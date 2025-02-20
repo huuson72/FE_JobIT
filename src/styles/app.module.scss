@@ -1,0 +1,22 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100vh; // Đảm bảo toàn bộ trang chiếm hết màn hình
+}
+
+.layout-app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; // Đảm bảo layout-app có chiều cao bằng với viewport
+}
+
+.content-app {
+  flex: 1; // Mở rộng nội dung để đẩy footer xuống dưới
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
