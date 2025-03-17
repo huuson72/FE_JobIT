@@ -1,10 +1,18 @@
-import { Button, Col, Form, Row, Select, notification } from 'antd';
-import { EnvironmentOutlined, MonitorOutlined } from '@ant-design/icons';
+import { Button, Col, Form, InputNumber, Row, Select, notification } from 'antd';
+import { EnvironmentOutlined, MonitorOutlined, DollarOutlined } from '@ant-design/icons';
 import { LOCATION_LIST } from '@/config/utils';
 import { ProForm } from '@ant-design/pro-components';
 import { useEffect, useState } from 'react';
 import { callFetchAllSkill } from '@/config/api';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+
+const LEVELS = [
+    { label: 'INTERN', value: 'INTERN' },
+    { label: 'FRESHER', value: 'FRESHER' },
+    { label: 'JUNIOR', value: 'JUNIOR' },
+    { label: 'MIDDLE', value: 'MIDDLE' },
+    { label: 'SENIOR', value: 'SENIOR' }
+];
 
 const SearchClient = () => {
     const navigate = useNavigate();
@@ -20,12 +28,15 @@ const SearchClient = () => {
         if (location.search) {
             const queryLocation = searchParams.get("location");
             const querySkills = searchParams.get("skills");
-            if (queryLocation) {
-                form.setFieldValue("location", queryLocation.split(","));
-            }
-            if (querySkills) {
-                form.setFieldValue("skills", querySkills.split(","));
-            }
+            const queryMinSalary = searchParams.get("minSalary");
+            const queryMaxSalary = searchParams.get("maxSalary");
+            const queryLevel = searchParams.get("level");
+
+            if (queryLocation) form.setFieldValue("location", queryLocation.split(","));
+            if (querySkills) form.setFieldValue("skills", querySkills.split(","));
+            if (queryMinSalary) form.setFieldValue("minSalary", Number(queryMinSalary));
+            if (queryMaxSalary) form.setFieldValue("maxSalary", Number(queryMaxSalary));
+            if (queryLevel) form.setFieldValue("level", queryLevel);
         }
     }, [location.search]);
 
@@ -35,7 +46,6 @@ const SearchClient = () => {
 
     const fetchSkill = async () => {
         let query = `page=1&size=100&sort=createdAt,desc`;
-
         const res = await callFetchAllSkill(query);
         if (res && res.data) {
             const arr = res?.data?.result?.map(item => ({
@@ -47,13 +57,21 @@ const SearchClient = () => {
     };
 
     const onFinish = async (values: any) => {
-        let query = "";
-        if (values?.location?.length) {
-            query = `location=${values?.location?.join(",")}`;
+        let queryParts = [];
+
+        if (values?.location?.length) queryParts.push(`location=${values?.location?.join(",")}`);
+        if (values?.skills?.length) queryParts.push(`skills=${values?.skills?.join(",")}`);
+        if (values?.level) queryParts.push(`level=${values.level}`);
+
+        if (values?.minSalary !== undefined && values?.minSalary !== null && !isNaN(values.minSalary)) {
+            queryParts.push(`minSalary=${Number(values.minSalary)}`);
         }
-        if (values?.skills?.length) {
-            query = values.location?.length ? query + `&skills=${values?.skills?.join(",")}` : `skills=${values?.skills?.join(",")}`;
+        if (values?.maxSalary !== undefined && values?.maxSalary !== null && !isNaN(values.maxSalary)) {
+            queryParts.push(`maxSalary=${Number(values.maxSalary)}`);
         }
+
+        const query = queryParts.join('&');
+        console.log('Query string:', query); // Kiểm tra query string
 
         if (!query) {
             notification.error({
@@ -62,9 +80,9 @@ const SearchClient = () => {
             });
             return;
         }
+
         navigate(`/job?${query}`);
     };
-
     return (
         <ProForm
             form={form}
@@ -74,7 +92,6 @@ const SearchClient = () => {
             <Row gutter={[20, 20]}>
                 <Col span={24}><h2>IT Job For Developer</h2></Col>
 
-                {/* Đổi vị trí phần tìm địa điểm lên trước */}
                 <Col span={12} md={4}>
                     <ProForm.Item name="location">
                         <Select
@@ -85,6 +102,40 @@ const SearchClient = () => {
                             placeholder={<><EnvironmentOutlined /> Địa điểm...</>}
                             optionLabelProp="label"
                             options={optionsLocations}
+                        />
+                    </ProForm.Item>
+                </Col>
+
+                <Col span={12} md={4}>
+                    <ProForm.Item name="level">
+                        <Select
+                            allowClear
+                            style={{ width: '100%' }}
+                            placeholder="Chọn cấp bậc..."
+                            options={LEVELS}
+                        />
+                    </ProForm.Item>
+                </Col>
+
+                <Col span={12} md={4}>
+                    <ProForm.Item name="minSalary">
+                        <InputNumber
+                            style={{ width: '100%' }}
+                            placeholder="Lương tối thiểu..."
+                            min={0}
+                            formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '') as any}
+                        />
+                    </ProForm.Item>
+                </Col>
+                <Col span={12} md={4}>
+                    <ProForm.Item name="maxSalary">
+                        <InputNumber
+                            style={{ width: '100%' }}
+                            placeholder="Lương tối đa..."
+                            min={0}
+                            formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '') as any}
                         />
                     </ProForm.Item>
                 </Col>
@@ -111,11 +162,10 @@ const SearchClient = () => {
                     >
                         Search
                     </Button>
-
-
                 </Col>
             </Row>
         </ProForm>
     );
 };
+
 export default SearchClient;

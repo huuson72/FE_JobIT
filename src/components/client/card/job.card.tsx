@@ -31,32 +31,60 @@ const JobCard = ({ showPagination = false, jobs }: IProps) => {
     const [searchParams] = useSearchParams();
     const location = useLocation();
 
+
     useEffect(() => {
         if (!jobs) fetchJob();
     }, [current, pageSize, filter, sortQuery, location]);
 
     const fetchJob = async () => {
         setIsLoading(true);
+
+        // Xây dựng query cơ bản
         let query = `page=${current}&size=${pageSize}`;
         if (filter) query += `&${filter}`;
         if (sortQuery) query += `&${sortQuery}`;
 
+        // Lấy params từ URL
         const queryLocation = searchParams.get("location");
         const querySkills = searchParams.get("skills");
-        if (queryLocation || querySkills) {
-            let q = "";
-            if (queryLocation) q = sfIn("location", queryLocation.split(",")).toString();
-            if (querySkills) q += queryLocation ? ` and ${sfIn("skills", querySkills.split(","))}` : sfIn("skills", querySkills.split(",")).toString();
-            query += `&filter=${encodeURIComponent(q)}`;
+        const queryLevel = searchParams.get("level");
+        const queryMinSalary = searchParams.get("minSalary"); // Thêm minSalary
+        const queryMaxSalary = searchParams.get("maxSalary"); // Thêm maxSalary
+
+        // Xây dựng mảng filter
+        let q = [];
+        if (queryLocation) q.push(sfIn("location", queryLocation.split(",")).toString());
+        if (querySkills) q.push(sfIn("skills", querySkills.split(",")).toString());
+        if (queryLevel) q.push(sfIn("level", queryLevel.split(",")).toString());
+
+        // Thêm điều kiện lọc lương với minSalary và maxSalary
+        if (queryMinSalary) q.push(`salary>=${queryMinSalary}`);
+        if (queryMaxSalary) q.push(`salary<=${queryMaxSalary}`);
+
+        // Gộp các filter lại bằng "and"
+        if (q.length > 0) {
+            query += `&filter=${encodeURIComponent(q.join(" and "))}`;
         }
 
-        const res = await callFetchJob(query);
-        if (res?.data) {
-            setDisplayJob(res.data.result);
-            setTotal(res.data.meta.total);
+        console.log("Final Query:", query); // Debug query cuối cùng
+
+        try {
+            const res = await callFetchJob(query);
+
+            // Log dữ liệu API trả về
+            console.log("API Response:", res?.data);
+
+            if (res?.data) {
+                setDisplayJob(res.data.result);
+                setTotal(res.data.meta.total);
+            }
+        } catch (error) {
+            console.error("Lỗi fetch job:", error);
         }
+
         setIsLoading(false);
     };
+
 
     const handleOnChangePage = (page: number, size: number) => {
         setCurrent(page);

@@ -34,6 +34,25 @@ export interface IAccount {
         }
     }
 }
+export interface IReview {
+    id?: string;
+    company: {
+        id: string;
+        name: string;
+        logo?: string;
+    };
+    user: {
+        id: string;
+        name: string;
+    };
+    userName?: string; // ✅ Thêm userName để khớp API
+    content: string;
+    rating: number;
+    createdAt?: string;
+    updatedAt?: string;
+    createdBy?: string;
+    updatedBy?: string;
+}
 
 export interface IGetAccount extends Omit<IAccount, "access_token"> { }
 

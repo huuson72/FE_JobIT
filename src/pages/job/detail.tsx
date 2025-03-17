@@ -1,7 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import { IJob } from "@/types/backend";
-import { callFetchJobById } from "@/config/api";
+import { callAddToFavourite, callFetchJobById } from "@/config/api";
 import styles from 'styles/client.module.scss';
 import parse from 'html-react-parser';
 import { Col, Divider, Row, Skeleton, Tag } from "antd";
@@ -11,29 +12,56 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import ApplyModal from "@/components/client/modal/apply.modal";
 dayjs.extend(relativeTime)
-
+import { HeartOutlined, HeartFilled } from "@ant-design/icons";
+import { message } from "antd";
+import { useSelector } from "react-redux";
 
 const ClientJobDetailPage = (props: any) => {
     const [jobDetail, setJobDetail] = useState<IJob | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
     let location = useLocation();
     let params = new URLSearchParams(location.search);
     const id = params?.get("id"); // job id
+    const [isFavourite, setIsFavourite] = useState<boolean>(false);
+
+    const userId = useSelector((state: any) => state.account.user.id);
+
+    const handleAddToFavourite = async () => {
+        if (!jobDetail || !jobDetail.id) {
+            message.error("Lỗi: Không tìm thấy thông tin công việc!");
+            return;
+        }
+
+        if (!userId) {
+            message.error("Bạn cần đăng nhập để lưu công việc yêu thích!");
+            return;
+        }
+
+        try {
+            await callAddToFavourite(Number(jobDetail.id), userId);
+            message.success("Đã thêm vào danh sách yêu thích!");
+            setIsFavourite(true);
+            localStorage.setItem(`favourite_${jobDetail.id}`, 'true');
+        } catch (error) {
+            message.error("Lỗi khi thêm vào danh sách yêu thích!");
+        }
+    };
 
     useEffect(() => {
         const init = async () => {
             if (id) {
-                setIsLoading(true)
+                setIsLoading(true);
                 const res = await callFetchJobById(id);
                 if (res?.data) {
-                    setJobDetail(res.data)
+                    setJobDetail(res.data);
+                    const savedFavourite = localStorage.getItem(`favourite_${res.data.id}`);
+                    setIsFavourite(savedFavourite === 'true');
                 }
-                setIsLoading(false)
+                setIsLoading(false);
             }
-        }
+        };
         init();
     }, [id]);
 
@@ -49,25 +77,29 @@ const ClientJobDetailPage = (props: any) => {
                                 <div className={styles["header"]}>
                                     {jobDetail.name}
                                 </div>
-                                <div>
+                                <button onClick={() => setIsModalOpen(true)} className={styles["btn-apply"]} >Apply Now</button>
+                                <div className={styles["extra-buttons"]} style={{ marginTop: '20px' }}>
+                                    <Link to="/favourites" style={{ marginLeft: '10px', marginBottom: '20px', color: '#1890ff', textDecoration: 'none', fontWeight: 'bold' }}>❤️ Công việc yêu thích</Link>
                                     <button
-                                        onClick={() => setIsModalOpen(true)}
-                                        className={styles["btn-apply"]}
-                                    >Apply Now</button>
+                                        onClick={handleAddToFavourite}
+                                        className={`${styles["btn-favourite"]} ${isFavourite ? styles["favourite-active"] : styles["favourite-inactive"]}`}
+                                        style={{ marginLeft: "10px", padding: '10px 20px', backgroundColor: isFavourite ? "#ff4d4f" : "#ddd", color: "#fff", borderRadius: '8px', border: 'none', cursor: 'pointer' }}
+                                    >
+                                        {isFavourite ? <HeartFilled /> : <HeartOutlined />} &nbsp; Lưu vào yêu thích
+                                    </button>
                                 </div>
+
                                 <Divider />
                                 <div className={styles["skills"]}>
-                                    {jobDetail?.skills?.map((item, index) => {
-                                        return (
-                                            <Tag key={`${index}-key`} color="gold" >
-                                                {item.name}
-                                            </Tag>
-                                        )
-                                    })}
+                                    {jobDetail?.skills?.map((item, index) => (
+                                        <Tag key={`${index}-key`} color="gold" >
+                                            {item.name}
+                                        </Tag>
+                                    ))}
                                 </div>
                                 <div className={styles["salary"]}>
                                     <DollarOutlined />
-                                    <span>&nbsp;{(jobDetail.salary + "")?.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} đ</span>
+                                    <span>&nbsp;{(jobDetail.salary + "").replace(/\B(?=(\d{3})+(?!\d))/g, ',')} đ</span>
                                 </div>
                                 <div className={styles["location"]}>
                                     <EnvironmentOutlined style={{ color: '#58aaab' }} />&nbsp;{getLocationName(jobDetail.location)}
@@ -105,4 +137,5 @@ const ClientJobDetailPage = (props: any) => {
         </div>
     )
 }
+
 export default ClientJobDetailPage;

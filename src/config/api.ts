@@ -1,4 +1,4 @@
-import { IBackendRes, ICompany, IAccount, IUser, IModelPaginate, IGetAccount, IJob, IResume, IPermission, IRole, ISkill, ISubscribers } from '@/types/backend';
+import { IBackendRes, ICompany, IAccount, IUser, IModelPaginate, IGetAccount, IJob, IResume, IPermission, IRole, ISkill, ISubscribers, IReview } from '@/types/backend';
 import axios from 'config/axios-customize';
 
 /**
@@ -259,6 +259,103 @@ export const callFetchJobsByCompanyId = async (companyId: string) => {
         return await res.json();
     } catch (error) {
         console.error("Lỗi lấy danh sách jobs:", error);
+        return null;
+    }
+};
+export const callCreateReview = async (companyId: string, content: string, rating: number) => {
+    const token = localStorage.getItem("access_token");
+
+    if (!token) {
+        console.error("❌ Không tìm thấy access_token, người dùng có thể chưa đăng nhập.");
+        return;
+    }
+
+    const reviewData = { companyId, content, rating };
+    console.log("📌 Dữ liệu gửi lên API:", reviewData);
+
+    return axios.post("/api/reviews", reviewData, {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        }
+    });
+};
+
+
+    export const callFetchReviewsByCompany = async (companyId: string) => {
+        const url = `/api/reviews/company/${companyId}`;
+        console.log("📌 Đang gọi API:", url); // ✅ Log API URL
+    
+        try {
+            const response = await axios.get(url);
+            console.log("🚀 API Response:", response.data);
+            return response.data;
+        } catch (error: any) {
+            console.error("❌ Lỗi API:", error.response?.status, error.response?.data);
+            return { data: [] };
+        }
+    };
+    
+
+// Module Favourite Job
+export const callAddToFavourite = async (jobId: number, userId: number) => {
+    const token = localStorage.getItem("access_token");
+
+    if (!token) {
+        console.error("❌ Không tìm thấy access_token, người dùng có thể chưa đăng nhập.");
+        return { success: false, message: "Người dùng chưa đăng nhập" };
+    }
+
+    try {
+        const response = await axios.post(
+            `/api/favorites/${jobId}?userId=${userId}`, 
+            {}, // POST không cần body
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}` 
+                }
+            }
+        );
+
+        console.log("✅ Thêm vào danh sách yêu thích thành công:", response.data);
+        return { success: true, data: response.data };
+
+    } catch (error: any) {
+        console.error("❌ Lỗi API:", error.response?.status, error.response?.data);
+        return { success: false, message: error.response?.data?.message || "Lỗi không xác định" };
+    }
+};
+
+export const callGetFavouriteJobs = async (userId: number) => {
+    const token = localStorage.getItem("access_token");
+
+    if (!token) {
+        console.error("❌ Không tìm thấy access_token, người dùng có thể chưa đăng nhập.");
+        return { success: false, message: "Người dùng chưa đăng nhập" };
+    }
+
+    try {
+        const response = await axios.get(`/api/favorites?userId=${userId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        console.log("✅ Lấy danh sách yêu thích thành công:", response.data);
+        return { success: true, data: response.data };
+
+    } catch (error: any) {
+        console.error("❌ Lỗi API:", error.response?.status, error.response?.data);
+        return { success: false, message: error.response?.data?.message || "Lỗi không xác định" };
+    }
+};
+export const callFetchUserFavourites = async (userId: number) => {
+    try {
+        const response = await axios.get(`/api/favorites?userId=${userId}`);
+        return response;
+    } catch (error) {
+        console.error("Lỗi khi lấy danh sách yêu thích", error);
         return null;
     }
 };

@@ -79,13 +79,20 @@ const Header = (props: any) => {
             key: 'manage-account',
             icon: <ContactsOutlined />
         },
-        ...(user.role?.permissions?.length ? [{
-            label: <Link
-                to={"/admin"}
-            >Trang Quản Trị</Link>,
-            key: 'admin',
-            icon: <FireOutlined />
-        },] : []),
+        // ...(user.role?.permissions?.length ? [{
+        //     label: <Link
+        //         to={"/admin"}
+        //     >Trang Quản Trị</Link>,
+        //     key: 'admin',
+        //     icon: <FireOutlined />
+        // },] : []),
+        ...(user.role?.name === "HR" || user.role?.name === "SUPER_ADMIN"
+            ? [{
+                label: <Link to={"/admin"}>Trang Quản Trị</Link>,
+                key: 'admin',
+                icon: <FireOutlined />
+            }]
+            : []),
 
         {
             label: <label
