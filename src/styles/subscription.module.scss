@@ -1,0 +1,278 @@
+// Subscription Pages Styles
+.subscriptionContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+
+  .heroSection {
+    text-align: center;
+    padding: 50px 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+    border-radius: 10px;
+    margin-bottom: 40px;
+    
+    h1 {
+      font-size: 2.8rem;
+      margin-bottom: 16px;
+      color: #1a1a1a;
+    }
+    
+    .heroText {
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin: 0 auto 30px;
+      color: #666;
+    }
+    
+    .heroCta {
+      margin-top: 30px;
+      
+      button {
+        transition: all 0.3s ease;
+        
+        &:hover {
+          transform: translateY(-3px);
+          background: #f7b84c !important;
+          box-shadow: 0 8px 20px rgba(245, 166, 35, 0.3) !important;
+        }
+      }
+    }
+  }
+
+  .pageHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    h2 {
+      margin-bottom: 0;
+    }
+  }
+
+  .loadingContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+  }
+}
+
+// Benefits Section
+.benefitsSection {
+  margin: 40px 0;
+  text-align: center;
+  
+  h2 {
+    margin-bottom: 30px;
+  }
+  
+  .benefitsRow {
+    margin-top: 20px;
+  }
+  
+  .benefitCard {
+    height: 100%;
+    text-align: center;
+    transition: all 0.3s;
+    
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .benefitIcon {
+      font-size: 36px;
+      color: #1890ff;
+      margin-bottom: 16px;
+    }
+    
+    h4 {
+      margin-bottom: 12px;
+    }
+  }
+}
+
+// Packages Display
+.packagesContainer {
+  margin-top: 30px;
+  
+  .packageCard {
+    height: 100%;
+    transition: all 0.3s;
+    overflow: hidden;
+    
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .packageHeader {
+      h3 {
+        margin-bottom: 8px;
+      }
+    }
+    
+    .packagePrice {
+      text-align: center;
+      margin: 20px 0;
+      
+      h2 {
+        margin-bottom: 0;
+        color: #1890ff;
+      }
+    }
+    
+    .packageDescription {
+      margin-bottom: 20px;
+      min-height: 50px;
+    }
+    
+    .featuresList {
+      list-style: none;
+      padding-left: 0;
+      margin-bottom: 30px;
+      
+      li {
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+      }
+    }
+    
+    .subscribeButton {
+      margin-top: 20px;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2) !important;
+      }
+    }
+  }
+  
+  .popularPackage {
+    transform: scale(1.03);
+    border: 2px solid #f5a623;
+    box-shadow: 0 10px 20px rgba(245, 166, 35, 0.15);
+    
+    .subscribeButton {
+      &:hover {
+        background: #f7b84c !important;
+      }
+    }
+  }
+}
+
+// Purchase Page
+.purchaseContainer {
+  margin: 20px auto;
+  max-width: 900px;
+  
+  .purchaseCard {
+    .steps {
+      margin-bottom: 20px;
+    }
+    
+    .stepContent {
+      min-height: 300px;
+      margin-bottom: 30px;
+    }
+    
+    .stepsAction {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+  }
+}
+
+// Package Review
+.packageReview {
+  .summaryCard {
+    margin-top: 20px;
+    
+    .packageSummary {
+      margin-top: 20px;
+      text-align: right;
+      
+      .totalAmount {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        
+        h3 {
+          margin-bottom: 0;
+          color: #1890ff;
+        }
+      }
+    }
+  }
+}
+
+// Payment Method
+.paymentMethod {
+  .paymentOption {
+    display: block;
+    width: 100%;
+    margin-bottom: 16px;
+    
+    .paymentOptionContent {
+      display: flex;
+      align-items: center;
+      
+      .paymentIcon {
+        font-size: 24px;
+        margin-right: 16px;
+        color: #1890ff;
+      }
+    }
+  }
+}
+
+// My Packages Page
+.statusCard {
+  margin-bottom: 20px;
+}
+
+.subscriptionsCard {
+  margin-bottom: 40px;
+}
+
+/* Thêm phần hiển thị cho nút thanh toán VNPay */
+.vnpayButton {
+  position: relative;
+  overflow: hidden;
+  animation: pulse 2s infinite;
+  z-index: 1;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 80%);
+    transform: rotate(30deg);
+    z-index: -1;
+    transition: all 0.5s ease-in-out;
+  }
+  
+  &:hover::before {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 4px 12px rgba(10, 88, 150, 0.2);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(10, 88, 150, 0.4);
+  }
+  100% {
+    box-shadow: 0 4px 12px rgba(10, 88, 150, 0.2);
+  }
+} 

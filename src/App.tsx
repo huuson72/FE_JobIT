@@ -10,6 +10,7 @@ import NotFound from 'components/share/not.found';
 import Loading from 'components/share/loading';
 import LoginPage from 'pages/auth/login';
 import RegisterPage from 'pages/auth/register';
+import EmployerRegisterPage from 'pages/auth/employer-register';
 import LayoutAdmin from 'components/admin/layout.admin';
 import ProtectedRoute from 'components/share/protected-route.ts';
 import Header from 'components/client/header.client';
@@ -31,6 +32,13 @@ import ClientCompanyPage from './pages/company';
 import ClientCompanyDetailPage from './pages/company/detail';
 import JobTabs from './pages/admin/job/job.tabs';
 import FavouriteJobsPage from './pages/job/favourite';
+import CreateCVForm from './components/client/CreateCVForm';
+import SubscriptionPage from './pages/client/subscription';
+import SubscriptionPurchasePage from './pages/client/subscription/purchase';
+import MyPackagesPage from './pages/client/subscription/my-packages';
+import PaymentResultPage from './pages/client/subscription/payment-result';
+import SubscriptionManagement from './pages/admin/subscription';
+
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -82,8 +90,19 @@ export default function App() {
         { path: "company", element: <ClientCompanyPage /> },
         { path: "company/:id", element: <ClientCompanyDetailPage /> },
         { path: "company/:id/job", element: <ClientJobPage /> },
-        { path: "favourites", element: <FavouriteJobsPage /> }
-
+        { path: "favourites", element: <FavouriteJobsPage /> },
+        { path: "subscription", element: <SubscriptionPage /> },
+        { path: "subscription/purchase/:packageId", element: <SubscriptionPurchasePage /> },
+        { path: "subscription/my-packages", element: <MyPackagesPage /> },
+        { path: "subscription/payment-result", element: <PaymentResultPage /> },
+        {
+          path: "cv/create",
+          element: (
+            <ProtectedRoute>
+              <CreateCVForm />
+            </ProtectedRoute>
+          )
+        }
       ],
     },
 
@@ -147,6 +166,13 @@ export default function App() {
             <ProtectedRoute>
               <RolePage />
             </ProtectedRoute>
+        },
+        {
+          path: "subscription",
+          element:
+            <ProtectedRoute>
+              <SubscriptionManagement />
+            </ProtectedRoute>
         }
       ],
     },
@@ -161,6 +187,12 @@ export default function App() {
       path: "/register",
       element: <RegisterPage />,
     },
+
+    {
+      path: "/auth/employer-register",
+      element: <EmployerRegisterPage />,
+    },
+
   ]);
 
   return (

@@ -34,25 +34,6 @@ export interface IAccount {
         }
     }
 }
-export interface IReview {
-    id?: string;
-    company: {
-        id: string;
-        name: string;
-        logo?: string;
-    };
-    user: {
-        id: string;
-        name: string;
-    };
-    userName?: string; // ✅ Thêm userName để khớp API
-    content: string;
-    rating: number;
-    createdAt?: string;
-    updatedAt?: string;
-    createdBy?: string;
-    updatedBy?: string;
-}
 
 export interface IGetAccount extends Omit<IAccount, "access_token"> { }
 
@@ -79,25 +60,26 @@ export interface ISkill {
     updatedAt?: string;
 }
 
-
-
 export interface IUser {
-    id?: string;
-    name: string;
+    id: string;
     email: string;
+    name: string;
+    role: {
+        id?: string;
+        name?: string;
+        permissions?: IPermission[]
+    };
+    company?: {
+        id: number;
+        name: string;
+        address?: string;
+        description?: string;
+        logo?: string;
+    };
     password?: string;
     age: number;
     gender: string;
     address: string;
-    role?: {
-        id: string;
-        name: string;
-    }
-
-    company?: {
-        id: string;
-        name: string;
-    }
     createdBy?: string;
     isDeleted?: boolean;
     deletedAt?: boolean | null;
@@ -122,12 +104,44 @@ export interface IJob {
     startDate: Date;
     endDate: Date;
     active: boolean;
-
     createdBy?: string;
     isDeleted?: boolean;
     deletedAt?: boolean | null;
     createdAt?: string;
     updatedAt?: string;
+}
+
+export interface ICV {
+    id?: string;
+    title: string;
+    profileSummary?: string;
+    fullName: string;
+    email: string;
+    phoneNumber?: string;
+    address?: string;
+    education?: string;
+    experience?: string;
+    skills?: string;
+    customContent?: string;
+    user?: IUser;
+    job?: IJob;
+    active?: boolean;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface ICreateCVRequest {
+    title: string;
+    fullName: string;
+    email?: string;
+    phoneNumber?: string;
+    address?: string;
+    education?: string;
+    experience?: string;
+    skills?: string;
+    customContent?: string;
+    userId: number;
+    jobId: number;
 }
 
 export interface IResume {
@@ -163,13 +177,11 @@ export interface IPermission {
     apiPath?: string;
     method?: string;
     module?: string;
-
     createdBy?: string;
     isDeleted?: boolean;
     deletedAt?: boolean | null;
     createdAt?: string;
     updatedAt?: string;
-
 }
 
 export interface IRole {
@@ -178,7 +190,6 @@ export interface IRole {
     description: string;
     active: boolean;
     permissions: IPermission[] | string[];
-
     createdBy?: string;
     isDeleted?: boolean;
     deletedAt?: boolean | null;
@@ -197,3 +208,73 @@ export interface ISubscribers {
     createdAt?: string;
     updatedAt?: string;
 }
+
+export interface IReview {
+    id?: string;
+    company: {
+        id: string;
+        name: string;
+        logo?: string;
+    };
+    user: {
+        id: string;
+        name: string;
+    };
+    userName?: string;
+    content: string;
+    rating: number;
+    createdAt?: string;
+    updatedAt?: string;
+    createdBy?: string;
+    updatedBy?: string;
+}
+
+export interface ISubscriptionPackage {
+    id: number;
+    name: string;
+    description: string;
+    price: number;
+    durationDays: number;
+    jobPostLimit: number;
+    isHighlighted: boolean;
+    isPrioritized: boolean;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string | null;
+    createdBy: string;
+    updatedBy: string | null;
+    displayPriority?: number;
+    features?: string[];
+    rewardPoints?: number;
+}
+
+export interface IEmployerSubscription {
+    id: number;
+    userId: number;
+    companyId: number;
+    packageId: number;
+    package?: ISubscriptionPackage;
+    startDate: string;
+    endDate: string;
+    isActive: boolean;
+    paymentMethod: string;
+    paymentStatus: string;
+    jobPostsRemaining: number;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface ISubscriptionStatus {
+    hasActiveSubscription: boolean;
+    activeSubscription?: IEmployerSubscription;
+    jobPostsRemaining: number;
+    canPostJob: boolean;
+    daysRemaining: number;
+}
+
+export interface IPurchaseSubscriptionRequest {
+    userId: number;
+    companyId: number;
+    packageId: number;
+    paymentMethod: string;
+} 

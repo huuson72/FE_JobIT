@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import { setUserLoginInfo } from '@/redux/slice/accountSlide';
 import styles from 'styles/auth.module.scss';
 import { useAppSelector } from '@/redux/hooks';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { UserOutlined, LockOutlined, MailOutlined, TeamOutlined, RocketOutlined, CheckCircleOutlined, LinkedinOutlined, GithubOutlined, GoogleOutlined, BankOutlined, BuildOutlined, GlobalOutlined, BulbOutlined } from '@ant-design/icons';
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -46,65 +46,142 @@ const LoginPage = () => {
 
     return (
         <div className={styles["login-page"]}>
-            <main className={styles.main}>
-                <div className={styles.container}>
-                    <section className={styles.wrapper}>
-                        <div className={styles.heading}>
-                            <h2
-                                style={{ textAlign: "center", width: "100%", fontSize: "27px", fontWeight: "bold", marginBottom: "10px" }}
-                            >
-                                Đăng Nhập
-                            </h2>
-
-                            <Divider />
+            <div className={styles["login-container"]}>
+                {/* Banner Section */}
+                <div className={styles["banner-section"]}>
+                    <div className={styles["banner-content"]}>
+                        <div className={styles["banner-logo-container"]}>
+                            <div className={styles["banner-logo"]}>
+                                <BankOutlined />
+                            </div>
+                            <div className={styles["banner-logo-text"]}>
+                                <span className={styles["logo-title"]}>HSJob</span>
+                                <span className={styles["logo-tagline"]}>Find Your Dream Job</span>
+                            </div>
                         </div>
-                        <Form name="login-form" onFinish={onFinish} autoComplete="off">
+
+                        <h1 className={styles["banner-title"]}>
+                            Khám phá cơ hội việc làm
+                            <span className={styles["highlight"]}> không giới hạn</span>
+                        </h1>
+                        <p className={styles["banner-subtitle"]}>
+                            Kết nối với hàng nghìn doanh nghiệp hàng đầu
+                        </p>
+
+                        <div className={styles["features-list"]}>
+                            <div className={styles["feature-item"]}>
+                                <BuildOutlined style={{ marginRight: '8px' }} />
+                                <span>Hàng nghìn việc làm chất lượng</span>
+                            </div>
+                            <div className={styles["feature-item"]}>
+                                <GlobalOutlined style={{ marginRight: '8px' }} />
+                                <span>Kết nối toàn cầu</span>
+                            </div>
+                            <div className={styles["feature-item"]}>
+                                <BulbOutlined style={{ marginRight: '8px' }} />
+                                <span>Đề xuất việc làm thông minh</span>
+                            </div>
+                            <div className={styles["feature-item"]}>
+                                <TeamOutlined style={{ marginRight: '8px' }} />
+                                <span>Cộng đồng chuyên nghiệp</span>
+                            </div>
+                        </div>
+
+
+                        <div className={styles["banner-footer"]}>
+                            <RocketOutlined />
+                            <span>Bắt đầu hành trình sự nghiệp của bạn ngay hôm nay</span>
+                        </div>
+
+                        <div className={styles["social-links"]}>
+                            <a href="#" className={styles["social-link"]}>
+                                <LinkedinOutlined style={{ color: "#000000", fontSize: "24px" }} />
+                            </a>
+                            <a href="#" className={styles["social-link"]}>
+                                <GithubOutlined style={{ color: "#000000", fontSize: "24px" }} />
+                            </a>
+                            <a href="#" className={styles["social-link"]}>
+                                <GoogleOutlined style={{ color: "#000000", fontSize: "24px" }} />
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+
+                {/* Login Form Section */}
+                <div className={styles["form-section"]}>
+                    <div className={styles["form-container"]}>
+                        <div className={styles["form-header"]}>
+                            <h2>Đăng nhập</h2>
+                            <p>Đăng nhập để tiếp tục với tài khoản của bạn</p>
+                        </div>
+
+                        <Form
+                            name="login-form"
+                            onFinish={onFinish}
+                            autoComplete="off"
+                            layout="vertical"
+                        >
                             <Form.Item
-                                labelCol={{ span: 24 }}
-                                label={<span style={{ fontSize: "18px", fontWeight: "bold" }}>Email</span>}
                                 name="username"
                                 rules={[{ required: true, message: 'Email không được để trống!' }]}
                             >
                                 <Input
                                     prefix={<UserOutlined />}
                                     placeholder="Nhập email của bạn"
-                                    style={{ fontSize: "16px", padding: "12px", height: "50px" }}
+                                    size="large"
                                 />
                             </Form.Item>
 
                             <Form.Item
-                                labelCol={{ span: 24 }}
-                                label={<span style={{ fontSize: "18px", fontWeight: "bold" }}>Mật khẩu</span>}
                                 name="password"
                                 rules={[{ required: true, message: 'Mật khẩu không được để trống!' }]}
                             >
                                 <Input.Password
                                     prefix={<LockOutlined />}
                                     placeholder="Nhập mật khẩu"
-                                    style={{ fontSize: "16px", padding: "12px", height: "50px" }}
+                                    size="large"
                                 />
                             </Form.Item>
 
-                            {/* Căn giữa nút đăng nhập và dòng chưa có tài khoản */}
                             <Form.Item>
-                                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "10px" }}>
-                                    <Button type="primary" htmlType="submit" loading={isSubmit} style={{ fontSize: "18px", height: "45px", width: "100%" }}>
-                                        Đăng nhập
-                                    </Button>
-                                    <Divider style={{ width: "100%" }}>Hoặc</Divider>
-                                    <p style={{ fontSize: "16px" }}>
-                                        Chưa có tài khoản?
-                                        <Link to='/register' style={{ color: "#1890ff", fontWeight: "bold", marginLeft: "5px", textDecoration: "none" }}>
-                                            Đăng Ký
-                                        </Link>
-                                    </p>
-                                </div>
+                                <Button
+                                    type="primary"
+                                    htmlType="submit"
+                                    loading={isSubmit}
+                                    size="large"
+                                    block
+                                    className={styles.loginButton}
+                                >
+                                    Đăng nhập
+                                </Button>
                             </Form.Item>
-                        </Form>
 
-                    </section>
+                            <div className={styles.dividerContainer}>
+                                <Divider>Hoặc</Divider>
+                            </div>
+
+                            <div className={styles["social-login"]}>
+                                <Button className={styles["social-button"]} icon={<GoogleOutlined />}>
+                                    Đăng nhập với Google
+                                </Button>
+                                <Button className={styles["social-button"]} icon={<LinkedinOutlined />}>
+                                    Đăng nhập với LinkedIn
+                                </Button>
+                            </div>
+
+                            <div className={styles.registerContainer}>
+                                <p className={styles.registerText}>
+                                    Chưa có tài khoản?
+                                    <Link to='/register' className={styles.registerLink}>
+                                        Đăng Ký
+                                    </Link>
+                                </p>
+                            </div>
+                        </Form>
+                    </div>
                 </div>
-            </main>
+            </div>
         </div>
     );
 };

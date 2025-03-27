@@ -10,6 +10,7 @@ import {
     AliwangwangOutlined,
     BugOutlined,
     ScheduleOutlined,
+    CrownOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, Dropdown, Space, message, Avatar, Button } from 'antd';
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -21,7 +22,6 @@ import type { MenuProps } from 'antd';
 import { setLogoutAction } from '@/redux/slice/accountSlide';
 import { ALL_PERMISSIONS } from '@/config/permissions';
 import { motion } from 'framer-motion';
-import { CrownOutlined } from '@ant-design/icons'; // Thay thế BugOutlined bằng CrownOutlined
 
 const { Content, Sider } = Layout;
 
@@ -88,14 +88,11 @@ const LayoutAdmin = () => {
                     key: '/admin/company',
                     icon: <BankOutlined />,
                 }] : []),
-
-
                 ...(viewJob || ACL_ENABLE === 'false' ? [{
                     label: <Link to='/admin/job'>Việc làm</Link>,
                     key: '/admin/job',
                     icon: <ScheduleOutlined />
                 }] : []),
-
                 ...(viewResume || ACL_ENABLE === 'false' ? [{
                     label: <Link to='/admin/resume'>Trạng thái</Link>,
                     key: '/admin/resume',
@@ -111,9 +108,11 @@ const LayoutAdmin = () => {
                     key: '/admin/role',
                     icon: <ExceptionOutlined />
                 }] : []),
-
-
-
+                {
+                    label: <Link to='/admin/subscription'>Quản lý gói VIP</Link>,
+                    key: '/admin/subscription',
+                    icon: <CrownOutlined />
+                },
             ];
 
             setMenuItems(full);

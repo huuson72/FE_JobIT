@@ -56,15 +56,49 @@ const ApplyModal = (props: IProps) => {
         accept: "application/pdf,application/msword, .doc, .docx, .pdf",
         async customRequest({ file, onSuccess, onError }: any) {
             const res = await callUploadSingleFile(file, "resume");
-            if (res && res.data) {
-                setUrlCV(res.data.fileName);
-                if (onSuccess) onSuccess('ok')
-            } else {
-                if (onError) {
-                    setUrlCV("");
-                    const error = new Error(res.message);
-                    onError({ event: error });
+
+            // Check for different response structures
+            if (res && typeof res === 'object') {
+                // Response has direct fileName property
+                if ('fileName' in res && typeof res.fileName === 'string') {
+                    setUrlCV(res.fileName);
+                    if (onSuccess) onSuccess('ok');
+                    return;
                 }
+
+                // Response has nested data.fileName
+                if ('data' in res && res.data && typeof res.data === 'object' &&
+                    'fileName' in res.data && typeof res.data.fileName === 'string') {
+                    setUrlCV(res.data.fileName);
+                    if (onSuccess) onSuccess('ok');
+                    return;
+                }
+
+                // Response has deeper nested structure
+                if ('data' in res && res.data && typeof res.data === 'object' &&
+                    'data' in res.data && res.data.data && typeof res.data.data === 'object' &&
+                    'fileName' in res.data.data && typeof res.data.data.fileName === 'string') {
+                    setUrlCV(res.data.data.fileName);
+                    if (onSuccess) onSuccess('ok');
+                    return;
+                }
+            }
+
+            // Handle string response (direct URL)
+            if (res && typeof res === 'string') {
+                setUrlCV(res);
+                if (onSuccess) onSuccess('ok');
+                return;
+            }
+
+            // No valid fileName found
+            if (onError) {
+                setUrlCV("");
+                const errorMsg = res && typeof res === 'object' && 'message' in res && typeof res.message === 'string'
+                    ? res.message
+                    : "Không thể xác định đường dẫn file";
+                const error = new Error(errorMsg);
+                onError({ event: error });
             }
         },
         onChange(info) {

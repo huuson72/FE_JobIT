@@ -14,7 +14,11 @@ const LEVELS = [
     { label: 'SENIOR', value: 'SENIOR' }
 ];
 
-const SearchClient = () => {
+interface SearchClientProps {
+    hidden?: boolean;
+}
+
+const SearchClient = ({ hidden = false }: SearchClientProps) => {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -83,6 +87,11 @@ const SearchClient = () => {
 
         navigate(`/job?${query}`);
     };
+
+    if (hidden) {
+        return null;
+    }
+
     return (
         <ProForm
             form={form}
