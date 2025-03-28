@@ -6,13 +6,21 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import vn.hstore.jobhunter.domain.Promotion;
 import vn.hstore.jobhunter.domain.SubscriptionPackage;
 import vn.hstore.jobhunter.dto.PromotionDTO;
 import vn.hstore.jobhunter.repository.PromotionRepository;
 import vn.hstore.jobhunter.repository.SubscriptionPackageRepository;
+import vn.hstore.jobhunter.service.PromotionService;
 
 @RestController
 @RequestMapping("/api/v1/promotions")
@@ -23,6 +31,9 @@ public class PromotionController {
 
     @Autowired
     private SubscriptionPackageRepository subscriptionPackageRepository;
+    
+    @Autowired
+    private PromotionService promotionService;
 
     @GetMapping
     public ResponseEntity<?> getAllPromotions() {
@@ -103,7 +114,7 @@ public class PromotionController {
             }
 
             promotion.setName(promotionDTO.getName());
-            promotion.setDescription(promotionDTO.getDescription());    
+            promotion.setDescription(promotionDTO.getDescription());
             promotion.setDiscountPercentage(promotionDTO.getDiscountPercentage());
             promotion.setStartDate(promotionDTO.getStartDate());
             promotion.setEndDate(promotionDTO.getEndDate());
@@ -174,4 +185,20 @@ public class PromotionController {
             ));
         }
     }
-} 
+
+    @GetMapping("/calculate-discount/{packageId}")
+    public ResponseEntity<?> calculateDiscountedPrice(@PathVariable Long packageId) {
+        try {
+            PromotionService.DiscountResult result = promotionService.calculateDiscountedPrice(packageId);
+            return ResponseEntity.ok(Map.of(
+                    "data", result,
+                    "success", true
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "message", "Lỗi khi tính giá sau khuyến mãi: " + e.getMessage(),
+                    "success", false
+            ));
+        }
+    }
+}

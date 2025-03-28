@@ -1,233 +1,598 @@
-.cv-template.modern {
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: 30px;
-    background: white;
-    padding: 0;
-    max-width: 210mm;
-    min-height: 297mm;
+/* CV Template Styling */
+.cv-template {
+    width: 100%;
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     margin: 0 auto;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border-radius: 8px;
+    overflow: hidden;
+    color: #333333;
+    font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
 }
 
-.cv-sidebar {
-    background: #2c3e50;
+/* Modern Template */
+.cv-template.modern {
+    display: flex;
+    min-height: 297mm; /* A4 height */
+}
+
+.cv-template.modern .cv-sidebar {
+    width: 35%;
+    background: #3f51b5;
     color: white;
     padding: 40px 30px;
-    min-height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
-.profile-section {
-    text-align: center;
+.cv-template.modern .cv-main {
+    width: 65%;
+    padding: 40px 40px;
+    background: white;
+}
+
+.cv-template.modern .profile-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     margin-bottom: 40px;
-    padding-bottom: 30px;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
 }
 
-.profile-image {
-    width: 150px;
-    height: 150px;
-    margin: 0 auto 20px;
+.cv-template.modern .profile-image {
+    width: 120px;
+    height: 120px;
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 50%;
-    background: #34495e;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 4px solid #3498db;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
 }
 
-.profile-image i {
-    font-size: 80px;
-    color: #3498db;
-}
-
-.profile-name h2 {
-    font-size: 1.8em;
-    margin: 10px 0;
+.cv-template.modern .profile-name h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 5px 0;
     color: white;
 }
 
-.profile-title {
-    color: #3498db;
-    font-size: 1.2em;
-    margin-top: 10px;
+.cv-template.modern .profile-title {
+    font-size: 16px;
+    opacity: 0.8;
+    margin-top: 5px;
 }
 
-.sidebar-heading {
-    color: #3498db;
-    font-size: 1.3em;
-    margin: 25px 0 15px;
+.cv-template.modern .sidebar-heading {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 30px 0 15px;
     padding-bottom: 10px;
     border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    color: white;
 }
 
-.contact-section {
-    margin-bottom: 40px;
+.cv-template.modern .contact-section,
+.cv-template.modern .skills-section {
+    margin-bottom: 30px;
 }
 
-.contact-item {
+.cv-template.modern .contact-item {
     display: flex;
     align-items: center;
-    gap: 12px;
     margin-bottom: 15px;
-    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
 }
 
-.contact-item i {
-    color: #3498db;
-    font-size: 1.2em;
-    width: 20px;
+.cv-template.modern .contact-item .anticon {
+    margin-right: 15px;
+    font-size: 18px;
+    opacity: 0.8;
 }
 
-.skills-list {
+.cv-template.modern .skills-list {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.skill-item {
-    background: rgba(52, 152, 219, 0.1);
+.cv-template.modern .skill-item {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
     padding: 8px 15px;
-    border-radius: 4px;
-    border-left: 3px solid #3498db;
-}
-
-.skill-name {
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 0.95em;
-}
-
-.cv-main {
-    padding: 40px;
-}
-
-.section-title {
-    color: #2c3e50;
-    font-size: 1.5em;
-    margin-bottom: 20px;
+    font-size: 14px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #ecf0f1;
-}
-
-.section-title i {
-    color: #3498db;
-}
-
-.timeline {
-    position: relative;
-    padding-left: 20px;
-}
-
-.timeline-item {
-    position: relative;
-    padding-bottom: 25px;
-    padding-left: 20px;
-}
-
-.timeline-item::before {
-    content: '';
-    position: absolute;
-    left: -6px;
-    top: 0;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: #3498db;
-    border: 2px solid white;
-}
-
-.timeline-item::after {
-    content: '';
-    position: absolute;
-    left: -1px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: #ecf0f1;
-}
-
-.timeline-item:last-child {
-    padding-bottom: 0;
-}
-
-.timeline-content {
-    background: #f8f9fa;
-    padding: 15px 20px;
-    border-radius: 6px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.timeline-content p {
-    margin: 0;
-    color: #2c3e50;
-    line-height: 1.6;
-}
-
-.additional-info p {
-    color: #2c3e50;
-    line-height: 1.6;
-    margin-bottom: 10px;
-}
-
-/* Editable fields styling */
-.editable-title,
-.editable-name,
-.editable-field {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid transparent;
-    border-radius: 4px;
-    font-family: inherit;
-    background: transparent;
-    color: white;
     transition: all 0.3s ease;
 }
 
-.editable-title {
-    font-size: 1.2em;
-    color: #3498db;
+.cv-template.modern .skill-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateX(5px);
+}
+
+.cv-template.modern .section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #3f51b5;
+    margin: 0 0 20px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cv-template.modern .section-title .anticon {
+    font-size: 22px;
+    color: #3f51b5;
+}
+
+.cv-template.modern .education-section,
+.cv-template.modern .experience-section,
+.cv-template.modern .additional-section {
+    margin-bottom: 40px;
+}
+
+.cv-template.modern .timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.cv-template.modern .timeline:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e0e0e0;
+}
+
+.cv-template.modern .timeline-item {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.cv-template.modern .timeline-item:before {
+    content: '';
+    position: absolute;
+    left: -34px;
+    top: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #3f51b5;
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px #3f51b5;
+}
+
+.cv-template.modern .timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+.cv-template.modern .timeline-content {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.cv-template.modern .additional-info {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Professional Template */
+.cv-template.professional {
+    display: flex;
+    flex-direction: column;
+    min-height: 297mm;
+}
+
+.cv-template.professional .cv-header {
+    background: #2c387e;
+    color: white;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
 }
 
-.editable-name {
-    font-size: 1.8em;
+.cv-template.professional .cv-header h1 {
+    font-size: 32px;
+    margin: 0 0 5px 0;
+    color: white;
+}
+
+.cv-template.professional .cv-header p {
+    font-size: 18px;
+    opacity: 0.9;
+    margin: 5px 0;
+}
+
+.cv-template.professional .cv-contact-bar {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 15px 40px;
+    background: #f5f5f5;
+    flex-wrap: wrap;
+}
+
+.cv-template.professional .contact-item {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #555;
+}
+
+.cv-template.professional .contact-item .anticon {
+    margin-right: 8px;
+    color: #2c387e;
+}
+
+.cv-template.professional .cv-body {
+    display: flex;
+    flex: 1;
+}
+
+.cv-template.professional .cv-main {
+    flex: 2;
+    padding: 40px;
+}
+
+.cv-template.professional .cv-sidebar {
+    flex: 1;
+    background: #f9f9f9;
+    padding: 40px 30px;
+}
+
+.cv-template.professional .section-title {
+    font-size: 20px;
+    color: #2c387e;
+    font-weight: 600;
+    margin: 0 0 20px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cv-template.professional .section {
+    margin-bottom: 30px;
+}
+
+.cv-template.professional .timeline-item {
+    margin-bottom: 20px;
+    padding-left: 20px;
+    border-left: 3px solid #2c387e;
+}
+
+.cv-template.professional .skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.cv-template.professional .skill-item {
+    background: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border: 1px solid #e0e0e0;
+}
+
+/* Creative Template */
+.cv-template.creative {
+    display: grid;
+    grid-template-columns: 1fr;
+    min-height: 297mm;
+    background: #f8f9fa;
+}
+
+.cv-template.creative .cv-header {
+    background: #ff4081;
+    color: white;
+    padding: 40px;
     text-align: center;
+    clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.cv-template.creative .cv-header h1 {
+    font-size: 36px;
+    margin: 0;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.cv-template.creative .cv-header p {
+    font-size: 18px;
+    opacity: 0.9;
+    margin: 10px 0 0 0;
+}
+
+.cv-template.creative .cv-contact {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    padding: 20px;
+    margin-top: -20px;
+    flex-wrap: wrap;
+}
+
+.cv-template.creative .contact-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 14px;
+}
+
+.cv-template.creative .contact-item .anticon {
+    font-size: 24px;
+    margin-bottom: 8px;
+    width: 50px;
+    height: 50px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ff4081;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.cv-template.creative .cv-body {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 30px;
+    padding: 40px;
+}
+
+.cv-template.creative .section {
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    height: fit-content;
+}
+
+.cv-template.creative .section-title {
+    font-size: 20px;
+    color: #ff4081;
+    font-weight: 600;
+    margin: 0 0 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cv-template.creative .section-title:after {
+    content: '';
+    height: 3px;
+    flex: 1;
+    background: linear-gradient(90deg, #ff4081, transparent);
+}
+
+.cv-template.creative .skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.cv-template.creative .skill-item {
+    background: #f8f9fa;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
+}
+
+.cv-template.creative .skill-item:hover {
+    background: #ff4081;
+    color: white;
+    border-color: #ff4081;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+}
+
+.cv-template.creative .timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+    padding-left: 30px;
+}
+
+.cv-template.creative .timeline-item:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #ff4081;
+}
+
+/* Simple Template */
+.cv-template.simple {
+    padding: 40px;
+    min-height: 297mm;
+    background: #ffffff;
+}
+
+.cv-template.simple .cv-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #eee;
+}
+
+.cv-template.simple .cv-header h1 {
+    font-size: 28px;
+    margin: 0 0 5px 0;
+    color: #333;
+}
+
+.cv-template.simple .cv-header p {
+    font-size: 18px;
+    color: #757575;
+    margin: 5px 0 15px;
+}
+
+.cv-template.simple .cv-contact {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.cv-template.simple .contact-item {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #555;
+}
+
+.cv-template.simple .contact-item .anticon {
+    margin-right: 8px;
+    color: #555;
+}
+
+.cv-template.simple .cv-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+.cv-template.simple .left-column,
+.cv-template.simple .right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.cv-template.simple .section-title {
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 15px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+.cv-template.simple .skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.cv-template.simple .skill-item {
+    font-size: 14px;
+    padding: 5px 0;
+    color: #555;
+}
+
+.cv-template.simple .timeline-item {
+    margin-bottom: 15px;
+}
+
+.cv-template.simple .timeline-content {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+}
+
+/* Editable fields for all templates */
+.editable-name,
+.editable-title,
+.editable-field {
+    background: transparent;
+    border: 1px dashed rgba(0, 0, 0, 0.3);
+    padding: 5px 10px;
+    margin: 2px 0;
+    width: 100%;
+    color: inherit;
+    font-size: inherit;
+    font-family: inherit;
+    border-radius: 4px;
 }
 
 .editable-textarea {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    padding: 10px;
     width: 100%;
-    min-height: 120px;
-    padding: 12px;
-    border: 1px solid #ecf0f1;
-    border-radius: 6px;
+    min-height: 100px;
+    border-radius: 4px;
     font-family: inherit;
-    font-size: 1em;
-    line-height: 1.6;
-    color: #2c3e50;
-    background: white;
+    font-size: 14px;
     resize: vertical;
 }
 
-.editable-title:hover,
-.editable-name:hover,
-.editable-field:hover,
-.editable-textarea:hover {
-    border-color: #3498db;
-    background: rgba(52, 152, 219, 0.1);
+/* Responsive Adjustments for CV Templates */
+@media (max-width: 991px) {
+    .cv-template.modern {
+        flex-direction: column;
+    }
+    
+    .cv-template.modern .cv-sidebar,
+    .cv-template.modern .cv-main {
+        width: 100%;
+    }
+    
+    .cv-template.professional .cv-body {
+        flex-direction: column;
+    }
+    
+    .cv-template.creative .cv-body {
+        grid-template-columns: 1fr;
+    }
+    
+    .cv-template.simple .cv-body {
+        grid-template-columns: 1fr;
+    }
 }
 
-.editable-title:focus,
-.editable-name:focus,
-.editable-field:focus,
-.editable-textarea:focus {
-    outline: none;
-    border-color: #3498db;
-    background: rgba(52, 152, 219, 0.05);
-    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+@media (max-width: 768px) {
+    .cv-template {
+        padding: 20px;
+    }
+    
+    .cv-template.modern .cv-sidebar,
+    .cv-template.modern .cv-main {
+        padding: 20px;
+    }
+    
+    .cv-template.professional .cv-header,
+    .cv-template.professional .cv-main,
+    .cv-template.professional .cv-sidebar {
+        padding: 20px;
+    }
+    
+    .cv-template.creative .cv-header,
+    .cv-template.creative .cv-body {
+        padding: 20px;
+    }
+    
+    .cv-template.creative .section {
+        padding: 15px;
+    }
+    
+    .cv-template.simple {
+        padding: 20px;
+    }
 }
 
 @media print {

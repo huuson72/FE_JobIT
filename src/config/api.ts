@@ -770,23 +770,48 @@ export const callDeletePackage = (id: number) => {
     return axios.delete<IBackendRes<ISubscriptionPackage>>(`/api/v1/packages/${id}`);
 };
 
-export const callGetAllPromotions = async () => {
-    const res = await axios.get('/api/v1/promotions');
-    return res.data;
+// Promotion Management APIs
+export interface IPromotion {
+    id: number;
+    name: string;
+    description: string;
+    discountPercentage: number;
+    startDate: string;
+    endDate: string;
+    isActive: boolean;
+    code: string;
+    subscriptionPackageId: number;
+}
+
+export const callGetAllPromotions = () => {
+    return axios.get<IBackendRes<IPromotion[]>>('/api/v1/promotions');
 };
 
-export const callCreatePromotion = async (data: any) => {
-    const res = await axios.post('/api/v1/promotions', data);
-    return res.data;
+export const callGetPromotionById = (id: number) => {
+    return axios.get<IBackendRes<IPromotion>>(`/api/v1/promotions/${id}`);
 };
 
-export const callUpdatePromotion = async (id: number, data: any) => {
-    const res = await axios.put(`/api/v1/promotions/${id}`, data);
-    return res.data;
+export const callCreatePromotion = (data: Omit<IPromotion, 'id'>) => {
+    return axios.post<IBackendRes<IPromotion>>('/api/v1/promotions', data);
 };
 
-export const callDeletePromotion = async (id: number) => {
-    const res = await axios.delete(`/api/v1/promotions/${id}`);
-    return res.data;
+export const callUpdatePromotion = (id: number, data: Partial<IPromotion>) => {
+    return axios.put<IBackendRes<IPromotion>>(`/api/v1/promotions/${id}`, data);
+};
+
+export const callDeletePromotion = (id: number) => {
+    return axios.delete<IBackendRes<IPromotion>>(`/api/v1/promotions/${id}`);
+};
+
+export const callGetPromotionsByPackage = (packageId: number) => {
+    return axios.get<IBackendRes<IPromotion[]>>(`/api/v1/promotions/package/${packageId}`);
+};
+
+export const callGetActivePromotions = () => {
+    return axios.get<IBackendRes<IPromotion[]>>('/api/v1/promotions/active');
+};
+
+export const callGetPackagePriceWithDiscount = (packageId: number): Promise<IBackendRes<any>> => {
+    return axios.get(`/api/v1/packages/${packageId}/price-with-discount`);
 };
 

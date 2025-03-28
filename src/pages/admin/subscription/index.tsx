@@ -1,38 +1,35 @@
 import { useEffect, useState } from 'react';
 import { Table, Button, Space, Modal, Form, Input, InputNumber, Switch, message, Popconfirm, Tag, Card, Typography, Tabs, DatePicker, Select } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, CrownOutlined, GiftOutlined } from '@ant-design/icons';
-import { ISubscriptionPackage } from '@/types/backend';
-import { callGetAllPackages, callCreatePackage, callUpdatePackage, callDeletePackage, callGetAllPromotions, callCreatePromotion, callUpdatePromotion, callDeletePromotion } from '@/config/api';
+import { ISubscriptionPackage, IPromotion } from '@/types/backend';
+import {
+    callGetAllPackages,
+    callCreatePackage,
+    callUpdatePackage,
+    callDeletePackage,
+    callGetAllPromotions,
+    callCreatePromotion,
+    callUpdatePromotion,
+    callDeletePromotion,
+    callGetPackagePriceWithDiscount
+} from '@/config/api';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 
 const { Title } = Typography;
 const { TabPane } = Tabs;
 
-interface IPromotion {
-    id: number;
-    name: string;
-    description: string;
-    discountPercentage: number;
-    startDate: string;
-    endDate: string;
-    code: string;
-    subscriptionPackage: {
-        id: number;
-        name: string;
-        description: string;
-        price: number;
-        durationDays: number;
-        jobPostLimit: number;
-        isHighlighted: boolean;
-        isPrioritized: boolean;
-        isActive: boolean;
-    };
-    active: boolean;
+interface IPackageWithDiscount extends ISubscriptionPackage {
+    discountInfo?: {
+        promotionName: string;
+        discountPercentage: number;
+        originalPrice: number;
+        finalPrice: number;
+    }
 }
 
 const SubscriptionManagement = () => {
-    const [packages, setPackages] = useState<ISubscriptionPackage[]>([]);
+    const [packages, setPackages] = useState<IPackageWithDiscount[]>([]);
     const [promotions, setPromotions] = useState<IPromotion[]>([]);
     const [loading, setLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
@@ -48,14 +45,50 @@ const SubscriptionManagement = () => {
             const res = await callGetAllPackages();
             console.log("Raw API Response:", res);
 
-            if (res?.data?.data?.data) {
-                setPackages(res.data.data.data);
-            } else if (res?.data?.data) {
-                setPackages(res.data.data);
-            } else if (Array.isArray(res?.data)) {
-                setPackages(res.data);
+            if (res?.data?.data) {
+                const packagesList = res.data.data;
+                console.log("Found packages in response:", packagesList);
+
+                if (packagesList.length > 0) {
+                    const sortedPackages = [...packagesList].sort((a, b) =>
+                        (a.displayPriority || 999) - (b.displayPriority || 999)
+                    );
+
+                    // Fetch discount information for each package
+                    const packagesWithDiscount = await Promise.all(
+                        sortedPackages.map(async (pkg) => {
+                            try {
+                                const discountRes = await callGetPackagePriceWithDiscount(pkg.id);
+                                console.log(`Discount response for package ${pkg.id}:`, discountRes);
+
+                                // Kiểm tra từng cấu trúc response có thể có
+                                if (discountRes?.data?.data?.data) {
+                                    return {
+                                        ...pkg,
+                                        discountInfo: discountRes.data.data.data
+                                    };
+                                } else if (discountRes?.data?.data) {
+                                    return {
+                                        ...pkg,
+                                        discountInfo: discountRes.data.data
+                                    };
+                                }
+                                return pkg;
+                            } catch (error) {
+                                console.error(`Error fetching discount for package ${pkg.id}:`, error);
+                                return pkg;
+                            }
+                        })
+                    );
+
+                    console.log("Setting packages with discount info to state:", packagesWithDiscount);
+                    setPackages(packagesWithDiscount);
+                } else {
+                    console.log("No packages found in response");
+                    setPackages([]);
+                }
             } else {
-                console.log("No packages found in response");
+                console.log("Invalid response structure:", res);
                 setPackages([]);
             }
         } catch (error) {
@@ -73,10 +106,12 @@ const SubscriptionManagement = () => {
             const res = await callGetAllPromotions();
             console.log("Raw Promotions Response:", res);
 
-            if (res?.data) {
-                setPromotions(res.data);
+            if (res?.data?.data) {
+                const promotionsList = res.data.data;
+                console.log("Found promotions in response:", promotionsList);
+                setPromotions(promotionsList);
             } else {
-                console.log("No promotions found in response");
+                console.log("Invalid promotions response structure:", res);
                 setPromotions([]);
             }
         } catch (error) {
@@ -165,8 +200,7 @@ const SubscriptionManagement = () => {
                 ...values,
                 startDate: values.startDate.format('YYYY-MM-DDTHH:mm:ss'),
                 endDate: values.endDate.format('YYYY-MM-DDTHH:mm:ss'),
-                discountPercentage: values.discountPercentage,
-                code: values.code || values.discountPercentage.toString()
+                active: values.isActive // Map isActive to active for API
             };
 
             if (editingPromotion) {
@@ -183,7 +217,7 @@ const SubscriptionManagement = () => {
         }
     };
 
-    const columns: ColumnsType<ISubscriptionPackage> = [
+    const columns: ColumnsType<IPackageWithDiscount> = [
         {
             title: 'Tên gói',
             dataIndex: 'name',
@@ -197,9 +231,24 @@ const SubscriptionManagement = () => {
         },
         {
             title: 'Giá',
-            dataIndex: 'price',
             key: 'price',
-            render: (price) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price)
+            render: (_, record) => {
+                if (record.discountInfo) {
+                    return (
+                        <Space direction="vertical">
+                            <span style={{ textDecoration: 'line-through', color: '#999' }}>
+                                {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(record.price)}
+                            </span>
+                            <span style={{ color: '#f5222d', fontWeight: 'bold' }}>
+                                {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(record.discountInfo.finalPrice)}
+                            </span>
+                            <Tag color="red">-{record.discountInfo.discountPercentage}%</Tag>
+                        </Space>
+                    );
+                }
+
+                return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(record.price);
+            }
         },
         {
             title: 'Thời hạn (ngày)',
@@ -225,9 +274,9 @@ const SubscriptionManagement = () => {
         },
         {
             title: 'Ưu tiên hiển thị',
-            dataIndex: 'isPrioritized',
-            key: 'isPrioritized',
-            render: (isPrioritized) => isPrioritized ? <Tag color="gold">Phổ biến nhất</Tag> : null
+            dataIndex: 'displayPriority',
+            key: 'displayPriority',
+            render: (priority) => priority === 1 ? <Tag color="gold">Phổ biến nhất</Tag> : null
         },
         {
             title: 'Thao tác',
@@ -269,32 +318,21 @@ const SubscriptionManagement = () => {
             )
         },
         {
+            title: 'Mã ưu đãi',
+            dataIndex: 'code',
+            key: 'code',
+            render: (code) => <Tag color="blue">{code}</Tag>
+        },
+        {
             title: 'Mô tả',
             dataIndex: 'description',
             key: 'description'
-        },
-        {
-            title: 'Gói VIP',
-            dataIndex: ['subscriptionPackage', 'name'],
-            key: 'subscriptionPackage',
-            render: (text, record) => (
-                <Space>
-                    <CrownOutlined style={{ color: record.subscriptionPackage.isHighlighted ? '#f5a623' : '#1890ff' }} />
-                    {text}
-                </Space>
-            )
         },
         {
             title: 'Giảm giá',
             dataIndex: 'discountPercentage',
             key: 'discountPercentage',
             render: (percent) => `${percent}%`
-        },
-        {
-            title: 'Mã ưu đãi',
-            dataIndex: 'code',
-            key: 'code',
-            render: (code) => <Tag color="blue">{code}</Tag>
         },
         {
             title: 'Thời gian',
@@ -305,6 +343,14 @@ const SubscriptionManagement = () => {
                     <span>Đến: {dayjs(record.endDate).format('DD/MM/YYYY HH:mm')}</span>
                 </Space>
             )
+        },
+        {
+            title: 'Gói áp dụng',
+            key: 'package',
+            render: (_, record) => {
+                const pkg = record.subscriptionPackage;
+                return pkg ? pkg.name : 'N/A';
+            }
         },
         {
             title: 'Trạng thái',
@@ -483,6 +529,13 @@ const SubscriptionManagement = () => {
                     >
                         <Switch />
                     </Form.Item>
+
+                    <Form.Item
+                        name="displayPriority"
+                        label="Độ ưu tiên hiển thị"
+                    >
+                        <InputNumber style={{ width: '100%' }} min={1} max={10} />
+                    </Form.Item>
                 </Form>
             </Modal>
 
@@ -506,19 +559,19 @@ const SubscriptionManagement = () => {
                     </Form.Item>
 
                     <Form.Item
-                        name="description"
-                        label="Mô tả"
-                        rules={[{ required: true, message: 'Vui lòng nhập mô tả' }]}
-                    >
-                        <Input.TextArea rows={4} />
-                    </Form.Item>
-
-                    <Form.Item
                         name="code"
                         label="Mã ưu đãi"
                         rules={[{ required: true, message: 'Vui lòng nhập mã ưu đãi' }]}
                     >
                         <Input />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="description"
+                        label="Mô tả"
+                        rules={[{ required: true, message: 'Vui lòng nhập mô tả' }]}
+                    >
+                        <Input.TextArea rows={4} />
                     </Form.Item>
 
                     <Form.Item
@@ -534,7 +587,7 @@ const SubscriptionManagement = () => {
                             parser={(value) => {
                                 if (!value) return 0;
                                 const num = parseInt(value.replace('%', ''));
-                                return num >= 0 && num <= 100 ? (num as 0 | 100) : 0;
+                                return num >= 0 && num <= 100 ? num : 0;
                             }}
                         />
                     </Form.Item>
@@ -570,9 +623,10 @@ const SubscriptionManagement = () => {
                     </Form.Item>
 
                     <Form.Item
-                        name="active"
+                        name="isActive"
                         label="Trạng thái"
                         valuePropName="checked"
+                        initialValue={false}
                     >
                         <Switch />
                     </Form.Item>

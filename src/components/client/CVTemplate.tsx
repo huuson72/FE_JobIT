@@ -1,10 +1,11 @@
 import React from 'react';
 import './CVTemplate.css';
+import { UserOutlined, MailOutlined, PhoneOutlined, HomeOutlined, BookOutlined, TrophyOutlined, ToolOutlined, FileTextOutlined } from '@ant-design/icons';
 
 interface CVTemplateProps {
     data: {
-        fullName: string;
         title: string;
+        fullName: string;
         email: string;
         phone: string;
         address: string;
@@ -13,187 +14,691 @@ interface CVTemplateProps {
         skills: string;
         additionalInfo: string;
     };
-    isEditing?: boolean;
+    isEditing: boolean;
     onEdit?: (field: string, value: string) => void;
+    template?: string;
 }
 
-const CVTemplate: React.FC<CVTemplateProps> = ({ data, isEditing = false, onEdit }) => {
-    const handleEdit = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        if (onEdit) {
-            onEdit(field, e.target.value);
+const CVTemplate: React.FC<CVTemplateProps> = ({ data, isEditing, onEdit, template = 'modern' }) => {
+    const handleEdit = (field: string, value: string) => {
+        if (onEdit && isEditing) {
+            onEdit(field, value);
         }
     };
 
-    return (
-        <div className="cv-template modern">
-            <div className="cv-sidebar">
-                <div className="profile-section">
-                    <div className="profile-image">
-                        <i className="fas fa-user"></i>
+    const renderSkills = () => {
+        if (!data.skills) return null;
+        return data.skills.split('\n').filter(skill => skill.trim().length > 0).map((skill, index) => (
+            <div key={index} className="skill-item">
+                <div className="skill-name">{skill}</div>
+            </div>
+        ));
+    };
+
+    const renderEducation = () => {
+        if (!data.education) return null;
+        const educationItems = data.education
+            .split('\n\n\n')
+            .filter(item => item.trim().length > 0)
+            .map((item, index) => (
+                <div key={index} className="timeline-item">
+                    <div className="timeline-content">
+                        <p>{item}</p>
                     </div>
-                    <div className="profile-name">
+                </div>
+            ));
+
+        return <div className="timeline">{educationItems}</div>;
+    };
+
+    const renderExperience = () => {
+        if (!data.experience) return null;
+        const experienceItems = data.experience
+            .split('\n\n\n')
+            .filter(item => item.trim().length > 0)
+            .map((item, index) => (
+                <div key={index} className="timeline-item">
+                    <div className="timeline-content">
+                        <p>{item}</p>
+                    </div>
+                </div>
+            ));
+
+        return <div className="timeline">{experienceItems}</div>;
+    };
+
+    // Modern Template
+    if (template === 'modern') {
+        return (
+            <div className="cv-template modern">
+                <div className="cv-sidebar">
+                    <div className="profile-section">
+                        <div className="profile-image">
+                            <UserOutlined style={{ fontSize: '80px', color: '#3498db' }} />
+                        </div>
+                        <div className="profile-name">
+                            {isEditing ? (
+                                <input
+                                    type="text"
+                                    value={data.fullName}
+                                    onChange={e => handleEdit('fullName', e.target.value)}
+                                    className="editable-name"
+                                    placeholder="Họ và Tên"
+                                />
+                            ) : (
+                                <h2>{data.fullName || "Họ và Tên"}</h2>
+                            )}
+                        </div>
+                        <div className="profile-title">
+                            {isEditing ? (
+                                <input
+                                    type="text"
+                                    value={data.title}
+                                    onChange={e => handleEdit('title', e.target.value)}
+                                    className="editable-title"
+                                    placeholder="Tiêu đề CV"
+                                />
+                            ) : (
+                                <span>{data.title || "Tiêu đề CV"}</span>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="contact-section">
+                        <h3 className="sidebar-heading">Thông tin liên hệ</h3>
+                        <div className="contact-item">
+                            <MailOutlined />
+                            {isEditing ? (
+                                <input
+                                    type="text"
+                                    value={data.email}
+                                    onChange={e => handleEdit('email', e.target.value)}
+                                    className="editable-field"
+                                    placeholder="Email"
+                                />
+                            ) : (
+                                <span>{data.email || "Email"}</span>
+                            )}
+                        </div>
+                        <div className="contact-item">
+                            <PhoneOutlined />
+                            {isEditing ? (
+                                <input
+                                    type="text"
+                                    value={data.phone}
+                                    onChange={e => handleEdit('phone', e.target.value)}
+                                    className="editable-field"
+                                    placeholder="Số điện thoại"
+                                />
+                            ) : (
+                                <span>{data.phone || "Số điện thoại"}</span>
+                            )}
+                        </div>
+                        <div className="contact-item">
+                            <HomeOutlined />
+                            {isEditing ? (
+                                <input
+                                    type="text"
+                                    value={data.address}
+                                    onChange={e => handleEdit('address', e.target.value)}
+                                    className="editable-field"
+                                    placeholder="Địa chỉ"
+                                />
+                            ) : (
+                                <span>{data.address || "Địa chỉ"}</span>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="skills-section">
+                        <h3 className="sidebar-heading">Kỹ năng</h3>
                         {isEditing ? (
-                            <input
-                                type="text"
-                                className="editable-name"
-                                value={data.fullName}
-                                onChange={handleEdit('fullName')}
-                                placeholder="Your Full Name"
+                            <textarea
+                                value={data.skills}
+                                onChange={e => handleEdit('skills', e.target.value)}
+                                className="editable-field"
+                                placeholder="Kỹ năng"
+                                style={{ color: 'white', minHeight: '150px' }}
                             />
                         ) : (
-                            <h2>{data.fullName}</h2>
+                            <div className="skills-list">
+                                {renderSkills()}
+                            </div>
                         )}
                     </div>
+                </div>
+
+                <div className="cv-main">
+                    <div className="education-section">
+                        <h3 className="section-title">
+                            <BookOutlined /> Học vấn
+                        </h3>
+                        {isEditing ? (
+                            <textarea
+                                value={data.education}
+                                onChange={e => handleEdit('education', e.target.value)}
+                                className="editable-textarea"
+                                placeholder="Học vấn"
+                            />
+                        ) : (
+                            renderEducation()
+                        )}
+                    </div>
+
+                    <div className="experience-section">
+                        <h3 className="section-title">
+                            <TrophyOutlined /> Kinh nghiệm làm việc
+                        </h3>
+                        {isEditing ? (
+                            <textarea
+                                value={data.experience}
+                                onChange={e => handleEdit('experience', e.target.value)}
+                                className="editable-textarea"
+                                placeholder="Kinh nghiệm làm việc"
+                            />
+                        ) : (
+                            renderExperience()
+                        )}
+                    </div>
+
+                    <div className="additional-section">
+                        <h3 className="section-title">
+                            <FileTextOutlined /> Thông tin khác
+                        </h3>
+                        {isEditing ? (
+                            <textarea
+                                value={data.additionalInfo}
+                                onChange={e => handleEdit('additionalInfo', e.target.value)}
+                                className="editable-textarea"
+                                placeholder="Thông tin khác"
+                            />
+                        ) : (
+                            <div className="additional-info">
+                                <p>{data.additionalInfo || "Chưa có thông tin thêm"}</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // Professional Template
+    if (template === 'professional') {
+        return (
+            <div className="cv-template professional">
+                <div className="cv-header">
                     {isEditing ? (
                         <input
                             type="text"
-                            className="editable-title"
-                            value={data.title}
-                            onChange={handleEdit('title')}
-                            placeholder="Your Professional Title"
+                            value={data.fullName}
+                            onChange={e => handleEdit('fullName', e.target.value)}
+                            className="editable-name"
+                            placeholder="Họ và Tên"
                         />
                     ) : (
-                        <div className="profile-title">{data.title}</div>
+                        <h1>{data.fullName || "Họ và Tên"}</h1>
+                    )}
+                    {isEditing ? (
+                        <input
+                            type="text"
+                            value={data.title}
+                            onChange={e => handleEdit('title', e.target.value)}
+                            className="editable-title"
+                            placeholder="Tiêu đề CV"
+                        />
+                    ) : (
+                        <p>{data.title || "Tiêu đề CV"}</p>
                     )}
                 </div>
 
-                <div className="contact-section">
-                    <h3 className="sidebar-heading">Contact Information</h3>
+                <div className="cv-contact-bar">
                     <div className="contact-item">
-                        <i className="fas fa-envelope"></i>
+                        <MailOutlined />
                         {isEditing ? (
                             <input
                                 type="text"
-                                className="editable-field"
                                 value={data.email}
-                                onChange={handleEdit('email')}
-                                placeholder="Your Email"
+                                onChange={e => handleEdit('email', e.target.value)}
+                                className="editable-field"
+                                placeholder="Email"
+                                style={{ color: '#555' }}
                             />
                         ) : (
-                            <span>{data.email}</span>
+                            <span>{data.email || "Email"}</span>
                         )}
                     </div>
                     <div className="contact-item">
-                        <i className="fas fa-phone"></i>
+                        <PhoneOutlined />
                         {isEditing ? (
                             <input
                                 type="text"
-                                className="editable-field"
                                 value={data.phone}
-                                onChange={handleEdit('phone')}
-                                placeholder="Your Phone"
+                                onChange={e => handleEdit('phone', e.target.value)}
+                                className="editable-field"
+                                placeholder="Số điện thoại"
+                                style={{ color: '#555' }}
                             />
                         ) : (
-                            <span>{data.phone}</span>
+                            <span>{data.phone || "Số điện thoại"}</span>
                         )}
                     </div>
                     <div className="contact-item">
-                        <i className="fas fa-map-marker-alt"></i>
+                        <HomeOutlined />
                         {isEditing ? (
                             <input
                                 type="text"
-                                className="editable-field"
                                 value={data.address}
-                                onChange={handleEdit('address')}
-                                placeholder="Your Address"
+                                onChange={e => handleEdit('address', e.target.value)}
+                                className="editable-field"
+                                placeholder="Địa chỉ"
+                                style={{ color: '#555' }}
                             />
                         ) : (
-                            <span>{data.address}</span>
+                            <span>{data.address || "Địa chỉ"}</span>
                         )}
                     </div>
                 </div>
 
-                <div className="skills-section">
-                    <h3 className="sidebar-heading">Skills</h3>
-                    <div className="skills-list">
-                        {isEditing ? (
-                            <textarea
-                                className="editable-textarea"
-                                value={data.skills}
-                                onChange={handleEdit('skills')}
-                                placeholder="List your key skills..."
-                            />
-                        ) : (
-                            data.skills.split('\n').map((skill, index) => (
-                                <div key={index} className="skill-item">
-                                    <span className="skill-name">{skill}</span>
+                <div className="cv-body">
+                    <div className="cv-main">
+                        <div className="section">
+                            <h3 className="section-title">
+                                <BookOutlined /> Học vấn
+                            </h3>
+                            {isEditing ? (
+                                <textarea
+                                    value={data.education}
+                                    onChange={e => handleEdit('education', e.target.value)}
+                                    className="editable-textarea"
+                                    placeholder="Học vấn"
+                                />
+                            ) : (
+                                <div className="timeline">
+                                    {renderEducation()}
                                 </div>
-                            ))
-                        )}
+                            )}
+                        </div>
+
+                        <div className="section">
+                            <h3 className="section-title">
+                                <TrophyOutlined /> Kinh nghiệm làm việc
+                            </h3>
+                            {isEditing ? (
+                                <textarea
+                                    value={data.experience}
+                                    onChange={e => handleEdit('experience', e.target.value)}
+                                    className="editable-textarea"
+                                    placeholder="Kinh nghiệm làm việc"
+                                />
+                            ) : (
+                                <div className="timeline">
+                                    {renderExperience()}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="cv-sidebar">
+                        <div className="section">
+                            <h3 className="section-title">
+                                <ToolOutlined /> Kỹ năng
+                            </h3>
+                            {isEditing ? (
+                                <textarea
+                                    value={data.skills}
+                                    onChange={e => handleEdit('skills', e.target.value)}
+                                    className="editable-textarea"
+                                    placeholder="Kỹ năng"
+                                />
+                            ) : (
+                                <div className="skills-list">
+                                    {renderSkills()}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="section">
+                            <h3 className="section-title">
+                                <FileTextOutlined /> Thông tin khác
+                            </h3>
+                            {isEditing ? (
+                                <textarea
+                                    value={data.additionalInfo}
+                                    onChange={e => handleEdit('additionalInfo', e.target.value)}
+                                    className="editable-textarea"
+                                    placeholder="Thông tin khác"
+                                />
+                            ) : (
+                                <div className="additional-info">
+                                    <p>{data.additionalInfo || "Chưa có thông tin thêm"}</p>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
+        );
+    }
 
-            <div className="cv-main">
-                <div className="education-section">
-                    <h3 className="section-title">
-                        <i className="fas fa-graduation-cap"></i>
-                        Education
-                    </h3>
-                    <div className="timeline">
+    // Creative Template
+    if (template === 'creative') {
+        return (
+            <div className="cv-template creative">
+                <div className="cv-header">
+                    {isEditing ? (
+                        <input
+                            type="text"
+                            value={data.fullName}
+                            onChange={e => handleEdit('fullName', e.target.value)}
+                            className="editable-name"
+                            placeholder="Họ và Tên"
+                        />
+                    ) : (
+                        <h1>{data.fullName || "Họ và Tên"}</h1>
+                    )}
+                    {isEditing ? (
+                        <input
+                            type="text"
+                            value={data.title}
+                            onChange={e => handleEdit('title', e.target.value)}
+                            className="editable-title"
+                            placeholder="Tiêu đề CV"
+                        />
+                    ) : (
+                        <p>{data.title || "Tiêu đề CV"}</p>
+                    )}
+                </div>
+
+                <div className="cv-contact">
+                    <div className="contact-item">
+                        <MailOutlined />
+                        {isEditing ? (
+                            <input
+                                type="text"
+                                value={data.email}
+                                onChange={e => handleEdit('email', e.target.value)}
+                                className="editable-field"
+                                placeholder="Email"
+                                style={{ color: '#555' }}
+                            />
+                        ) : (
+                            <span>{data.email || "Email"}</span>
+                        )}
+                    </div>
+                    <div className="contact-item">
+                        <PhoneOutlined />
+                        {isEditing ? (
+                            <input
+                                type="text"
+                                value={data.phone}
+                                onChange={e => handleEdit('phone', e.target.value)}
+                                className="editable-field"
+                                placeholder="Số điện thoại"
+                                style={{ color: '#555' }}
+                            />
+                        ) : (
+                            <span>{data.phone || "Số điện thoại"}</span>
+                        )}
+                    </div>
+                    <div className="contact-item">
+                        <HomeOutlined />
+                        {isEditing ? (
+                            <input
+                                type="text"
+                                value={data.address}
+                                onChange={e => handleEdit('address', e.target.value)}
+                                className="editable-field"
+                                placeholder="Địa chỉ"
+                                style={{ color: '#555' }}
+                            />
+                        ) : (
+                            <span>{data.address || "Địa chỉ"}</span>
+                        )}
+                    </div>
+                </div>
+
+                <div className="cv-body">
+                    <div className="section">
+                        <h3 className="section-title">
+                            <BookOutlined /> Học vấn
+                        </h3>
                         {isEditing ? (
                             <textarea
-                                className="editable-textarea"
                                 value={data.education}
-                                onChange={handleEdit('education')}
-                                placeholder="Enter your education history..."
+                                onChange={e => handleEdit('education', e.target.value)}
+                                className="editable-textarea"
+                                placeholder="Học vấn"
                             />
                         ) : (
-                            data.education.split('\n\n').map((edu, index) => (
-                                <div key={index} className="timeline-item">
-                                    <div className="timeline-content">
-                                        <p>{edu}</p>
-                                    </div>
-                                </div>
-                            ))
+                            <div>
+                                {renderEducation()}
+                            </div>
                         )}
                     </div>
-                </div>
 
-                <div className="experience-section">
-                    <h3 className="section-title">
-                        <i className="fas fa-briefcase"></i>
-                        Professional Experience
-                    </h3>
-                    <div className="timeline">
+                    <div className="section">
+                        <h3 className="section-title">
+                            <TrophyOutlined /> Kinh nghiệm làm việc
+                        </h3>
                         {isEditing ? (
                             <textarea
-                                className="editable-textarea"
                                 value={data.experience}
-                                onChange={handleEdit('experience')}
-                                placeholder="Enter your work experience..."
+                                onChange={e => handleEdit('experience', e.target.value)}
+                                className="editable-textarea"
+                                placeholder="Kinh nghiệm làm việc"
                             />
                         ) : (
-                            data.experience.split('\n\n').map((exp, index) => (
-                                <div key={index} className="timeline-item">
-                                    <div className="timeline-content">
-                                        <p>{exp}</p>
-                                    </div>
-                                </div>
-                            ))
+                            <div>
+                                {renderExperience()}
+                            </div>
                         )}
                     </div>
-                </div>
 
-                <div className="additional-info-section">
-                    <h3 className="section-title">
-                        <i className="fas fa-info-circle"></i>
-                        Additional Information
-                    </h3>
-                    <div className="additional-info">
+                    <div className="section">
+                        <h3 className="section-title">
+                            <ToolOutlined /> Kỹ năng
+                        </h3>
                         {isEditing ? (
                             <textarea
+                                value={data.skills}
+                                onChange={e => handleEdit('skills', e.target.value)}
                                 className="editable-textarea"
-                                value={data.additionalInfo}
-                                onChange={handleEdit('additionalInfo')}
-                                placeholder="Add any additional information..."
+                                placeholder="Kỹ năng"
                             />
                         ) : (
-                            <p>{data.additionalInfo}</p>
+                            <div className="skills-list">
+                                {renderSkills()}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="section">
+                        <h3 className="section-title">
+                            <FileTextOutlined /> Thông tin khác
+                        </h3>
+                        {isEditing ? (
+                            <textarea
+                                value={data.additionalInfo}
+                                onChange={e => handleEdit('additionalInfo', e.target.value)}
+                                className="editable-textarea"
+                                placeholder="Thông tin khác"
+                            />
+                        ) : (
+                            <div className="additional-info">
+                                <p>{data.additionalInfo || "Chưa có thông tin thêm"}</p>
+                            </div>
                         )}
                     </div>
                 </div>
             </div>
+        );
+    }
+
+    // Simple Template
+    if (template === 'simple') {
+        return (
+            <div className="cv-template simple">
+                <div className="cv-header">
+                    {isEditing ? (
+                        <input
+                            type="text"
+                            value={data.fullName}
+                            onChange={e => handleEdit('fullName', e.target.value)}
+                            className="editable-name"
+                            placeholder="Họ và Tên"
+                            style={{ color: '#333' }}
+                        />
+                    ) : (
+                        <h1>{data.fullName || "Họ và Tên"}</h1>
+                    )}
+                    {isEditing ? (
+                        <input
+                            type="text"
+                            value={data.title}
+                            onChange={e => handleEdit('title', e.target.value)}
+                            className="editable-title"
+                            placeholder="Tiêu đề CV"
+                            style={{ color: '#757575' }}
+                        />
+                    ) : (
+                        <p>{data.title || "Tiêu đề CV"}</p>
+                    )}
+
+                    <div className="cv-contact">
+                        <div className="contact-item">
+                            <MailOutlined />
+                            {isEditing ? (
+                                <input
+                                    type="text"
+                                    value={data.email}
+                                    onChange={e => handleEdit('email', e.target.value)}
+                                    className="editable-field"
+                                    placeholder="Email"
+                                    style={{ color: '#555' }}
+                                />
+                            ) : (
+                                <span>{data.email || "Email"}</span>
+                            )}
+                        </div>
+                        <div className="contact-item">
+                            <PhoneOutlined />
+                            {isEditing ? (
+                                <input
+                                    type="text"
+                                    value={data.phone}
+                                    onChange={e => handleEdit('phone', e.target.value)}
+                                    className="editable-field"
+                                    placeholder="Số điện thoại"
+                                    style={{ color: '#555' }}
+                                />
+                            ) : (
+                                <span>{data.phone || "Số điện thoại"}</span>
+                            )}
+                        </div>
+                        <div className="contact-item">
+                            <HomeOutlined />
+                            {isEditing ? (
+                                <input
+                                    type="text"
+                                    value={data.address}
+                                    onChange={e => handleEdit('address', e.target.value)}
+                                    className="editable-field"
+                                    placeholder="Địa chỉ"
+                                    style={{ color: '#555' }}
+                                />
+                            ) : (
+                                <span>{data.address || "Địa chỉ"}</span>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                <div className="cv-body">
+                    <div className="left-column">
+                        <div className="section">
+                            <h3 className="section-title">Học vấn</h3>
+                            {isEditing ? (
+                                <textarea
+                                    value={data.education}
+                                    onChange={e => handleEdit('education', e.target.value)}
+                                    className="editable-textarea"
+                                    placeholder="Học vấn"
+                                />
+                            ) : (
+                                <div>
+                                    {renderEducation()}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="section">
+                            <h3 className="section-title">Kỹ năng</h3>
+                            {isEditing ? (
+                                <textarea
+                                    value={data.skills}
+                                    onChange={e => handleEdit('skills', e.target.value)}
+                                    className="editable-textarea"
+                                    placeholder="Kỹ năng"
+                                />
+                            ) : (
+                                <div className="skills-list">
+                                    {renderSkills()}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="right-column">
+                        <div className="section">
+                            <h3 className="section-title">Kinh nghiệm làm việc</h3>
+                            {isEditing ? (
+                                <textarea
+                                    value={data.experience}
+                                    onChange={e => handleEdit('experience', e.target.value)}
+                                    className="editable-textarea"
+                                    placeholder="Kinh nghiệm làm việc"
+                                />
+                            ) : (
+                                <div>
+                                    {renderExperience()}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="section">
+                            <h3 className="section-title">Thông tin khác</h3>
+                            {isEditing ? (
+                                <textarea
+                                    value={data.additionalInfo}
+                                    onChange={e => handleEdit('additionalInfo', e.target.value)}
+                                    className="editable-textarea"
+                                    placeholder="Thông tin khác"
+                                />
+                            ) : (
+                                <div className="additional-info">
+                                    <p>{data.additionalInfo || "Chưa có thông tin thêm"}</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // Fallback to default template
+    return (
+        <div className="cv-template default">
+            <h1>{data.fullName}</h1>
+            <p>{data.title}</p>
+            <p>{data.email}</p>
+            <p>{data.phone}</p>
+            <p>{data.address}</p>
+            <div>{data.education}</div>
+            <div>{data.experience}</div>
+            <div>{data.skills}</div>
+            <div>{data.additionalInfo}</div>
         </div>
     );
 };

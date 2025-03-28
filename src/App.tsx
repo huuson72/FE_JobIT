@@ -41,29 +41,37 @@ import SubscriptionManagement from './pages/admin/subscription';
 
 
 const LayoutClient = () => {
-  const [searchTerm, setSearchTerm] = useState("");
   const location = useLocation();
-  const rootRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (rootRef && rootRef.current) {
-      rootRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-
-  }, [location]);
-
-
+  // Check if we're on CV pages to hide the search banner
+  const isCVPage = () => {
+    const pathname = location.pathname;
+    return pathname.includes('/cv') || pathname.includes('/resumes');
+  };
 
   return (
-    <div className={styles["layout-app"]} ref={rootRef}>
-      <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-      <div className={styles["content-app"]}>
-        <Outlet context={[searchTerm, setSearchTerm]} />
+    <div className={styles["layout-app"]}>
+      <div className={styles["header-app"]}>
+        <Header />
       </div>
-      <Footer />
+
+      {/* Hide search banner on CV pages */}
+      {!isCVPage() && (
+        <div className={styles["search-banner-container"]}>
+          {/* You can add a search banner component here if needed */}
+        </div>
+      )}
+
+      <div className={styles["content-app"]}>
+        <Outlet />
+      </div>
+      <div className={styles["footer-app"]}>
+        <Footer />
+      </div>
     </div>
   );
 };
+
 export default function App() {
   const dispatch = useAppDispatch();
   const isLoading = useAppSelector(state => state.account.isLoading);
@@ -197,7 +205,7 @@ export default function App() {
 
   return (
     <>
-      <RouterProvider router={router} />
+      {isLoading ? <Loading /> : <RouterProvider router={router} />}
     </>
   )
 }

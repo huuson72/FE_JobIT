@@ -277,4 +277,21 @@ export interface IPurchaseSubscriptionRequest {
     companyId: number;
     packageId: number;
     paymentMethod: string;
+}
+
+export interface IPromotion {
+    id: number;
+    name: string;
+    description: string;
+    discountPercentage: number;
+    startDate: string;
+    endDate: string;
+    code: string;
+    subscriptionPackageId: number;
+    subscriptionPackage?: ISubscriptionPackage;
+    active: boolean;
+    createdAt?: string;
+    updatedAt?: string;
+    createdBy?: string;
+    updatedBy?: string;
 } 

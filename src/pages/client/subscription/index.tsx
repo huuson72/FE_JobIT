@@ -1,8 +1,14 @@
-import { Col, Row, Typography, Card, Button, Badge, Tag, Spin, Divider, Modal } from 'antd';
+import { Col, Row, Typography, Card, Button, Badge, Tag, Spin, Divider, Modal, Space } from 'antd';
 import { useEffect, useState } from 'react';
-import { callGetActivePackages, callCreateVNPayPayment, callGetUserSubscriptions } from '@/config/api';
+import {
+    callGetActivePackages,
+    callCreateVNPayPayment,
+    callGetUserSubscriptions,
+    callGetActivePromotions,
+    callGetPackagePriceWithDiscount
+} from '@/config/api';
 import { useNavigate } from 'react-router-dom';
-import { ISubscriptionPackage } from '@/types/backend';
+import { ISubscriptionPackage, IPromotion } from '@/types/backend';
 import { CrownOutlined, CheckCircleOutlined, DollarOutlined, ArrowUpOutlined } from '@ant-design/icons';
 import styles from '@/styles/subscription.module.scss';
 import { notification } from 'antd';
@@ -30,8 +36,18 @@ const calculateDaysLeft = (endDateString: string) => {
     return diffDays > 0 ? diffDays : 0;
 };
 
+interface IPackageWithDiscount extends ISubscriptionPackage {
+    discountInfo?: {
+        promotionName: string;
+        discountPercentage: number;
+        originalPrice: number;
+        finalPrice: number;
+    }
+}
+
 const SubscriptionPage = () => {
-    const [packages, setPackages] = useState<ISubscriptionPackage[]>([]);
+    const [packages, setPackages] = useState<IPackageWithDiscount[]>([]);
+    const [promotions, setPromotions] = useState<IPromotion[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [paymentProcessing, setPaymentProcessing] = useState<Record<string, boolean>>({});
     const [currentSubscription, setCurrentSubscription] = useState<any>(null);
@@ -57,8 +73,49 @@ const SubscriptionPage = () => {
                         const sortedPackages = packagesList.sort((a, b) =>
                             (a.displayPriority || 999) - (b.displayPriority || 999)
                         );
-                        setPackages(sortedPackages);
+
+                        // Fetch discount information for each package
+                        const packagesWithDiscount = await Promise.all(
+                            sortedPackages.map(async (pkg) => {
+                                try {
+                                    const discountRes = await callGetPackagePriceWithDiscount(pkg.id);
+                                    console.log(`Discount response for package ${pkg.id}:`, discountRes);
+
+                                    // Kiểm tra từng cấu trúc response có thể có
+                                    if (discountRes?.data?.data?.data) {
+                                        return {
+                                            ...pkg,
+                                            discountInfo: discountRes.data.data.data
+                                        };
+                                    } else if (discountRes?.data?.data) {
+                                        return {
+                                            ...pkg,
+                                            discountInfo: discountRes.data.data
+                                        };
+                                    }
+                                    return pkg;
+                                } catch (error) {
+                                    console.error(`Error fetching discount for package ${pkg.id}:`, error);
+                                    return pkg;
+                                }
+                            })
+                        );
+
+                        console.log("Setting packages with discount info to state:", packagesWithDiscount);
+                        setPackages(packagesWithDiscount);
                     }
+                }
+
+                // Lấy danh sách ưu đãi
+                const promotionsRes = await callGetActivePromotions();
+                if (promotionsRes && promotionsRes.data) {
+                    let promotionsList: IPromotion[] = [];
+                    if (Array.isArray(promotionsRes.data)) {
+                        promotionsList = promotionsRes.data as IPromotion[];
+                    } else if (typeof promotionsRes.data === 'object' && promotionsRes.data !== null && 'data' in promotionsRes.data) {
+                        promotionsList = (promotionsRes.data as any).data as IPromotion[];
+                    }
+                    setPromotions(promotionsList);
                 }
 
                 // Lấy thông tin gói VIP hiện tại của user
@@ -81,7 +138,7 @@ const SubscriptionPage = () => {
         fetchData();
     }, [user]);
 
-    const renderFeaturesList = (pkg: ISubscriptionPackage) => {
+    const renderFeaturesList = (pkg: IPackageWithDiscount) => {
         const defaultFeatures = [
             `Đăng tối đa ${pkg.jobPostLimit} tin tuyển dụng`,
             `Thời hạn sử dụng ${pkg.durationDays} ngày`,
@@ -107,7 +164,7 @@ const SubscriptionPage = () => {
         return `${window.location.origin}/subscription/payment-result`;
     };
 
-    const handleDirectVNPayPayment = async (packageId: number, packagePrice: number, packageName: string) => {
+    const handleDirectVNPayPayment = async (packageId: number, packageName: string) => {
         console.log("handleDirectVNPayPayment called");
 
         if (!user || !user.id) {
@@ -120,11 +177,22 @@ const SubscriptionPage = () => {
             return;
         }
 
+        const pkg = packages.find(p => p.id === packageId);
+        if (!pkg) {
+            notification.error({
+                message: 'Lỗi',
+                description: 'Không tìm thấy thông tin gói VIP.',
+            });
+            return;
+        }
+
+        const finalPrice = getDiscountedPrice(pkg);
+
         console.log("User information:", {
             userId: user.id,
             companyId: 1, // Hardcode company ID = 1
             packageId: packageId,
-            packagePrice: packagePrice
+            packagePrice: finalPrice
         });
 
         setPaymentProcessing(prev => ({ ...prev, [packageId]: true }));
@@ -140,7 +208,7 @@ const SubscriptionPage = () => {
             companyId: 1, // Hardcode company ID = 1
             orderType: "billpayment",
             orderInfo: "Thanh toan goi VIP",
-            amount: packagePrice, // Backend đã nhân 100 rồi, không cần nhân lại
+            amount: finalPrice, // Sử dụng giá sau giảm giá
             returnUrl: getFullReturnUrl()
         };
 
@@ -235,51 +303,29 @@ const SubscriptionPage = () => {
         return packagePrice > currentSubscription.subscriptionPackage.price;
     };
 
-    // Render nút thanh toán dựa trên điều kiện
-    const renderPaymentButton = (pkg: ISubscriptionPackage) => {
-        if (!canUpgradeToPackage(pkg.price)) {
-            return (
-                <Button
-                    type="default"
-                    block
-                    size="large"
-                    disabled
-                    style={{
-                        height: "56px",
-                        fontSize: "18px",
-                        marginTop: "16px",
-                        background: "#f5f5f5",
-                        color: "#999"
-                    }}
-                >
-                    Bạn đã mua gói VIP này
-                </Button>
-            );
-        }
+    // Hàm kiểm tra xem gói có ưu đãi không
+    const hasDiscount = (pkg: IPackageWithDiscount) => {
+        return !!pkg.discountInfo;
+    };
 
-        return (
-            <Button
-                type="primary"
-                block
-                size="large"
-                className={`${styles.subscribeButton} ${styles.vnpayButton}`}
-                onClick={(e) => {
-                    e.preventDefault();
-                    handleDirectVNPayPayment(pkg.id, pkg.price, pkg.name);
-                }}
-                loading={paymentProcessing[pkg.id]}
-                style={{
-                    height: "56px",
-                    fontSize: "18px",
-                    fontWeight: "bold",
-                    marginTop: "16px",
-                    background: pkg.displayPriority === 1 ? "#f5a623" : "#1890ff",
-                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)"
-                }}
-            >
-                {currentSubscription ? "Nâng cấp gói VIP" : "Thanh Toán Qua VNPay"}
-            </Button>
-        );
+    // Hàm lấy giá sau giảm giá
+    const getDiscountedPrice = (pkg: IPackageWithDiscount) => {
+        return pkg.discountInfo ? pkg.discountInfo.finalPrice : pkg.price;
+    };
+
+    // Hàm lấy phần trăm giảm giá
+    const getDiscountPercentage = (pkg: IPackageWithDiscount) => {
+        return pkg.discountInfo ? pkg.discountInfo.discountPercentage : 0;
+    };
+
+    // Hàm kiểm tra xem gói có ưu đãi không
+    const hasActivePromotion = (pkg: IPackageWithDiscount) => {
+        return promotions.some(p => p.subscriptionPackageId === pkg.id && p.active);
+    };
+
+    // Hàm lấy ưu đãi của gói
+    const getPackagePromotion = (pkg: IPackageWithDiscount) => {
+        return promotions.find(p => p.subscriptionPackageId === pkg.id && p.active);
     };
 
     return (
@@ -355,7 +401,7 @@ const SubscriptionPage = () => {
                             e.preventDefault();
                             if (packages && packages.length > 0) {
                                 const firstPackage = packages.find(p => p.displayPriority === 1) || packages[0];
-                                handleDirectVNPayPayment(firstPackage.id, firstPackage.price, firstPackage.name);
+                                handleDirectVNPayPayment(firstPackage.id, firstPackage.name);
                             } else {
                                 document.querySelector('.' + styles.packagesContainer)?.scrollIntoView({
                                     behavior: 'smooth',
@@ -440,7 +486,7 @@ const SubscriptionPage = () => {
                             if (packages && packages.length > 0) {
                                 // Nếu có gói, chọn gói đầu tiên (thường là gói phổ biến nhất)
                                 const firstPackage = packages.find(p => p.displayPriority === 1) || packages[0];
-                                handleDirectVNPayPayment(firstPackage.id, firstPackage.price, firstPackage.name);
+                                handleDirectVNPayPayment(firstPackage.id, firstPackage.name);
                             }
                         }}
                         style={{
@@ -494,7 +540,7 @@ const SubscriptionPage = () => {
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 const pack = packages.find(p => p.displayPriority === 1) || packages[0];
-                                                handleDirectVNPayPayment(pack.id, pack.price, pack.name);
+                                                handleDirectVNPayPayment(pack.id, pack.name);
                                             }}
                                             loading={paymentProcessing[packages.find(p => p.displayPriority === 1)?.id || packages[0].id]}
                                             disabled={currentSubscription &&
@@ -540,8 +586,22 @@ const SubscriptionPage = () => {
                                         }
                                     >
                                         <div className={styles.packagePrice}>
-                                            <Title level={2}>{formatCurrency(pkg.price)}</Title>
-                                            <Text type="secondary">/ {pkg.durationDays} ngày</Text>
+                                            {hasDiscount(pkg) ? (
+                                                <Space direction="vertical" style={{ width: '100%' }}>
+                                                    <span style={{ textDecoration: 'line-through', color: '#999' }}>
+                                                        {formatCurrency(pkg.price)}
+                                                    </span>
+                                                    <Title level={2} style={{ color: '#f5222d', margin: 0 }}>
+                                                        {formatCurrency(getDiscountedPrice(pkg))}
+                                                    </Title>
+                                                    <Tag color="red">-{getDiscountPercentage(pkg)}%</Tag>
+                                                </Space>
+                                            ) : (
+                                                <>
+                                                    <Title level={2}>{formatCurrency(pkg.price)}</Title>
+                                                    <Text type="secondary">/ {pkg.durationDays} ngày</Text>
+                                                </>
+                                            )}
                                         </div>
 
                                         <Paragraph className={styles.packageDescription}>
@@ -550,7 +610,30 @@ const SubscriptionPage = () => {
 
                                         {renderFeaturesList(pkg)}
 
-                                        {renderPaymentButton(pkg)}
+                                        <Button
+                                            type="primary"
+                                            block
+                                            size="large"
+                                            className={`${styles.subscribeButton} ${styles.vnpayButton}`}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                handleDirectVNPayPayment(pkg.id, pkg.name);
+                                            }}
+                                            loading={paymentProcessing[pkg.id]}
+                                            disabled={!canUpgradeToPackage(pkg.price)}
+                                            style={{
+                                                height: "56px",
+                                                fontSize: "18px",
+                                                fontWeight: "bold",
+                                                marginTop: "16px",
+                                                background: pkg.displayPriority === 1 ? "#f5a623" : "#1890ff",
+                                                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)"
+                                            }}
+                                        >
+                                            {!canUpgradeToPackage(pkg.price)
+                                                ? "Bạn đã mua gói VIP này"
+                                                : (currentSubscription ? "Nâng cấp gói VIP" : "Thanh Toán Qua VNPay")}
+                                        </Button>
                                     </Card>
                                 </Badge.Ribbon>
                             </Col>
