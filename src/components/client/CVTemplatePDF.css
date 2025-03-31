@@ -1,4 +1,4 @@
-/* CV Template Styling */
+/* CV Template PDF Styling */
 .cv-template {
     max-width: 210mm;
     min-height: 297mm;
@@ -6,22 +6,24 @@
     padding: 40px;
     background: #ffffff;
     color: #000000;
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
 }
 
 .cv-header {
     text-align: center;
     margin-bottom: 30px;
     padding-bottom: 20px;
-    border-bottom: 2px solid #000000;
+    border-bottom: 2px solid #cccccc;
 }
 
 .cv-header h1 {
     margin: 0 0 10px;
+    color: #000000;
     font-size: 32px;
 }
 
 .contact-info {
+    color: #333333;
     line-height: 1.6;
 }
 
@@ -34,10 +36,11 @@
 }
 
 .cv-section h2 {
+    color: #000000;
     font-size: 20px;
     margin-bottom: 15px;
     padding-bottom: 5px;
-    border-bottom: 1px solid #000000;
+    border-bottom: 1px solid #cccccc;
 }
 
 .section-content {
@@ -46,6 +49,7 @@
 
 .section-content p {
     margin: 8px 0;
+    color: #333333;
 }
 
 .skill-tag {
@@ -54,6 +58,7 @@
     padding: 5px 10px;
     margin: 3px;
     border-radius: 3px;
+    color: #333333;
     font-size: 14px;
 }
 
@@ -146,15 +151,10 @@
     padding: 5px 10px;
     border-radius: 3px;
     font-size: 14px;
-    transition: background-color 0.3s;
-}
-
-.cv-template.modern .skill-item:hover {
-    background: rgba(255, 255, 255, 0.2);
 }
 
 .cv-template.modern .section-title {
-    color: #2c3e50;
+    color: #000000;
     font-size: 20px;
     margin-bottom: 20px;
     display: flex;
@@ -183,7 +183,7 @@
     top: 0;
     bottom: 0;
     width: 2px;
-    background: #eeeeee;
+    background: #cccccc;
 }
 
 .cv-template.modern .timeline-item {
@@ -211,19 +211,17 @@
     background: #ffffff;
     padding: 15px;
     border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .cv-template.modern .additional-info {
     margin-top: 30px;
     padding-top: 20px;
-    border-top: 1px solid #eeeeee;
+    border-top: 1px solid #cccccc;
 }
 
 /* Professional Template */
 .cv-template.professional {
     background: #ffffff;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
 .cv-template.professional .cv-header {
@@ -287,7 +285,7 @@
     font-size: 20px;
     margin-bottom: 20px;
     padding-bottom: 10px;
-    border-bottom: 2px solid #eeeeee;
+    border-bottom: 2px solid #cccccc;
 }
 
 .cv-template.professional .section {
@@ -310,57 +308,32 @@
     padding: 8px 15px;
     border-radius: 3px;
     font-size: 14px;
-    border: 1px solid #eeeeee;
-    transition: all 0.3s;
-}
-
-.cv-template.professional .skill-item:hover {
-    background: #2c3e50;
-    color: #ffffff;
-    border-color: #2c3e50;
+    border: 1px solid #cccccc;
 }
 
 /* Creative Template */
 .cv-template.creative {
     background: #ffffff;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
 }
 
 .cv-template.creative .cv-header {
-    background: linear-gradient(135deg, #6c5ce7, #a8a4e6);
+    background: #6c5ce7;
     color: #ffffff;
     padding: 60px 40px;
     margin: 0;
     border-bottom: none;
-    position: relative;
-    overflow: hidden;
-}
-
-.cv-template.creative .cv-header:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
-    opacity: 0.1;
 }
 
 .cv-template.creative .cv-header h1 {
     color: #ffffff;
     font-size: 42px;
     margin-bottom: 15px;
-    position: relative;
-    z-index: 1;
 }
 
 .cv-template.creative .cv-header p {
     color: rgba(255, 255, 255, 0.9);
     font-size: 20px;
     margin: 0;
-    position: relative;
-    z-index: 1;
 }
 
 .cv-template.creative .cv-contact {
@@ -368,8 +341,6 @@
     justify-content: center;
     gap: 30px;
     margin-top: 20px;
-    position: relative;
-    z-index: 1;
 }
 
 .cv-template.creative .contact-item {
@@ -407,7 +378,7 @@
     content: '';
     flex: 1;
     height: 2px;
-    background: #eeeeee;
+    background: #cccccc;
 }
 
 .cv-template.creative .skills-list {
@@ -422,13 +393,6 @@
     padding: 8px 15px;
     border-radius: 20px;
     font-size: 14px;
-    transition: all 0.3s;
-}
-
-.cv-template.creative .skill-item:hover {
-    background: #6c5ce7;
-    color: #ffffff;
-    transform: translateY(-2px);
 }
 
 .cv-template.creative .timeline-item {
@@ -448,14 +412,13 @@
 /* Simple Template */
 .cv-template.simple {
     background: #ffffff;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
 }
 
 .cv-template.simple .cv-header {
     text-align: left;
     padding: 40px;
     margin: 0;
-    border-bottom: 2px solid #eeeeee;
+    border-bottom: 2px solid #cccccc;
 }
 
 .cv-template.simple .cv-header h1 {
@@ -505,7 +468,7 @@
     font-size: 20px;
     margin-bottom: 20px;
     padding-bottom: 10px;
-    border-bottom: 2px solid #eeeeee;
+    border-bottom: 2px solid #cccccc;
 }
 
 .cv-template.simple .skills-list {
@@ -530,36 +493,6 @@
     padding: 15px;
     background: #f8f9fa;
     border-radius: 5px;
-}
-
-/* Editable Elements */
-.editable-name {
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 3px;
-    transition: background-color 0.3s;
-}
-
-.editable-name:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-}
-
-.editable-textarea {
-    width: 100%;
-    min-height: 100px;
-    padding: 10px;
-    border: 1px solid #eeeeee;
-    border-radius: 5px;
-    font-family: inherit;
-    font-size: inherit;
-    line-height: 1.6;
-    resize: vertical;
-}
-
-.editable-textarea:focus {
-    outline: none;
-    border-color: #3f51b5;
-    box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.1);
 }
 
 /* Responsive Design */

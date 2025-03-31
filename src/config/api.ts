@@ -815,3 +815,32 @@ export const callGetPackagePriceWithDiscount = (packageId: number): Promise<IBac
     return axios.get(`/api/v1/packages/${packageId}/price-with-discount`);
 };
 
+// Admin Statistics DTO
+export interface AdminStatisticsDTO {
+    totalUsers: number;
+    totalCompanies: number;
+    totalJobs: number;
+    totalCVs: number;
+}
+
+// Admin Statistics APIs
+export const callGetAllStatistics = () => {
+    return axios.get<IBackendRes<AdminStatisticsDTO>>('/api/v1/admin/statistics');
+};
+
+export const callGetJobStatistics = () => {
+    return axios.get<IBackendRes<AdminStatisticsDTO>>('/api/v1/admin/statistics/jobs');
+};
+
+export const callGetUserStatistics = () => {
+    return axios.get<IBackendRes<AdminStatisticsDTO>>('/api/v1/admin/statistics/users');
+};
+
+export const callGetCompanyStatistics = () => {
+    return axios.get<IBackendRes<AdminStatisticsDTO>>('/api/v1/admin/statistics/companies');
+};
+
+export const callGetCVStatistics = () => {
+    return axios.get<IBackendRes<AdminStatisticsDTO>>('/api/v1/admin/statistics/cvs');
+};
+
