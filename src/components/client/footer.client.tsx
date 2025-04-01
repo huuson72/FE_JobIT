@@ -1,138 +1,190 @@
 import { CSSProperties } from 'react';
+import './Footer.css';
 
 const Footer = () => {
     const styles: { [key: string]: CSSProperties } = {
         container: {
-            background: "linear-gradient(to right, #000000, #8B0000)",
-            color: "#fff",
-            padding: "15px 30px",
-            fontFamily: "Arial, sans-serif",
-            fontSize: "14px",
-            marginTop: "30px",
+            background: "linear-gradient(to right, #2c3e50, #1a2530)",
+            color: "#ecf0f1",
+            padding: "60px 0 20px",
+            fontFamily: "'Roboto', sans-serif",
+            marginTop: "70px",
+            boxShadow: "0 -5px 15px rgba(0,0,0,0.1)"
+        },
+        content: {
+            maxWidth: "1200px",
+            margin: "0 auto",
+            padding: "0 30px",
         },
         top: {
             display: "flex",
             justifyContent: "space-between",
             flexWrap: "wrap",
-            borderBottom: "1px solid #444",
-            paddingBottom: "10px",
-            marginBottom: "10px",
+            marginBottom: "40px",
+            gap: "40px"
         },
         logoSection: {
-            flex: "1 1 20%",
-            marginBottom: "10px",
+            flex: "1 1 320px",
+            marginBottom: "20px",
         },
         logo: {
-            color: "#e50914",
-            fontSize: "20px",
+            color: "#ecf0f1",
+            fontSize: "32px",
             fontWeight: "bold",
+            marginBottom: "20px",
+            letterSpacing: "1px",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px"
+        },
+        logoIcon: {
+            color: "#3498db"
         },
         description: {
-            margin: "5px 0",
-            fontSize: "12px",
-            color: "#ddd",
+            color: "#bdc3c7",
+            fontSize: "15px",
+            lineHeight: "1.7",
+            marginBottom: "25px",
+            maxWidth: "90%"
         },
         socialIcons: {
             display: "flex",
-            gap: "8px",
-            marginTop: "5px",
+            gap: "18px",
         },
         icon: {
-            color: "#fff",
-            fontSize: "18px",
+            color: "#ecf0f1",
+            fontSize: "22px",
             textDecoration: "none",
+            transition: "color 0.3s, transform 0.2s",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "40px",
+            height: "40px",
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.1)"
         },
         linksContainer: {
-            flex: "1 1 75%",
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: "flex-end",
             flexWrap: "wrap",
+            gap: "60px",
+            flex: "2 1 600px"
         },
         linkGroup: {
-            marginBottom: "10px",
+            flex: "1 1 180px",
+            maxWidth: "220px"
         },
         groupTitle: {
-            marginBottom: "5px",
-            fontSize: "14px",
+            color: "#ecf0f1",
+            fontSize: "18px",
             fontWeight: "bold",
-            color: "#fff",
+            marginBottom: "20px",
+            position: "relative",
+            paddingBottom: "12px"
         },
         link: {
+            color: "#bdc3c7",
             textDecoration: "none",
-            color: "#ccc",
-            fontSize: "12px",
-            marginBottom: "5px",
+            fontSize: "15px",
             display: "block",
-        },
-        contactInfo: {
-            fontSize: "12px",
-            color: "#ccc",
-            marginBottom: "3px",
+            marginBottom: "12px",
+            transition: "color 0.3s, transform 0.2s",
+            paddingLeft: "5px"
         },
         bottom: {
             textAlign: "center",
-            padding: "5px 0",
-            fontSize: "12px",
-            color: "#ccc",
+            padding: "25px 0 0",
+            borderTop: "1px solid rgba(255,255,255,0.1)",
+            marginTop: "30px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center"
         },
+        copyright: {
+            color: "#bdc3c7",
+            fontSize: "14px",
+            marginTop: "10px"
+        },
+        contactInfo: {
+            color: "#bdc3c7",
+            fontSize: "15px",
+            marginBottom: "10px",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px"
+        },
+        contactIcon: {
+            color: "#3498db",
+            fontSize: "16px",
+            marginRight: "5px"
+        }
     };
 
     return (
         <footer style={styles.container}>
-            <div style={styles.top}>
-                <div style={styles.logoSection}>
-                    <h2 style={styles.logo}>HSJob</h2>
-                    <p style={styles.description}>Ít nhưng mà chất</p>
-                    <div style={styles.socialIcons}>
-                        <a href="#" style={styles.icon}>
-                            <i className="fa fa-linkedin"></i>
-                        </a>
-                        <a href="#" style={styles.icon}>
-                            <i className="fa fa-facebook"></i>
-                        </a>
-                        <a href="#" style={styles.icon}>
-                            <i className="fa fa-youtube"></i>
-                        </a>
-                    </div>
-                </div>
-                <div style={styles.linksContainer}>
-                    <div style={styles.linkGroup}>
-                        <h3 style={styles.groupTitle}>About Us</h3>
-                        <a href="#" style={styles.link}>Home</a>
-                        <a href="#" style={styles.link}>About Us</a>
-                        <a href="#" style={styles.link}>AI Match Service</a>
-                        <a href="#" style={styles.link}>Contact Us</a>
-                        <a href="#" style={styles.link}>All Jobs</a>
-                        <a href="#" style={styles.link}>FAQ</a>
-                    </div>
-                    <div style={styles.linkGroup}>
-                        <h3 style={styles.groupTitle}>Campaign</h3>
-                        <a href="#" style={styles.link}>IT Story</a>
-                        <a href="#" style={styles.link}>Writing Contest</a>
-                        <a href="#" style={styles.link}>Featured IT Jobs</a>
-                        <a href="#" style={styles.link}>Annual Survey</a>
-                    </div>
-                    <div style={styles.linkGroup}>
-                        <h3 style={styles.groupTitle}>Terms & Conditions</h3>
-                        <a href="#" style={styles.link}>Privacy Policy</a>
-                        <a href="#" style={styles.link}>Operating Regulation</a>
-                        <a href="#" style={styles.link}>Complaint Handling</a>
-                        <a href="#" style={styles.link}>Terms & Conditions</a>
-                        <a href="#" style={styles.link}>Press</a>
-                    </div>
-                    <div style={styles.linkGroup}>
-                        <h3 style={styles.groupTitle}>Contact</h3>
-                        <p style={styles.contactInfo}>Ho Chi Minh: (+84) 977 460 519</p>
-                        <p style={styles.contactInfo}>Ha Noi: (+84) 983 131 351</p>
-                        <p style={styles.contactInfo}>
-                            Email: <a href="mailto:love@itviec.com" style={styles.link}>love@itviec.com</a>
+            <div style={styles.content}>
+                <div style={styles.top}>
+                    <div style={styles.logoSection}>
+                        <h2 style={styles.logo}>
+                            <span style={styles.logoIcon}><i className="fa fa-briefcase"></i></span>
+                            HSJob
+                        </h2>
+                        <p style={styles.description}>
+                            Nền tảng kết nối việc làm thông minh, giúp doanh nghiệp tìm được nhân tài phù hợp và ứng viên tìm được công việc mơ ước.
                         </p>
-                        <a href="#" style={styles.link}>Submit contact information</a>
+                        <div style={styles.socialIcons}>
+                            <a href="#" style={styles.icon} className="footer-icon" aria-label="LinkedIn">
+                                <i className="fa fa-linkedin"></i>
+                            </a>
+                            <a href="#" style={styles.icon} className="footer-icon" aria-label="Facebook">
+                                <i className="fa fa-facebook"></i>
+                            </a>
+                            <a href="#" style={styles.icon} className="footer-icon" aria-label="YouTube">
+                                <i className="fa fa-youtube"></i>
+                            </a>
+                            <a href="#" style={styles.icon} className="footer-icon" aria-label="Twitter">
+                                <i className="fa fa-twitter"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div style={styles.linksContainer}>
+                        <div style={styles.linkGroup}>
+                            <h3 style={styles.groupTitle} className="group-title">Về chúng tôi</h3>
+                            <a href="#" style={styles.link} className="footer-link">Trang chủ</a>
+                            <a href="#" style={styles.link} className="footer-link">Giới thiệu</a>
+                            <a href="#" style={styles.link} className="footer-link">Dịch vụ AI Match</a>
+                            <a href="#" style={styles.link} className="footer-link">Liên hệ</a>
+                        </div>
+                        <div style={styles.linkGroup}>
+                            <h3 style={styles.groupTitle} className="group-title">Hỗ trợ</h3>
+                            <a href="#" style={styles.link} className="footer-link">FAQ</a>
+                            <a href="#" style={styles.link} className="footer-link">Chính sách bảo mật</a>
+                            <a href="#" style={styles.link} className="footer-link">Điều khoản sử dụng</a>
+                            <a href="#" style={styles.link} className="footer-link">Quy định hoạt động</a>
+                        </div>
+                        <div style={styles.linkGroup}>
+                            <h3 style={styles.groupTitle} className="group-title">Liên hệ</h3>
+                            <p style={styles.contactInfo}>
+                                <span style={styles.contactIcon}><i className="fa fa-phone"></i></span>
+                                (+84) 977 460 519
+                            </p>
+                            <p style={styles.contactInfo}>
+                                <span style={styles.contactIcon}><i className="fa fa-envelope"></i></span>
+                                support@hsjob.com
+                            </p>
+                            <p style={styles.contactInfo}>
+                                <span style={styles.contactIcon}><i className="fa fa-map-marker"></i></span>
+                                TP.Hồ Chí Minh, Việt Nam
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div style={styles.bottom}>
-                Copyright © IT VIEC JSC | Tax code: 0312192258
+                <div style={styles.bottom}>
+                    <p style={styles.copyright}>
+                        Copyright © {new Date().getFullYear()} HSJob. All rights reserved.
+                    </p>
+                </div>
             </div>
         </footer>
     );

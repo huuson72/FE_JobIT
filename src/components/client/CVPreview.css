@@ -1,0 +1,1391 @@
+/* Base CV Styles */
+.cv-preview-container {
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+  width: 100%;
+  max-width: 100%;
+  min-height: 1000px;
+  display: flex;
+  font-family: 'Roboto', sans-serif;
+  position: relative;
+  margin-right: 0 !important;
+  max-width: 100% !important;
+}
+
+/* Draggable Fields Styling */
+.draggable-fields-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 3px;
+}
+
+.draggable-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+  border: 1px solid #d9d9d9;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.draggable-field-content {
+  padding: 8px 12px;
+  background-color: #f0f2f5;
+  flex-grow: 1;
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #333;
+  font-size: 13px;
+}
+
+.draggable-field-actions {
+  display: flex;
+  height: 100%;
+}
+
+.draggable-field-middle-drop {
+  width: 24px;
+  height: 100%;
+  background-color: #52c41a;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  transition: all 0.2s;
+  font-size: 12px;
+}
+
+.draggable-field-middle-drop:hover {
+  background-color: #389e0d;
+}
+
+.draggable-field-right-drop {
+  width: 24px;
+  height: 100%;
+  background-color: #1890ff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  transition: all 0.2s;
+  font-size: 12px;
+}
+
+.draggable-field-right-drop:hover {
+  background-color: #096dd9;
+}
+
+.draggable-field-content:hover {
+  background-color: #e6f7ff;
+}
+
+.draggable-field-content:active,
+.draggable-field-right-drop:active {
+  cursor: grabbing;
+}
+
+.draggable-field .anticon {
+  color: #1890ff;
+}
+
+.draggable-field-right-drop .anticon {
+  color: white;
+}
+
+/* Custom field header shared style */
+.custom-field-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.custom-field-content {
+  flex-grow: 1;
+}
+
+.custom-field-delete {
+  color: #ff4d4f;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.custom-field:hover .custom-field-delete,
+.tech-card:hover .custom-field-delete,
+.minimal-custom-item:hover .custom-field-delete {
+  opacity: 1;
+}
+
+/* Drop Zone Styling */
+.cv-drop-zone {
+  border: 2px dashed #d9d9d9;
+  border-radius: 4px;
+  padding: 15px;
+  margin: 10px 0;
+  background-color: rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  min-height: 80px;
+}
+
+.cv-drop-zone.active {
+  border-color: #1890ff;
+  background-color: rgba(24, 144, 255, 0.05);
+}
+
+.cv-drop-zone .anticon {
+  font-size: 24px;
+  color: #d9d9d9;
+  margin-bottom: 8px;
+}
+
+.cv-drop-zone.active .anticon {
+  color: #1890ff;
+}
+
+.cv-drop-zone-text {
+  color: #888;
+  font-size: 14px;
+  text-align: center;
+}
+
+.cv-drop-zone.active .cv-drop-zone-text {
+  color: #1890ff;
+}
+
+.edit-instructions {
+  animation: fadeIn 0.3s ease;
+  position: absolute !important;
+  right: -260px !important;
+  top: 60px !important;
+  z-index: 999;
+  max-width: 250px;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px dashed #eb2f96;
+  background-color: rgba(255, 255, 255, 0.97) !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15) !important;
+  font-size: 14px;
+  transition: opacity 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Custom fields styling */
+.custom-field {
+  margin-bottom: 8px;
+  padding: 6px 10px;
+  background-color: rgba(24, 144, 255, 0.05);
+  border-radius: 4px;
+}
+
+.custom-field .anticon {
+  margin-right: 10px;
+  color: #1890ff;
+}
+
+.custom-field strong {
+  color: #333;
+  margin-right: 5px;
+  font-size: 14px;
+}
+
+.custom-field span {
+  color: #555;
+  font-size: 14px;
+}
+
+/* Minimal template custom item */
+.minimal-custom-item {
+  padding: 8px 12px;
+  background-color: rgba(114, 46, 209, 0.05);
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.minimal-custom-item .minimal-item-title {
+  color: #722ed1;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+/* Preview Controls */
+.cv-preview-controls {
+  position: relative;
+}
+
+/* Modern Template (Default) */
+.cv-sidebar {
+  width: 30%;
+  padding: 40px 20px;
+  background-color: #f0f2f5;
+  color: #333;
+}
+
+.sidebar-section {
+  margin-bottom: 25px;
+}
+
+.sidebar-section h2 {
+  color: #1890ff;
+  margin-bottom: 15px;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.sidebar-section h3 {
+  color: #333;
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #1890ff;
+}
+
+.contact-info {
+  margin-bottom: 20px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.info-item .anticon {
+  margin-right: 10px;
+  color: #1890ff;
+}
+
+.skills-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.skill-tag {
+  background-color: #e6f7ff;
+  color: #1890ff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.cv-main {
+  width: 70%;
+  padding: 40px 30px;
+}
+
+.cv-section {
+  margin-bottom: 30px;
+}
+
+.cv-section h3 {
+  color: #1890ff;
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 15px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.section-item {
+  margin-bottom: 20px;
+}
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.item-header h4 {
+  color: #333;
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.item-date {
+  color: #666;
+  font-size: 14px;
+}
+
+.item-subheader {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 8px;
+  font-style: italic;
+}
+
+.item-description {
+  color: #333;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.item-description p {
+  margin-bottom: 5px;
+}
+
+/* Creative Template */
+.creative-template {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  color: #333;
+}
+
+.cv-header {
+  padding: 30px;
+  background-color: #52c41a;
+  color: white;
+}
+
+.creative-name {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+
+.creative-objective {
+  font-size: 16px;
+  line-height: 1.5;
+  max-width: 80%;
+  margin-top: 10px;
+}
+
+.cv-body {
+  display: flex;
+  padding: 0;
+}
+
+.left-column {
+  width: 35%;
+  padding: 30px;
+  background-color: #f6ffed;
+}
+
+.right-column {
+  width: 65%;
+  padding: 30px;
+}
+
+.section-title {
+  color: #52c41a;
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.section-title:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background-color: #52c41a;
+}
+
+.contact-section, .skills-section, .education-section,
+.experience-section, .activities-section, .awards-section {
+  margin-bottom: 30px;
+}
+
+.creative-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.creative-skill-tag {
+  background-color: #b7eb8f;
+  color: #333;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+.creative-item {
+  margin-bottom: 25px;
+}
+
+.creative-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 5px;
+}
+
+.creative-item-header h4 {
+  color: #333;
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.creative-subtitle {
+  color: #52c41a;
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.creative-date {
+  color: #666;
+  font-size: 14px;
+}
+
+.creative-description {
+  color: #333;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-top: 8px;
+}
+
+/* Minimal Template */
+.minimal-template {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background: white;
+  font-family: 'Helvetica', 'Arial', sans-serif;
+}
+
+.minimal-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.minimal-name {
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #722ed1;
+  letter-spacing: 1px;
+}
+
+.minimal-contact {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+}
+
+.minimal-contact-item {
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  color: #555;
+  font-size: 14px;
+}
+
+.minimal-contact-item .anticon {
+  margin-right: 5px;
+  color: #722ed1;
+}
+
+.minimal-section {
+  margin-bottom: 35px;
+}
+
+.minimal-section-title {
+  color: #722ed1;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+.minimal-objective {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #555;
+  text-align: center;
+  margin: 0 auto;
+  max-width: 80%;
+}
+
+.minimal-item {
+  margin-bottom: 25px;
+}
+
+.minimal-item-title {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 5px;
+  color: #333;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.minimal-item-company, .minimal-item-school, .minimal-item-organization {
+  color: #722ed1;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 5px;
+}
+
+.minimal-item-date {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.minimal-item-description {
+  color: #555;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.minimal-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.minimal-skill {
+  background-color: #f9f0ff;
+  color: #722ed1;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Middle Section Styling */
+.minimal-middle-section {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #f0f0f0;
+  width: 100%;
+  order: 999;
+}
+
+.minimal-middle-section .minimal-section-title {
+  text-align: center;
+  color: #722ed1;
+}
+
+.minimal-middle-section .minimal-item {
+  max-width: 80%;
+  margin: 0 auto 25px auto;
+}
+
+@media (max-width: 768px) {
+  .minimal-middle-section .minimal-item {
+    max-width: 100%;
+  }
+}
+
+.tech-profile-section.middle-section {
+  order: 999;
+}
+
+.cv-section.middle-section {
+  order: 999;
+}
+
+/* Add flex display to parent containers to enable ordering */
+.cv-main, .tech-main, .minimal-container {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure scroll works on small screens */
+@media (max-width: 992px) {
+  .edit-instructions {
+    max-width: 200px;
+    right: 10px !important;
+  }
+  
+  .draggable-fields-panel {
+    top: 200px !important;
+    max-height: 300px;
+    right: 10px !important;
+  }
+}
+
+/* Technical Template */
+.technical-template {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  font-family: 'Roboto Mono', monospace;
+}
+
+.technical-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 30px;
+  background-color: #1f1f1f;
+  color: white;
+}
+
+.technical-name-block {
+  max-width: 60%;
+}
+
+.technical-name {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #eb2f96;
+  letter-spacing: 1px;
+}
+
+.technical-objective {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #ccc;
+}
+
+.technical-contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.technical-contact-item {
+  display: flex;
+  align-items: center;
+  color: #ddd;
+  font-size: 14px;
+}
+
+.technical-contact-item .anticon {
+  margin-right: 10px;
+  color: #eb2f96;
+}
+
+.technical-body {
+  padding: 30px;
+  background-color: #f9f9f9;
+}
+
+.technical-section {
+  margin-bottom: 35px;
+}
+
+.technical-section-title {
+  display: flex;
+  align-items: center;
+  color: #eb2f96;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.technical-section-title .anticon {
+  margin-right: 10px;
+}
+
+.technical-skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.technical-skill-item {
+  display: flex;
+  align-items: center;
+  background-color: #fff0f6;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border-left: 3px solid #eb2f96;
+}
+
+.technical-skill-item .anticon {
+  margin-right: 8px;
+  color: #eb2f96;
+}
+
+.technical-item {
+  margin-bottom: 25px;
+  padding: 15px;
+  border-radius: 4px;
+  background-color: #fafafa;
+}
+
+.technical-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.technical-item-header h3 {
+  color: #333;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.technical-item-date {
+  color: #666;
+  font-size: 14px;
+  font-family: 'Roboto Mono', monospace;
+}
+
+.technical-item-subheader {
+  color: #eb2f96;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.technical-item-description {
+  color: #333;
+  font-size: 14px;
+  line-height: 1.6;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Editing Mode Styles */
+[contenteditable]:focus {
+  outline: none;
+}
+
+/* New Tech Template Styles */
+.tech-header {
+  background-color: #1e1e1e;
+  color: #fff;
+  padding: 15px;
+  font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.tech-terminal {
+  background-color: #2d2d2d;
+  border-radius: 6px 6px 0 0;
+  padding: 8px 15px;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.tech-terminal-buttons {
+  display: flex;
+  gap: 8px;
+  margin-right: 15px;
+}
+
+.tech-terminal-button {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.tech-close {
+  background-color: #ff5f56;
+}
+
+.tech-minimize {
+  background-color: #ffbd2e;
+}
+
+.tech-maximize {
+  background-color: #27c93f;
+}
+
+.tech-terminal-title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #aaa;
+  font-size: 13px;
+  pointer-events: none;
+}
+
+.tech-terminal-content {
+  background-color: #1e1e1e;
+  padding: 15px;
+  border-radius: 0 0 6px 6px;
+  font-size: 14px;
+}
+
+.tech-prompt {
+  display: flex;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.tech-user {
+  color: #27c93f;
+}
+
+.tech-separator, .tech-directory {
+  color: #ddd;
+}
+
+.tech-command {
+  color: #ddd;
+  margin-left: 5px;
+}
+
+.tech-output {
+  margin-top: 15px;
+}
+
+.tech-ascii-name {
+  font-size: 24px;
+  font-weight: bold;
+  color: #61dafb;
+  margin-bottom: 10px;
+  white-space: pre;
+}
+
+.tech-objective {
+  color: #ccc;
+  margin-top: 10px;
+  padding-left: 15px;
+  border-left: 2px solid #61dafb;
+  font-style: italic;
+}
+
+.tech-body {
+  display: flex;
+  flex-wrap: wrap;
+  background-color: #f9f9f9;
+}
+
+.tech-sidebar {
+  width: 35%;
+  min-width: 250px;
+  background-color: #f0f2f5;
+  padding: 25px;
+  border-right: 1px solid #ddd;
+}
+
+.tech-main {
+  width: 65%;
+  min-width: 300px;
+  padding: 25px;
+}
+
+.tech-profile-section {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px dashed #ddd;
+}
+
+.tech-profile-section:last-child {
+  border-bottom: none;
+}
+
+.tech-section-title {
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #1e1e1e;
+  display: flex;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #61dafb;
+}
+
+.tech-section-title .anticon {
+  margin-right: 10px;
+  color: #61dafb;
+}
+
+.tech-contact-items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tech-contact-item {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #555;
+}
+
+.tech-contact-item .anticon {
+  margin-right: 10px;
+  color: #61dafb;
+  font-size: 16px;
+}
+
+.tech-card {
+  background-color: white;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  border-left: 3px solid #61dafb;
+}
+
+.tech-card-title {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.tech-card-subtitle {
+  color: #61dafb;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.tech-card-date {
+  color: #888;
+  font-size: 13px;
+  margin-bottom: 10px;
+  font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.tech-card-description {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+}
+
+.tech-skills-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tech-skill-item {
+  background-color: white;
+  border-radius: 6px;
+  padding: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.tech-skill-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.tech-skill-icon {
+  margin-right: 10px;
+  color: #61dafb;
+}
+
+.tech-skill-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.tech-skill-percentage {
+  color: #61dafb;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 13px;
+}
+
+.tech-skill-bar {
+  height: 6px;
+  background-color: #eee;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.tech-skill-progress {
+  height: 100%;
+  background-color: #61dafb;
+}
+
+.tech-timeline {
+  position: relative;
+  padding-left: 20px;
+}
+
+.tech-timeline:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #ddd;
+}
+
+.tech-timeline-item {
+  position: relative;
+  padding-bottom: 25px;
+}
+
+.tech-timeline-dot {
+  position: absolute;
+  left: -25px;
+  top: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #61dafb;
+  border: 2px solid white;
+}
+
+.tech-timeline-content {
+  background-color: white;
+  border-radius: 6px;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.tech-timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.tech-timeline-title {
+  font-weight: 600;
+  font-size: 16px;
+  margin: 0;
+  color: #333;
+}
+
+.tech-timeline-date {
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 13px;
+  color: #888;
+}
+
+.tech-timeline-subtitle {
+  color: #61dafb;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.tech-timeline-description {
+  font-size: 14px;
+  color: #555;
+}
+
+.tech-code-snippet {
+  background-color: #f5f5f5;
+  padding: 12px;
+  border-radius: 4px;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 13px;
+  color: #333;
+  overflow-x: auto;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.tech-projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.tech-project-card {
+  background-color: white;
+  border-radius: 6px;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  border-top: 3px solid #61dafb;
+}
+
+.tech-project-header {
+  margin-bottom: 10px;
+}
+
+.tech-project-title {
+  font-weight: 600;
+  font-size: 16px;
+  margin: 0 0 5px 0;
+  color: #333;
+}
+
+.tech-project-role {
+  display: inline-block;
+  background-color: #e6f7ff;
+  color: #1890ff;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+.tech-project-time {
+  color: #888;
+  font-size: 13px;
+  margin-bottom: 10px;
+  font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.tech-project-description {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+}
+
+.tech-achievements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.tech-achievement-item {
+  display: flex;
+  background-color: white;
+  border-radius: 6px;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.tech-achievement-badge {
+  font-size: 24px;
+  margin-right: 15px;
+}
+
+.tech-achievement-content {
+  flex: 1;
+}
+
+.tech-achievement-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.tech-achievement-title {
+  font-weight: 600;
+  font-size: 16px;
+  margin: 0;
+  color: #333;
+}
+
+.tech-achievement-date {
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 13px;
+  color: #888;
+}
+
+.tech-achievement-description {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+}
+
+/* Additional Info section styling for Technical template */
+.tech-additional-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.tech-additional-info .tech-card {
+    background-color: rgba(5, 26, 52, 0.02);
+    border-left: 3px solid #4c9eeb;
+    padding: 8px 12px;
+    border-radius: 0 4px 4px 0;
+    position: relative;
+}
+
+.tech-additional-info .tech-card-title {
+    color: #1f6ead;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+.tech-additional-info .tech-card-description {
+    color: #475569;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+/* Minimal Template two-column layout */
+.minimal-container {
+  display: flex;
+  gap: 30px;
+  width: 100%;
+}
+
+.minimal-left-column {
+  flex: 1;
+  padding-right: 15px;
+  border-right: 1px solid #f0f0f0;
+}
+
+.minimal-right-column {
+  flex: 1;
+  padding-left: 15px;
+}
+
+@media (max-width: 768px) {
+  .minimal-container {
+    flex-direction: column;
+  }
+  
+  .minimal-left-column {
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .minimal-right-column {
+    padding-left: 0;
+  }
+}
+
+@media print {
+  .cv-preview-container {
+    box-shadow: none;
+  }
+}
+
+.draggable-fields-panel {
+  position: absolute !important;
+  right: -260px !important;
+  top: 230px !important;
+  z-index: 998;
+  width: 250px;
+  max-height: calc(100vh - 250px);
+  overflow-y: auto;
+}
+
+.draggable-fields-panel .ant-card {
+  position: static !important;
+  width: 100% !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15) !important;
+  background-color: rgba(255, 255, 255, 0.97) !important;
+}
+
+/* Make the Modern Template more responsive */
+.modern-template {
+  flex-wrap: wrap;
+}
+
+.modern-template .cv-sidebar {
+  width: 30%;
+  min-width: 250px;
+}
+
+.modern-template .cv-main {
+  width: 70%;
+  min-width: 300px;
+}
+
+/* Adjust the Minimal Template columns */
+.minimal-container {
+  flex-wrap: wrap;
+}
+
+@media (max-width: 992px) {
+  .modern-template .cv-sidebar,
+  .modern-template .cv-main {
+    width: 100%;
+  }
+  
+  .edit-instructions {
+    max-width: 200px;
+  }
+  
+  .draggable-fields-panel {
+    top: 200px !important;
+    max-height: 300px;
+  }
+}
+
+/* Fix Minimal Template layout */
+.minimal-template {
+  padding: 20px;
+}
+
+.minimal-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.minimal-contact {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+}
+
+.minimal-contact-item {
+  white-space: nowrap;
+}
+
+/* Technical Template fixes */
+.technical-template .tech-body {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.technical-template .tech-sidebar {
+  width: 35%;
+  min-width: 250px;
+}
+
+.technical-template .tech-main {
+  width: 65%;
+  min-width: 300px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .modern-template .cv-sidebar,
+  .modern-template .cv-main,
+  .technical-template .tech-sidebar,
+  .technical-template .tech-main {
+    width: 100%;
+    min-width: 100%;
+  }
+  
+  .minimal-container {
+    flex-direction: column;
+  }
+  
+  .minimal-left-column,
+  .minimal-right-column {
+    width: 100%;
+  }
+}
+
+@media (max-width: 1200px) {
+  .edit-instructions {
+    right: 10px !important;
+  }
+  
+  .draggable-fields-panel {
+    right: 10px !important;
+  }
+} 

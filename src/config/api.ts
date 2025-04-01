@@ -844,3 +844,11 @@ export const callGetCVStatistics = () => {
     return axios.get<IBackendRes<AdminStatisticsDTO>>('/api/v1/admin/statistics/cvs');
 };
 
+export const callGetAllCVs = () => {
+    return axios.get('/api/v1/admin/cvs');
+};
+
+export const callDeleteCV = (id: string) => {
+    return axios.delete(`/api/v1/admin/cvs/${id}`);
+};
+

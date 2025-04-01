@@ -577,38 +577,44 @@ const SubscriptionPage = () => {
                                     <Card
                                         className={`${styles.packageCard} ${pkg.displayPriority === 1 ? styles.popularPackage : ''}`}
                                         title={
-                                            <div className={styles.packageHeader}>
-                                                <Title level={3}>{pkg.name}</Title>
-                                                <Tag color={pkg.displayPriority === 1 ? 'gold' : 'blue'}>
+                                            <div className={styles.packageHeader} style={{ textAlign: 'center' }}>
+                                                <Title level={3} style={{ margin: 0 }}>{pkg.name}</Title>
+                                                <Tag color={pkg.displayPriority === 1 ? 'gold' : 'blue'} style={{ marginTop: '8px' }}>
                                                     {pkg.displayPriority === 1 ? 'Ưu đãi tốt nhất' : 'Tiêu chuẩn'}
                                                 </Tag>
                                             </div>
                                         }
                                     >
                                         <div className={styles.packagePrice}>
-                                            {hasDiscount(pkg) ? (
-                                                <Space direction="vertical" style={{ width: '100%' }}>
-                                                    <span style={{ textDecoration: 'line-through', color: '#999' }}>
-                                                        {formatCurrency(pkg.price)}
-                                                    </span>
-                                                    <Title level={2} style={{ color: '#f5222d', margin: 0 }}>
-                                                        {formatCurrency(getDiscountedPrice(pkg))}
-                                                    </Title>
-                                                    <Tag color="red">-{getDiscountPercentage(pkg)}%</Tag>
-                                                </Space>
-                                            ) : (
-                                                <>
-                                                    <Title level={2}>{formatCurrency(pkg.price)}</Title>
-                                                    <Text type="secondary">/ {pkg.durationDays} ngày</Text>
-                                                </>
-                                            )}
+                                            <Space direction="vertical" style={{ width: '100%', minHeight: '120px', textAlign: 'center' }}>
+                                                {hasDiscount(pkg) && getDiscountPercentage(pkg) > 0 ? (
+                                                    <>
+                                                        <span style={{ textDecoration: 'line-through', color: '#999' }}>
+                                                            {formatCurrency(pkg.price)}
+                                                        </span>
+                                                        <Title level={2} style={{ color: '#f5222d', margin: 0 }}>
+                                                            {formatCurrency(getDiscountedPrice(pkg))}
+                                                        </Title>
+                                                        <Tag color="red">-{getDiscountPercentage(pkg)}%</Tag>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Title level={2} style={{ margin: 0 }}>
+                                                            {formatCurrency(pkg.price)}
+                                                        </Title>
+                                                        <Text type="secondary">/ {pkg.durationDays} ngày</Text>
+                                                    </>
+                                                )}
+                                            </Space>
                                         </div>
 
-                                        <Paragraph className={styles.packageDescription}>
+                                        <Paragraph className={styles.packageDescription} style={{ textAlign: 'center' }}>
                                             {pkg.description}
                                         </Paragraph>
 
-                                        {renderFeaturesList(pkg)}
+                                        <div style={{ textAlign: 'center' }}>
+                                            {renderFeaturesList(pkg)}
+                                        </div>
 
                                         <Button
                                             type="primary"

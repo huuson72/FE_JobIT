@@ -223,7 +223,7 @@ const SubscriptionManagement = () => {
             dataIndex: 'name',
             key: 'name',
             render: (text, record) => (
-                <Space>
+                <Space style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
                     <CrownOutlined style={{ color: record.isHighlighted ? '#f5a623' : '#1890ff' }} />
                     {text}
                 </Space>
@@ -233,9 +233,9 @@ const SubscriptionManagement = () => {
             title: 'Giá',
             key: 'price',
             render: (_, record) => {
-                if (record.discountInfo) {
+                if (record.discountInfo && record.discountInfo.discountPercentage > 0) {
                     return (
-                        <Space direction="vertical">
+                        <Space direction="vertical" style={{ minHeight: '80px', textAlign: 'center', width: '100%' }}>
                             <span style={{ textDecoration: 'line-through', color: '#999' }}>
                                 {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(record.price)}
                             </span>
@@ -247,7 +247,13 @@ const SubscriptionManagement = () => {
                     );
                 }
 
-                return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(record.price);
+                return (
+                    <Space direction="vertical" style={{ minHeight: '80px', textAlign: 'center', width: '100%' }}>
+                        <span style={{ fontWeight: 'bold' }}>
+                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(record.price)}
+                        </span>
+                    </Space>
+                );
             }
         },
         {

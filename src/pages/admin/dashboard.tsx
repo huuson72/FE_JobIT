@@ -4,6 +4,7 @@ import { UserOutlined, BankOutlined, FileTextOutlined, RiseOutlined } from "@ant
 import CountUp from 'react-countup';
 import { callGetAllStatistics } from "@/config/api";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { useNavigate } from 'react-router-dom';
 
 interface StatisticsData {
     totalUsers: number;
@@ -15,6 +16,7 @@ interface StatisticsData {
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 const DashboardPage = () => {
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [statistics, setStatistics] = useState<StatisticsData>({
@@ -45,6 +47,10 @@ const DashboardPage = () => {
 
     const formatter = (value: any) => {
         return <CountUp end={Number(value)} separator="," />;
+    };
+
+    const handleCardClick = (path: string) => {
+        navigate(path);
     };
 
     const barChartData = [
@@ -84,7 +90,11 @@ const DashboardPage = () => {
             {/* Statistics Cards */}
             <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
                 <Col xs={24} sm={12} lg={6}>
-                    <Card>
+                    <Card
+                        hoverable
+                        onClick={() => handleCardClick('/admin/user')}
+                        style={{ cursor: 'pointer' }}
+                    >
                         <Statistic
                             title="Tổng số người dùng"
                             value={statistics.totalUsers}
@@ -94,7 +104,11 @@ const DashboardPage = () => {
                     </Card>
                 </Col>
                 <Col xs={24} sm={12} lg={6}>
-                    <Card>
+                    <Card
+                        hoverable
+                        onClick={() => handleCardClick('/admin/company')}
+                        style={{ cursor: 'pointer' }}
+                    >
                         <Statistic
                             title="Tổng số công ty"
                             value={statistics.totalCompanies}
@@ -104,7 +118,11 @@ const DashboardPage = () => {
                     </Card>
                 </Col>
                 <Col xs={24} sm={12} lg={6}>
-                    <Card>
+                    <Card
+                        hoverable
+                        onClick={() => handleCardClick('/admin/job')}
+                        style={{ cursor: 'pointer' }}
+                    >
                         <Statistic
                             title="Tổng số việc làm"
                             value={statistics.totalJobs}
@@ -114,7 +132,11 @@ const DashboardPage = () => {
                     </Card>
                 </Col>
                 <Col xs={24} sm={12} lg={6}>
-                    <Card>
+                    <Card
+                        hoverable
+                        onClick={() => handleCardClick('/admin/cv')}
+                        style={{ cursor: 'pointer' }}
+                    >
                         <Statistic
                             title="Tổng số CV"
                             value={statistics.totalCVs}

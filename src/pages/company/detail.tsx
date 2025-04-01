@@ -98,13 +98,22 @@ const ClientCompanyDetailPage = () => {
 
     const fetchReviews = async () => {
         if (id) {
-            const resReviews = await callFetchReviewsByCompany(id);
-            console.log("📌 Dữ liệu từ API trước khi setState:", resReviews);
+            try {
+                const resReviews = await callFetchReviewsByCompany(id);
+                console.log("📌 Raw API Response:", resReviews);
 
-            if (Array.isArray(resReviews)) {
-                setReviews(resReviews); // ✅ Đảm bảo dữ liệu đúng kiểu trước khi cập nhật state
-            } else {
-                console.error("❌ Lỗi: API không trả về mảng reviews.");
+                if (resReviews && resReviews.data) {
+                    // Nếu API trả về trong format { data: [...] }
+                    setReviews(resReviews.data);
+                } else if (Array.isArray(resReviews)) {
+                    // Nếu API trả về trực tiếp mảng
+                    setReviews(resReviews);
+                } else {
+                    console.error("❌ Invalid API response format:", resReviews);
+                    setReviews([]);
+                }
+            } catch (error) {
+                console.error("❌ Error fetching reviews:", error);
                 setReviews([]);
             }
         }
@@ -131,8 +140,6 @@ const ClientCompanyDetailPage = () => {
                     if (resJobs?.data?.jobs) {
                         setJobs(resJobs.data.jobs);
                     }
-
-
 
                     // Lấy danh sách review
                     await fetchReviews();
