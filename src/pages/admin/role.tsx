@@ -131,25 +131,17 @@ const RolePage = () => {
                         permission={ALL_PERMISSIONS.ROLES.UPDATE}
                         hideChildren
                     >
-                        <EditOutlined
-                            style={{
-                                padding: '8px',
-                                borderRadius: '50%',
-                                backgroundColor: '#fff',
-                                cursor: 'pointer',
-                                transition: 'background-color 0.3s',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                border: '1px solid #d9d9d9',
-                            }}
-
-                            type=""
+                        <Button
+                            type="primary"
+                            icon={<EditOutlined />}
+                            size="small"
                             onClick={() => {
                                 setSingleRole(entity);
                                 setOpenModal(true);
                             }}
-                        />
+                        >
+                            Sửa
+                        </Button>
                     </Access>
                     <Access
                         permission={ALL_PERMISSIONS.ROLES.DELETE}
@@ -163,14 +155,9 @@ const RolePage = () => {
                             okText="Xác nhận"
                             cancelText="Hủy"
                         >
-                            <span style={{ cursor: "pointer", margin: "0 10px" }}>
-                                <DeleteOutlined
-                                    style={{
-                                        fontSize: 20,
-                                        color: '#ff4d4f',
-                                    }}
-                                />
-                            </span>
+                            <Button danger icon={<DeleteOutlined />} size="small">
+                                Xóa
+                            </Button>
                         </Popconfirm>
                     </Access>
                 </Space>

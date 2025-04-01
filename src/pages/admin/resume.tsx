@@ -2,7 +2,7 @@ import DataTable from "@/components/client/data-table";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { IResume } from "@/types/backend";
 import { ActionType, ProColumns, ProFormSelect } from '@ant-design/pro-components';
-import { Space, message, notification } from "antd";
+import { Space, message, notification, Button } from "antd";
 import { useState, useRef } from 'react';
 import dayjs from 'dayjs';
 import { callDeleteResume } from "@/config/api";
@@ -123,17 +123,17 @@ const ResumePage = () => {
             width: 100,
             render: (_value, entity, _index, _action) => (
                 <Space>
-                    <EditOutlined
-                        style={{
-                            fontSize: 20,
-                            color: '#ffa500',
-                        }}
-                        type=""
+                    <Button
+                        type="primary"
+                        icon={<EditOutlined />}
+                        size="small"
                         onClick={() => {
                             setOpenViewDetail(true);
                             setDataInit(entity);
                         }}
-                    />
+                    >
+                        Xem
+                    </Button>
 
                     {/* <Popconfirm
                         placement="leftTop"
@@ -143,14 +143,9 @@ const ResumePage = () => {
                         okText="Xác nhận"
                         cancelText="Hủy"
                     >
-                        <span style={{ cursor: "pointer", margin: "0 10px" }}>
-                            <DeleteOutlined
-                                style={{
-                                    fontSize: 20,
-                                    color: '#ff4d4f',
-                                }}
-                            />
-                        </span>
+                        <Button danger icon={<DeleteOutlined />} size="small">
+                            Xóa
+                        </Button>
                     </Popconfirm> */}
                 </Space>
             ),

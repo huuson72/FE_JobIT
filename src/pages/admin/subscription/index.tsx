@@ -222,56 +222,78 @@ const SubscriptionManagement = () => {
             title: 'Tên gói',
             dataIndex: 'name',
             key: 'name',
-            render: (text, record) => (
-                <Space style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-                    <CrownOutlined style={{ color: record.isHighlighted ? '#f5a623' : '#1890ff' }} />
-                    {text}
-                </Space>
-            )
+            width: 200,
+            render: (_, record) => (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {record.name}
+                    {record.isHighlighted && (
+                        <Tag color="volcano" style={{ margin: 0 }}>Hot</Tag>
+                    )}
+                </div>
+            ),
         },
         {
-            title: 'Giá',
+            title: 'Giá (VND)',
+            dataIndex: 'price',
             key: 'price',
-            render: (_, record) => {
+            width: 200,
+            align: 'right',
+            render: (price, record) => {
+                const formattedPrice = new Intl.NumberFormat('vi-VN').format(price);
+
                 if (record.discountInfo && record.discountInfo.discountPercentage > 0) {
+                    const discountedPrice = record.discountInfo.finalPrice;
+                    const formattedDiscountedPrice = new Intl.NumberFormat('vi-VN').format(discountedPrice);
+
                     return (
-                        <Space direction="vertical" style={{ minHeight: '80px', textAlign: 'center', width: '100%' }}>
-                            <span style={{ textDecoration: 'line-through', color: '#999' }}>
-                                {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(record.price)}
-                            </span>
-                            <span style={{ color: '#f5222d', fontWeight: 'bold' }}>
-                                {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(record.discountInfo.finalPrice)}
-                            </span>
-                            <Tag color="red">-{record.discountInfo.discountPercentage}%</Tag>
-                        </Space>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                            <div>
+                                <span style={{ textDecoration: 'line-through', color: '#999', marginRight: '8px' }}>
+                                    {formattedPrice}đ
+                                </span>
+                                <span style={{ fontWeight: 'bold', color: '#f5222d' }}>
+                                    {formattedDiscountedPrice}đ
+                                </span>
+                            </div>
+                            <Tag color="green" style={{ marginTop: '4px' }}>
+                                Giảm {record.discountInfo.discountPercentage}%
+                            </Tag>
+                        </div>
                     );
                 }
 
-                return (
-                    <Space direction="vertical" style={{ minHeight: '80px', textAlign: 'center', width: '100%' }}>
-                        <span style={{ fontWeight: 'bold' }}>
-                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(record.price)}
-                        </span>
-                    </Space>
-                );
-            }
+                return <span style={{ fontWeight: 'bold' }}>{formattedPrice}đ</span>;
+            },
+            sorter: (a, b) => a.price - b.price
         },
         {
             title: 'Thời hạn (ngày)',
             dataIndex: 'durationDays',
             key: 'durationDays',
+            width: 120,
+            align: 'center',
+            render: (days) => (
+                <span >{days}</span>
+            ),
             sorter: (a, b) => a.durationDays - b.durationDays
         },
         {
             title: 'Số tin đăng',
             dataIndex: 'jobPostLimit',
             key: 'jobPostLimit',
+            width: 120,
+            align: 'center',
+            render: (jobLimit) => (
+                <span >{jobLimit}</span>
+            ),
             sorter: (a, b) => a.jobPostLimit - b.jobPostLimit
         },
         {
             title: 'Trạng thái',
             dataIndex: 'isActive',
             key: 'isActive',
+            width: 150,
+            align: 'center',
             render: (isActive) => (
                 <Tag color={isActive ? 'success' : 'error'}>
                     {isActive ? 'Đang hoạt động' : 'Đã tắt'}
@@ -282,16 +304,21 @@ const SubscriptionManagement = () => {
             title: 'Ưu tiên hiển thị',
             dataIndex: 'displayPriority',
             key: 'displayPriority',
+            width: 150,
+            align: 'center',
             render: (priority) => priority === 1 ? <Tag color="gold">Phổ biến nhất</Tag> : null
         },
         {
             title: 'Thao tác',
             key: 'action',
+            width: 200,
+            align: 'center',
             render: (_, record) => (
                 <Space>
                     <Button
                         type="primary"
                         icon={<EditOutlined />}
+                        size="small"
                         onClick={() => handleEdit(record)}
                     >
                         Sửa
@@ -302,7 +329,7 @@ const SubscriptionManagement = () => {
                         okText="Có"
                         cancelText="Không"
                     >
-                        <Button danger icon={<DeleteOutlined />}>
+                        <Button danger icon={<DeleteOutlined />} size="small">
                             Xóa
                         </Button>
                     </Popconfirm>
@@ -493,6 +520,7 @@ const SubscriptionManagement = () => {
                             style={{ width: '100%' }}
                             formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                             parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
+                            addonAfter="đ"
                         />
                     </Form.Item>
 
@@ -583,18 +611,18 @@ const SubscriptionManagement = () => {
                     <Form.Item
                         name="discountPercentage"
                         label="Phần trăm giảm giá"
-                        rules={[{ required: true, message: 'Vui lòng nhập phần trăm giảm giá' }]}
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng nhập phần trăm giảm giá'
+                            }
+                        ]}
                     >
                         <InputNumber
-                            style={{ width: '100%' }}
                             min={0}
                             max={100}
-                            formatter={(value) => `${value}%`}
-                            parser={(value) => {
-                                if (!value) return 0;
-                                const num = parseInt(value.replace('%', ''));
-                                return num >= 0 && num <= 100 ? num : 0;
-                            }}
+                            addonAfter="%"
+                            style={{ width: '100%' }}
                         />
                     </Form.Item>
 
@@ -606,7 +634,7 @@ const SubscriptionManagement = () => {
                         <Select>
                             {packages.map(pkg => (
                                 <Select.Option key={pkg.id} value={pkg.id}>
-                                    {pkg.name} - {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(pkg.price)}
+                                    {pkg.name} - {new Intl.NumberFormat('vi-VN').format(pkg.price)} đ
                                 </Select.Option>
                             ))}
                         </Select>

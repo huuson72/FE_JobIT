@@ -11,6 +11,13 @@ import {
     BugOutlined,
     ScheduleOutlined,
     CrownOutlined,
+    TeamOutlined,
+    BarsOutlined,
+    DatabaseOutlined,
+    ShopOutlined,
+    AuditOutlined,
+    DollarOutlined,
+    FileDoneOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, Dropdown, Space, message, Avatar, Button } from 'antd';
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -73,11 +80,11 @@ const LayoutAdmin = () => {
             )
 
             const full = [
-                {
+                ...(user?.role?.name !== 'HR' ? [{
                     label: <Link to='/admin'>Dashboard</Link>,
                     key: '/admin',
                     icon: <AppstoreOutlined />
-                },
+                }] : []),
                 ...(viewUser || ACL_ENABLE === 'false' ? [{
                     label: <Link to='/admin/user'>Người dùng</Link>,
                     key: '/admin/user',
@@ -98,29 +105,40 @@ const LayoutAdmin = () => {
                     key: '/admin/resume',
                     icon: <AliwangwangOutlined />
                 }] : []),
-                ...(viewPermission || ACL_ENABLE === 'false' ? [{
+                ...(viewPermission && user?.role?.name !== 'HR' ? [{
                     label: <Link to='/admin/permission'>Quyền hạn</Link>,
                     key: '/admin/permission',
                     icon: <ApiOutlined />
                 }] : []),
-                ...(viewRole || ACL_ENABLE === 'false' ? [{
+                ...(viewRole && user?.role?.name !== 'HR' ? [{
                     label: <Link to='/admin/role'>Vai trò</Link>,
                     key: '/admin/role',
                     icon: <ExceptionOutlined />
                 }] : []),
-                {
+                ...(user?.role?.name !== 'HR' ? [{
                     label: <Link to='/admin/subscription'>Quản lý gói VIP</Link>,
                     key: '/admin/subscription',
                     icon: <CrownOutlined />
-                },
+                }] : []),
+                ...(user?.role?.name !== 'HR' ? [{
+                    label: <Link to='/admin?tab=revenue'>Thống kê doanh thu</Link>,
+                    key: '/admin?tab=revenue',
+                    icon: <DollarOutlined />
+                }] : []),
             ];
 
             setMenuItems(full);
         }
-    }, [permissions])
+    }, [permissions, user])
     useEffect(() => {
-        setActiveMenu(location.pathname)
-    }, [location])
+        const currentPath = location.pathname + location.search;
+        setActiveMenu(currentPath);
+
+        // Redirect HR users to jobs page when accessing admin dashboard
+        if (user?.role?.name === 'HR' && location.pathname === '/admin') {
+            navigate('/admin/job');
+        }
+    }, [location, user, navigate])
 
     const handleLogout = async () => {
         const res = await callLogout();

@@ -116,14 +116,24 @@ export default function App() {
 
     {
       path: "/admin",
-      element: (<LayoutApp><LayoutAdmin /> </LayoutApp>),
+      element: (<LayoutApp><LayoutAdmin /></LayoutApp>),
       errorElement: <NotFound />,
       children: [
         {
-          index: true, element:
+          index: true,
+          element: (
             <ProtectedRoute>
               <DashboardPage />
             </ProtectedRoute>
+          )
+        },
+        {
+          path: "revenue",
+          element: (
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          )
         },
         {
           path: "company",

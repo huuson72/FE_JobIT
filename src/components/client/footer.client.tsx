@@ -133,27 +133,14 @@ const Footer = () => {
                         <p style={styles.description}>
                             Nền tảng kết nối việc làm thông minh, giúp doanh nghiệp tìm được nhân tài phù hợp và ứng viên tìm được công việc mơ ước.
                         </p>
-                        <div style={styles.socialIcons}>
-                            <a href="#" style={styles.icon} className="footer-icon" aria-label="LinkedIn">
-                                <i className="fa fa-linkedin"></i>
-                            </a>
-                            <a href="#" style={styles.icon} className="footer-icon" aria-label="Facebook">
-                                <i className="fa fa-facebook"></i>
-                            </a>
-                            <a href="#" style={styles.icon} className="footer-icon" aria-label="YouTube">
-                                <i className="fa fa-youtube"></i>
-                            </a>
-                            <a href="#" style={styles.icon} className="footer-icon" aria-label="Twitter">
-                                <i className="fa fa-twitter"></i>
-                            </a>
-                        </div>
+
                     </div>
                     <div style={styles.linksContainer}>
                         <div style={styles.linkGroup}>
                             <h3 style={styles.groupTitle} className="group-title">Về chúng tôi</h3>
                             <a href="#" style={styles.link} className="footer-link">Trang chủ</a>
                             <a href="#" style={styles.link} className="footer-link">Giới thiệu</a>
-                            <a href="#" style={styles.link} className="footer-link">Dịch vụ AI Match</a>
+
                             <a href="#" style={styles.link} className="footer-link">Liên hệ</a>
                         </div>
                         <div style={styles.linkGroup}>
@@ -161,7 +148,7 @@ const Footer = () => {
                             <a href="#" style={styles.link} className="footer-link">FAQ</a>
                             <a href="#" style={styles.link} className="footer-link">Chính sách bảo mật</a>
                             <a href="#" style={styles.link} className="footer-link">Điều khoản sử dụng</a>
-                            <a href="#" style={styles.link} className="footer-link">Quy định hoạt động</a>
+
                         </div>
                         <div style={styles.linkGroup}>
                             <h3 style={styles.groupTitle} className="group-title">Liên hệ</h3>
@@ -175,7 +162,7 @@ const Footer = () => {
                             </p>
                             <p style={styles.contactInfo}>
                                 <span style={styles.contactIcon}><i className="fa fa-map-marker"></i></span>
-                                TP.Hồ Chí Minh, Việt Nam
+                                TP.Huế, Việt Nam
                             </p>
                         </div>
                     </div>

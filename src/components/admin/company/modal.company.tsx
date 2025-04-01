@@ -1,15 +1,35 @@
 import { CheckSquareOutlined, LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { FooterToolbar, ModalForm, ProCard, ProFormText, ProFormTextArea } from "@ant-design/pro-components";
-import { Col, ConfigProvider, Form, Modal, Row, Upload, message, notification } from "antd";
+import { Col, ConfigProvider, Form, Modal, Row, Upload, App } from "antd";
 import 'styles/reset.scss';
 import { isMobile } from 'react-device-detect';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { callCreateCompany, callUpdateCompany, callUploadSingleFile } from "@/config/api";
 import { ICompany } from "@/types/backend";
 import { v4 as uuidv4 } from 'uuid';
 import enUS from 'antd/lib/locale/en_US';
+
+// Cấu hình Quill để khắc phục cảnh báo DOMNodeInserted
+const quillModules = {
+    toolbar: [
+        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+        [{ 'color': [] }, { 'background': [] }],
+        ['link'],
+        ['clean']
+    ],
+};
+
+const quillFormats = [
+    'header',
+    'bold', 'italic', 'underline', 'strike',
+    'list', 'bullet',
+    'color', 'background',
+    'link'
+];
 
 interface IProps {
     openModal: boolean;
@@ -29,8 +49,18 @@ interface ICompanyLogo {
     uid: string;
 }
 
-const ModalCompany = (props: IProps) => {
+const ModalCompanyWithApp = (props: IProps) => {
+    return (
+        <App>
+            <ModalCompanyContent {...props} />
+        </App>
+    );
+}
+
+// Đổi tên component cũ thành ModalCompanyContent và tách rời khỏi export
+const ModalCompanyContent = (props: IProps) => {
     const { openModal, setOpenModal, reloadTable, dataInit, setDataInit } = props;
+    const { message, notification } = App.useApp(); // Chỉ sử dụng hook này trong component được bọc bởi App
 
     //modal animation
     const [animation, setAnimation] = useState<string>('open');
@@ -119,17 +149,22 @@ const ModalCompany = (props: IProps) => {
             setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
             return;
         }
-        getBase64(file.originFileObj, (url: string) => {
+        getBase64(file.originFileObj).then(url => {
             setPreviewImage(url);
             setPreviewOpen(true);
             setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
+        }).catch(error => {
+            console.error("Error getting base64:", error);
         });
     };
 
-    const getBase64 = (img: any, callback: any) => {
-        const reader = new FileReader();
-        reader.addEventListener('load', () => callback(reader.result));
-        reader.readAsDataURL(img);
+    const getBase64 = (img: any): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.addEventListener('load', () => resolve(reader.result as string));
+            reader.addEventListener('error', reject);
+            reader.readAsDataURL(img);
+        });
     };
 
     const beforeUpload = (file: any) => {
@@ -158,19 +193,53 @@ const ModalCompany = (props: IProps) => {
     };
 
     const handleUploadFileLogo = async ({ file, onSuccess, onError }: any) => {
-        const res = await callUploadSingleFile(file, "company");
-        if (res && res.data) {
-            setDataLogo([{
-                name: res.data.fileName,
-                uid: uuidv4()
-            }])
-            if (onSuccess) onSuccess('ok')
-        } else {
-            if (onError) {
-                setDataLogo([])
-                const error = new Error(res.message);
-                onError({ event: error });
+        try {
+            const res = await callUploadSingleFile(file, "company");
+            console.log("Upload response:", res);
+
+            // Xử lý kết quả trả về từ API
+            let fileName = '';
+
+            // Nếu kết quả là một object với data
+            if (res && typeof res === 'object') {
+                // Trường hợp 1: res.data.data.fileName
+                if (res.data && res.data.data && res.data.data.fileName) {
+                    fileName = res.data.data.fileName;
+                }
+                // Trường hợp 2: res.data.fileName
+                else if (res.data && res.data.fileName) {
+                    fileName = res.data.fileName;
+                }
+                // Trường hợp 3: res.data là string
+                else if (res.data && typeof res.data === 'string') {
+                    fileName = res.data;
+                }
+                // Trường hợp 4: res.fileName
+                else if (res.fileName) {
+                    fileName = res.fileName;
+                }
             }
+            // Nếu kết quả là một string
+            else if (typeof res === 'string') {
+                fileName = res;
+            }
+
+            if (fileName) {
+                setDataLogo([{
+                    name: fileName,
+                    uid: uuidv4()
+                }]);
+                if (onSuccess) onSuccess('ok');
+            } else {
+                throw new Error('Không thể lấy được tên file từ response');
+            }
+        } catch (error: any) {
+            console.error("Upload error:", error);
+            setDataLogo([]);
+            if (onError) {
+                onError({ event: new Error(error.message || 'Lỗi khi upload file') });
+            }
+            message.error('Đã có lỗi xảy ra khi upload file: ' + (error.message || 'Lỗi không xác định'));
         }
     };
 
@@ -293,6 +362,8 @@ const ModalCompany = (props: IProps) => {
                                         theme="snow"
                                         value={value}
                                         onChange={setValue}
+                                        modules={quillModules}
+                                        formats={quillFormats}
                                     />
                                 </Col>
                             </ProCard>
@@ -313,4 +384,4 @@ const ModalCompany = (props: IProps) => {
     )
 }
 
-export default ModalCompany;
+export default ModalCompanyWithApp;

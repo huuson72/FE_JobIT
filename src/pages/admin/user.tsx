@@ -116,22 +116,22 @@ const UserPage = () => {
             width: 50,
             render: (_value, entity, _index, _action) => (
                 <Space>
-                    < Access
+                    <Access
                         permission={ALL_PERMISSIONS.USERS.UPDATE}
                         hideChildren
                     >
-                        <EditOutlined
-                            style={{
-                                fontSize: 20,
-                                color: '#ffa500',
-                            }}
-                            type=""
+                        <Button
+                            type="primary"
+                            icon={<EditOutlined />}
+                            size="small"
                             onClick={() => {
                                 setOpenModal(true);
                                 setDataInit(entity);
                             }}
-                        />
-                    </Access >
+                        >
+                            Sửa
+                        </Button>
+                    </Access>
 
                     <Access
                         permission={ALL_PERMISSIONS.USERS.DELETE}
@@ -145,17 +145,12 @@ const UserPage = () => {
                             okText="Xác nhận"
                             cancelText="Hủy"
                         >
-                            <span style={{ cursor: "pointer", margin: "0 10px" }}>
-                                <DeleteOutlined
-                                    style={{
-                                        fontSize: 20,
-                                        color: '#ff4d4f',
-                                    }}
-                                />
-                            </span>
+                            <Button danger icon={<DeleteOutlined />} size="small">
+                                Xóa
+                            </Button>
                         </Popconfirm>
                     </Access>
-                </Space >
+                </Space>
             ),
 
         },

@@ -99,6 +99,7 @@ const CVsPage = () => {
                     <Button
                         type="primary"
                         icon={<EyeOutlined />}
+                        size="small"
                         onClick={() => {
                             setSelectedCV(record);
                             setIsPreviewModalVisible(true);
@@ -109,6 +110,7 @@ const CVsPage = () => {
                     <Button
                         danger
                         icon={<DeleteOutlined />}
+                        size="small"
                         onClick={() => {
                             Modal.confirm({
                                 title: "Xác nhận xóa",

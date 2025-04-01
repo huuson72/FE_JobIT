@@ -852,3 +852,47 @@ export const callDeleteCV = (id: string) => {
     return axios.delete(`/api/v1/admin/cvs/${id}`);
 };
 
+// API thống kê doanh thu
+export interface RevenueStatisticsDTO {
+    totalRevenue: number;
+    todayRevenue: number;
+    lastWeekRevenue: number;
+    lastMonthRevenue: number;
+    revenueByPackage: {
+        packageName: string;
+        revenue: number;
+        count: number;
+    }[];
+    revenueByCompany: {
+        companyName: string;
+        revenue: number;
+        count: number;
+    }[];
+    revenueByMonth: {
+        month: number;
+        revenue: number;
+    }[];
+    transactionCountByStatus: {
+        status: string;
+        count: number;
+    }[];
+    dailyRevenueLastWeek: {
+        date: string;
+        revenue: number;
+    }[];
+    growthRateLastWeek: number | null;
+    growthRateLastMonth: number | null;
+    totalTransactions: number;
+    successfulTransactions: number;
+    failedTransactions: number;
+    successRate: number;
+}
+
+export const callGetRevenueStatistics = () => {
+    return axios.get<IBackendRes<RevenueStatisticsDTO>>('/api/v1/admin/statistics/revenue');
+};
+
+export const callGetRevenueStatisticsByDateRange = (startDate: string, endDate: string) => {
+    return axios.get<IBackendRes<RevenueStatisticsDTO>>(`/api/v1/admin/statistics/revenue/date-range?startDate=${startDate}&endDate=${endDate}`);
+};
+
