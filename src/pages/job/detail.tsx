@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import { IJob } from "@/types/backend";
-import { callAddToFavourite, callFetchJobById } from "@/config/api";
+import { callAddToFavourite, callFetchJobById, callRemoveFromFavourite } from "@/config/api";
 import styles from 'styles/client.module.scss';
 import parse from 'html-react-parser';
 import { Col, Divider, Row, Skeleton, Tag } from "antd";
@@ -28,24 +28,42 @@ const ClientJobDetailPage = (props: any) => {
 
     const userId = useSelector((state: any) => state.account.user.id);
 
-    const handleAddToFavourite = async () => {
+    const handleToggleFavourite = async () => {
         if (!jobDetail || !jobDetail.id) {
             message.error("Lỗi: Không tìm thấy thông tin công việc!");
             return;
         }
 
         if (!userId) {
-            message.error("Bạn cần đăng nhập để lưu công việc yêu thích!");
+            message.error("Bạn cần đăng nhập để thực hiện thao tác này!");
             return;
         }
 
         try {
-            await callAddToFavourite(Number(jobDetail.id), userId);
-            message.success("Đã thêm vào danh sách yêu thích!");
-            setIsFavourite(true);
-            localStorage.setItem(`favourite_${jobDetail.id}`, 'true');
+            if (isFavourite) {
+                // Nếu đã yêu thích thì xóa khỏi danh sách
+                const response = await callRemoveFromFavourite(Number(jobDetail.id), userId);
+                if (response.success) {
+                    message.success("Đã xóa khỏi danh sách yêu thích!");
+                    setIsFavourite(false);
+                    localStorage.removeItem(`favourite_${jobDetail.id}`);
+                } else {
+                    message.error(response.message || "Có lỗi xảy ra khi xóa khỏi yêu thích!");
+                }
+            } else {
+                // Nếu chưa yêu thích thì thêm vào danh sách
+                const response = await callAddToFavourite(Number(jobDetail.id), userId);
+                if (response.success) {
+                    message.success("Đã thêm vào danh sách yêu thích!");
+                    setIsFavourite(true);
+                    localStorage.setItem(`favourite_${jobDetail.id}`, 'true');
+                } else {
+                    message.error(response.message || "Có lỗi xảy ra khi thêm vào yêu thích!");
+                }
+            }
         } catch (error) {
-            message.error("Lỗi khi thêm vào danh sách yêu thích!");
+            console.error("Error toggling favourite:", error);
+            message.error("Có lỗi xảy ra khi thực hiện thao tác!");
         }
     };
 
@@ -81,11 +99,11 @@ const ClientJobDetailPage = (props: any) => {
                                 <div className={styles["extra-buttons"]} style={{ marginTop: '20px' }}>
                                     <Link to="/favourites" style={{ marginLeft: '10px', marginBottom: '20px', color: '#1890ff', textDecoration: 'none', fontWeight: 'bold' }}>❤️ Công việc yêu thích</Link>
                                     <button
-                                        onClick={handleAddToFavourite}
+                                        onClick={handleToggleFavourite}
                                         className={`${styles["btn-favourite"]} ${isFavourite ? styles["favourite-active"] : styles["favourite-inactive"]}`}
                                         style={{ marginLeft: "10px", padding: '10px 20px', backgroundColor: isFavourite ? "#ff4d4f" : "#ddd", color: "#fff", borderRadius: '8px', border: 'none', cursor: 'pointer' }}
                                     >
-                                        {isFavourite ? <HeartFilled /> : <HeartOutlined />} &nbsp; Lưu vào yêu thích
+                                        {isFavourite ? <HeartFilled /> : <HeartOutlined />} &nbsp; {isFavourite ? 'Bỏ yêu thích' : 'Lưu vào yêu thích'}
                                     </button>
                                 </div>
 

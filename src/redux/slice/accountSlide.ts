@@ -91,8 +91,10 @@ export const accountSlide = createSlice({
         setRefreshTokenAction: (state, action) => {
             state.isRefreshToken = action.payload?.status ?? false;
             state.errorRefreshToken = action.payload?.message ?? "";
+        },
+        setLoading: (state, action) => {
+            state.isLoading = action.payload;
         }
-
     },
     extraReducers: (builder) => {
         // Add reducers for additional action types here, and handle loading state as needed
@@ -128,7 +130,7 @@ export const accountSlide = createSlice({
 });
 
 export const {
-    setActiveMenu, setUserLoginInfo, setLogoutAction, setRefreshTokenAction
+    setActiveMenu, setUserLoginInfo, setLogoutAction, setRefreshTokenAction, setLoading
 } = accountSlide.actions;
 
 export default accountSlide.reducer;

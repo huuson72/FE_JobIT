@@ -46,36 +46,59 @@ instance.interceptors.request.use(function (config) {
 instance.interceptors.response.use(
     (res) => res.data,
     async (error) => {
-        if (error.config && error.response
-            && +error.response.status === 401
-            && error.config.url !== '/api/v1/auth/login'
-            && !error.config.headers[NO_RETRY_HEADER]
-        ) {
-            const access_token = await handleRefreshToken();
-            error.config.headers[NO_RETRY_HEADER] = 'true'
-            if (access_token) {
-                error.config.headers['Authorization'] = `Bearer ${access_token}`;
-                localStorage.setItem('access_token', access_token)
-                return instance.request(error.config);
+        // Xử lý lỗi 401 (Unauthorized)
+        if (error.config && error.response && +error.response.status === 401) {
+            // Nếu đang ở trang login, không cần xử lý gì
+            if (error.config.url === '/api/v1/auth/login') {
+                return Promise.reject(error);
+            }
+            
+            // Nếu không có token, chuyển về trang login
+            if (!localStorage.getItem('access_token')) {
+                window.location.href = '/login';
+                return Promise.reject(error);
+            }
+            
+            // Thử refresh token nếu chưa thử
+            if (!error.config.headers[NO_RETRY_HEADER]) {
+                try {
+                    const access_token = await handleRefreshToken();
+                    if (access_token) {
+                        error.config.headers[NO_RETRY_HEADER] = 'true';
+                        error.config.headers['Authorization'] = `Bearer ${access_token}`;
+                        localStorage.setItem('access_token', access_token);
+                        return instance.request(error.config);
+                    } else {
+                        // Nếu refresh thất bại, xóa token và chuyển về trang login
+                        localStorage.removeItem('access_token');
+                        window.location.href = '/login';
+                    }
+                } catch (refreshError) {
+                    // Nếu có lỗi khi refresh, xóa token và chuyển về trang login
+                    localStorage.removeItem('access_token');
+                    window.location.href = '/login';
+                }
             }
         }
 
+        // Xử lý lỗi 400 khi refresh token
         if (
             error.config && error.response
             && +error.response.status === 400
             && error.config.url === '/api/v1/auth/refresh'
-            && location.pathname.startsWith("/admin")
         ) {
             const message = error?.response?.data?.error ?? "Có lỗi xảy ra, vui lòng login.";
-            //dispatch redux action
             store.dispatch(setRefreshTokenAction({ status: true, message }));
+            localStorage.removeItem('access_token');
+            window.location.href = '/login';
         }
 
+        // Xử lý lỗi 403 (Forbidden)
         if (+error.response.status === 403) {
             notification.error({
-                message: error?.response?.data?.message ?? "",
-                description: error?.response?.data?.error ?? ""
-            })
+                message: error?.response?.data?.message ?? "Không có quyền truy cập",
+                description: error?.response?.data?.error ?? "Bạn không có quyền thực hiện hành động này"
+            });
         }
 
         return error?.response?.data ?? Promise.reject(error);

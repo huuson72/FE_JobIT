@@ -40,6 +40,7 @@ interface IFormValues {
     companyAddress: string;
     companyDescription: string;
     companyLogo: string;
+    businessLicense: string;
 }
 
 const EmployerRegisterPage = () => {
@@ -47,6 +48,7 @@ const EmployerRegisterPage = () => {
     const [isSubmit, setIsSubmit] = useState(false);
     const [form] = Form.useForm();
     const [imageUrl, setImageUrl] = useState<string>("");
+    const [businessLicenseUrl, setBusinessLicenseUrl] = useState<string>("");
 
     const onFinish = async (values: IFormValues) => {
         const { name, email, password, age, gender, address, phone, companyName, companyAddress, companyDescription } = values;
@@ -57,6 +59,17 @@ const EmployerRegisterPage = () => {
                 notification.warning({
                     message: "Thiếu thông tin",
                     description: "Vui lòng tải lên logo công ty trước khi đăng ký",
+                    duration: 5
+                });
+                setIsSubmit(false);
+                return;
+            }
+
+            // Kiểm tra xem đã tải giấy phép kinh doanh hay chưa
+            if (!businessLicenseUrl) {
+                notification.warning({
+                    message: "Thiếu thông tin",
+                    description: "Vui lòng tải lên giấy phép kinh doanh trước khi đăng ký",
                     duration: 5
                 });
                 setIsSubmit(false);
@@ -74,7 +87,8 @@ const EmployerRegisterPage = () => {
                 companyName,
                 companyAddress,
                 companyDescription,
-                companyLogo: imageUrl
+                companyLogo: imageUrl,
+                businessLicense: businessLicenseUrl
             };
 
             console.log("Sending registration data:", data);
@@ -125,55 +139,60 @@ const EmployerRegisterPage = () => {
     const handleUploadLogo: UploadProps['customRequest'] = async (options) => {
         const { file, onSuccess, onError } = options;
         try {
-            setIsSubmit(true); // Hiển thị trạng thái đang tải
+            setIsSubmit(true);
             console.log("Uploading file:", file);
 
             if (!file) {
                 throw new Error("Không tìm thấy file để tải lên");
             }
 
-            // Gọi API upload và xử lý response
             const res = await callUploadSingleFile(file, 'company');
             console.log("Upload response:", res);
 
-            // Xử lý các trường hợp khác nhau của cấu trúc response
-            let fileName = '';
-
-            // Trường hợp 1: res là IBackendRes và có data.fileName
-            if (res && typeof res === 'object' && 'data' in res && res.data && typeof res.data === 'object' && 'fileName' in res.data) {
-                fileName = res.data.fileName as string;
-            }
-            // Trường hợp 2: res là response trực tiếp từ axios có data.data.fileName
-            else if (res && typeof res === 'object' && 'data' in res && res.data && typeof res.data === 'object' && 'data' in res.data) {
-                const nestedData = res.data.data;
-                if (nestedData && typeof nestedData === 'object' && 'fileName' in nestedData) {
-                    fileName = nestedData.fileName as string;
-                }
-            }
-            // Trường hợp 3: res là string 
-            else if (res && typeof res === 'string') {
-                fileName = res;
-            }
-
-            // Nếu tìm được fileName, tiến hành cập nhật state và thông báo thành công
-            if (fileName) {
-                setImageUrl(fileName);
-                if (onSuccess) onSuccess({ fileName });
+            if (res?.data?.fileName) {
+                setImageUrl(res.data.fileName);
+                if (onSuccess) onSuccess(res.data);
                 message.success('Tải logo lên thành công!');
-                return;
+            } else {
+                throw new Error("Không nhận được tên file từ server");
             }
-
-            throw new Error('Không thể xác định đường dẫn file đã tải lên.');
         } catch (error: any) {
             console.error("Upload error:", error);
-            notification.error({
-                message: "Lỗi khi tải logo",
-                description: error.message || "Không thể tải logo lên, vui lòng thử lại",
-                duration: 5
-            });
             if (onError) {
-                onError(error instanceof Error ? error : new Error('Lỗi không xác định'));
+                onError(error);
             }
+            message.error(error.message || 'Tải logo lên thất bại!');
+        } finally {
+            setIsSubmit(false);
+        }
+    };
+
+    const handleUploadBusinessLicense: UploadProps['customRequest'] = async (options) => {
+        const { file, onSuccess, onError } = options;
+        try {
+            setIsSubmit(true);
+            console.log("Uploading business license:", file);
+
+            if (!file) {
+                throw new Error("Không tìm thấy file để tải lên");
+            }
+
+            const res = await callUploadSingleFile(file, 'company');
+            console.log("Upload response:", res);
+
+            if (res?.data?.fileName) {
+                setBusinessLicenseUrl(res.data.fileName);
+                if (onSuccess) onSuccess(res.data);
+                message.success('Tải giấy phép kinh doanh lên thành công!');
+            } else {
+                throw new Error("Không nhận được tên file từ server");
+            }
+        } catch (error: any) {
+            console.error("Upload error:", error);
+            if (onError) {
+                onError(error);
+            }
+            message.error(error.message || 'Tải giấy phép kinh doanh lên thất bại!');
         } finally {
             setIsSubmit(false);
         }
@@ -417,36 +436,56 @@ const EmployerRegisterPage = () => {
 
                             <Form.Item
                                 name="companyLogo"
-                                rules={[{ required: !!!imageUrl, message: 'Logo công ty không được để trống!' }]}
+                                label="Logo công ty"
+                                rules={[{ required: true, message: 'Vui lòng tải lên logo công ty!' }]}
                             >
                                 <Upload
-                                    name="logo"
-                                    listType="picture"
-                                    maxCount={1}
+                                    name="companyLogo"
+                                    listType="picture-card"
+                                    showUploadList={false}
                                     customRequest={handleUploadLogo}
-                                    showUploadList={true}
-                                    accept="image/*"
-                                    beforeUpload={(file) => {
-                                        const isImage = file.type.startsWith('image/');
-                                        if (!isImage) {
-                                            message.error('Bạn chỉ được tải lên file ảnh!');
-                                        }
-                                        const isLt2M = file.size / 1024 / 1024 < 2;
-                                        if (!isLt2M) {
-                                            message.error('Ảnh phải có kích thước nhỏ hơn 2MB!');
-                                        }
-                                        return isImage && isLt2M;
-                                    }}
+                                    maxCount={1}
                                 >
-                                    <Button icon={<UploadOutlined />} loading={isSubmit}>
-                                        {imageUrl ? 'Thay đổi logo' : 'Tải lên logo công ty'}
-                                    </Button>
+                                    {imageUrl ? (
+                                        <img
+                                            src={`${import.meta.env.VITE_BACKEND_URL}/storage/company/${imageUrl}`}
+                                            alt="Logo công ty"
+                                            style={{ width: '100%' }}
+                                        />
+                                    ) : (
+                                        <div>
+                                            <UploadOutlined />
+                                            <div style={{ marginTop: 8 }}>Tải lên</div>
+                                        </div>
+                                    )}
                                 </Upload>
-                                {imageUrl && (
-                                    <div style={{ marginTop: 8 }}>
-                                        Logo đã tải lên: <strong>{imageUrl}</strong>
-                                    </div>
-                                )}
+                            </Form.Item>
+
+                            <Form.Item
+                                name="businessLicense"
+                                label="Giấy phép kinh doanh"
+                                rules={[{ required: true, message: 'Vui lòng tải lên giấy phép kinh doanh!' }]}
+                            >
+                                <Upload
+                                    name="businessLicense"
+                                    listType="picture-card"
+                                    showUploadList={false}
+                                    customRequest={handleUploadBusinessLicense}
+                                    maxCount={1}
+                                >
+                                    {businessLicenseUrl ? (
+                                        <img
+                                            src={`${import.meta.env.VITE_BACKEND_URL}/storage/company/${businessLicenseUrl}`}
+                                            alt="Giấy phép kinh doanh"
+                                            style={{ width: '100%' }}
+                                        />
+                                    ) : (
+                                        <div>
+                                            <UploadOutlined />
+                                            <div style={{ marginTop: 8 }}>Tải lên</div>
+                                        </div>
+                                    )}
+                                </Upload>
                             </Form.Item>
 
                             <Form.Item>

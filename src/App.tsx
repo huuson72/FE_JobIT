@@ -23,6 +23,7 @@ import PermissionPage from './pages/admin/permission';
 import ResumePage from './pages/admin/resume';
 import RolePage from './pages/admin/role';
 import UserPage from './pages/admin/user';
+import EmployerVerificationPage from './pages/admin/employer-verification';
 import { fetchAccount } from './redux/slice/accountSlide';
 import LayoutApp from './components/share/layout.app';
 import ViewUpsertJob from './components/admin/job/upsert.job';
@@ -38,6 +39,7 @@ import SubscriptionPurchasePage from './pages/client/subscription/purchase';
 import MyPackagesPage from './pages/client/subscription/my-packages';
 import PaymentResultPage from './pages/client/subscription/payment-result';
 import SubscriptionManagement from './pages/admin/subscription';
+import ProfilePage from './pages/profile';
 
 
 const LayoutClient = () => {
@@ -78,13 +80,16 @@ export default function App() {
 
 
   useEffect(() => {
-    if (
-      window.location.pathname === '/login'
-      || window.location.pathname === '/register'
-    )
-      return;
-    dispatch(fetchAccount())
-  }, [])
+    const token = localStorage.getItem('access_token');
+    const isAuthPage = window.location.pathname === '/login' || window.location.pathname === '/register';
+
+    if (token && !isAuthPage) {
+      dispatch(fetchAccount());
+    } else if (!token && !isAuthPage) {
+      // Nếu không có token và không phải trang auth, set isLoading = false
+      dispatch({ type: 'account/setLoading', payload: false });
+    }
+  }, []);
 
   const router = createBrowserRouter([
     {
@@ -108,6 +113,16 @@ export default function App() {
           element: (
             <ProtectedRoute>
               <CreateCVForm />
+            </ProtectedRoute>
+          )
+        },
+        {
+          path: "profile",
+          element: (
+            <ProtectedRoute>
+              <LayoutApp>
+                <ProfilePage />
+              </LayoutApp>
             </ProtectedRoute>
           )
         }
@@ -183,6 +198,13 @@ export default function App() {
           element:
             <ProtectedRoute>
               <RolePage />
+            </ProtectedRoute>
+        },
+        {
+          path: "employer-verification",
+          element:
+            <ProtectedRoute>
+              <EmployerVerificationPage />
             </ProtectedRoute>
         },
         {

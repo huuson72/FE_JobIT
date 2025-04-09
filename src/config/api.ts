@@ -1,4 +1,4 @@
-import { IBackendRes, ICompany, IAccount, IUser, IModelPaginate, IGetAccount, IJob, IResume, IPermission, IRole, ISkill, ISubscribers, IReview, ICreateCVRequest, ICV, IEmployerSubscription, IPurchaseSubscriptionRequest, ISubscriptionPackage, ISubscriptionStatus } from '@/types/backend.d';
+import { IBackendRes, ICompany, IAccount, IUser, IModelPaginate, IGetAccount, IJob, IResume, IPermission, IRole, ISkill, ISubscribers, IReview, ICreateCVRequest, ICV, IEmployerSubscription, IPurchaseSubscriptionRequest, ISubscriptionPackage, ISubscriptionStatus, IChangePasswordRequest, IUpdateProfileRequest } from '@/types/backend';
 
 import axios from 'config/axios-customize';
 
@@ -22,6 +22,7 @@ export const callEmployerRegister = (data: {
     companyAddress: string;
     companyDescription: string;
     companyLogo: string;
+    businessLicense: string;
 }) => {
     console.log("API call data:", data);
     return axios.post<IBackendRes<IUser>>('/api/v1/auth/employer-register', data, {
@@ -80,49 +81,8 @@ export const callUploadSingleFile = (file: any, folderType: string) => {
             "Content-Type": "multipart/form-data",
             "Accept": "application/json"
         },
-        timeout: 30000, // Tăng timeout cho upload file
-    }).then(response => {
-        // Hiển thị response cụ thể để debug
-        console.log("File upload success response:", response);
-        
-        // Nếu API trả về dữ liệu trực tiếp từ server
-        if (response && response.data) {
-            // Xử lý trường hợp khi fileName nằm trong data
-            if (typeof response.data === 'object') {
-                // Trường hợp 1: response.data.data.fileName
-                if ('data' in response.data && response.data.data && 
-                    typeof response.data.data === 'object' && 'fileName' in response.data.data) {
-                    return response.data.data.fileName;
-                }
-                
-                // Trường hợp 2: response.data.fileName
-                if ('fileName' in response.data) {
-                    return response.data.fileName;
-                }
-                
-                // Trường hợp 3: response.data là response chuẩn từ IBackendRes
-                if ('data' in response.data && response.data.data) {
-                    return response.data;
-                }
-            }
-            
-            // Trường hợp 4: response.data là string (URL trực tiếp)
-            if (typeof response.data === 'string') {
-                return response.data;
-            }
-        }
-        
-        // Trường hợp mặc định: trả về nguyên response để xử lý ở component
-        return response;
-    }).catch(error => {
-        console.error("Upload Error:", error.response || error);
-        console.error("Error details:", error.message);
-        throw error;
     });
 }
-
-
-
 
 /**
  * 
@@ -168,8 +128,6 @@ export const callFetchAllSkill = (query: string) => {
     return axios.get<IBackendRes<IModelPaginate<ISkill>>>(`/api/v1/skills?${query}`);
 }
 
-
-
 /**
  * 
 Module User
@@ -205,10 +163,6 @@ export const callUpdateJob = (job: IJob, id: string) => {
 export const callDeleteJob = (id: string) => {
     return axios.delete<IBackendRes<IJob>>(`/api/v1/jobs/${id}`);
 }
-
-
-
-
 
 export const callFetchJob = (query: string) => {
     return axios.get<IBackendRes<IModelPaginate<IJob>>>(`/api/v1/jobs?${query}`);
@@ -372,21 +326,19 @@ export const callCreateReview = async (companyId: string, content: string, ratin
     });
 };
 
+export const callFetchReviewsByCompany = async (companyId: string) => {
+    const url = `/api/reviews/company/${companyId}`;
+    console.log("📌 Đang gọi API:", url); // ✅ Log API URL
 
-    export const callFetchReviewsByCompany = async (companyId: string) => {
-        const url = `/api/reviews/company/${companyId}`;
-        console.log("📌 Đang gọi API:", url); // ✅ Log API URL
-    
-        try {
-            const response = await axios.get(url);
-            console.log("🚀 API Response:", response.data);
-            return response.data;
-        } catch (error: any) {
-            console.error("❌ Lỗi API:", error.response?.status, error.response?.data);
-            return { data: [] };
-        }
-    };
-    
+    try {
+        const response = await axios.get(url);
+        console.log("🚀 API Response:", response.data);
+        return response.data;
+    } catch (error: any) {
+        console.error("❌ Lỗi API:", error.response?.status, error.response?.data);
+        return { data: [] };
+    }
+};
 
 // Module Favourite Job
 export const callAddToFavourite = async (jobId: number, userId: number) => {
@@ -448,6 +400,63 @@ export const callFetchUserFavourites = async (userId: number) => {
     } catch (error) {
         console.error("Lỗi khi lấy danh sách yêu thích", error);
         return null;
+    }
+};
+
+export const callRemoveFromFavourite = async (jobId: number, userId: number) => {
+    const token = localStorage.getItem("access_token");
+
+    if (!token) {
+        console.error("❌ Không tìm thấy access_token, người dùng có thể chưa đăng nhập.");
+        return { success: false, message: "Người dùng chưa đăng nhập" };
+    }
+
+    try {
+        const response = await axios.delete(
+            `/api/favorites/${jobId}?userId=${userId}`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}` 
+                }
+            }
+        );
+
+        console.log("✅ Xóa khỏi danh sách yêu thích thành công:", response.data);
+        return { success: true, data: response.data };
+
+    } catch (error: any) {
+        console.error("❌ Lỗi API:", error.response?.status, error.response?.data);
+        return { success: false, message: error.response?.data?.message || "Lỗi không xác định" };
+    }
+};
+
+export const callToggleFavouriteJob = async (jobId: number, userId: number) => {
+    const token = localStorage.getItem("access_token");
+
+    if (!token) {
+        console.error("❌ Không tìm thấy access_token, người dùng có thể chưa đăng nhập.");
+        return { success: false, message: "Người dùng chưa đăng nhập" };
+    }
+
+    try {
+        const response = await axios.post(
+            `/api/favorites/${jobId}/toggle?userId=${userId}`,
+            {},
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}` 
+                }
+            }
+        );
+
+        console.log("✅ Toggle yêu thích thành công:", response.data);
+        return { success: true, data: response.data };
+
+    } catch (error: any) {
+        console.error("❌ Lỗi API:", error.response?.status, error.response?.data);
+        return { success: false, message: error.response?.data?.message || "Lỗi không xác định" };
     }
 };
 
@@ -895,4 +904,85 @@ export const callGetRevenueStatistics = () => {
 export const callGetRevenueStatisticsByDateRange = (startDate: string, endDate: string) => {
     return axios.get<IBackendRes<RevenueStatisticsDTO>>(`/api/v1/admin/statistics/revenue/date-range?startDate=${startDate}&endDate=${endDate}`);
 };
+
+export const callUpdateUserProfile = async (data: IUpdateProfileRequest) => {
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+        return {
+            success: false,
+            message: "Bạn cần đăng nhập để thực hiện thao tác này"
+        };
+    }
+
+    try {
+        const response = await axios.put(
+            '/api/v1/users/profile',
+            data,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            }
+        );
+        return {
+            success: true,
+            data: response.data
+        };
+    } catch (error: any) {
+        console.error("❌ Lỗi khi cập nhật thông tin:", error.response?.data);
+        return {
+            success: false,
+            message: error.response?.data?.message || "Có lỗi xảy ra khi cập nhật thông tin"
+        };
+    }
+};
+
+export const callChangePassword = async (data: IChangePasswordRequest) => {
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+        return {
+            success: false,
+            message: "Bạn cần đăng nhập để thực hiện thao tác này"
+        };
+    }
+
+    try {
+        const response = await axios.put(
+            '/api/v1/users/change-password',
+            data,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            }
+        );
+        return {
+            success: true,
+            data: response.data
+        };
+    } catch (error: any) {
+        console.error("❌ Lỗi khi đổi mật khẩu:", error.response?.data);
+        return {
+            success: false,
+            message: error.response?.data?.message || "Có lỗi xảy ra khi đổi mật khẩu"
+        };
+    }
+};
+
+/**
+ * Admin - Employer Verification
+ */
+export const callGetPendingEmployers = (query: string) => {
+    return axios.get<IBackendRes<IModelPaginate<IUser>>>(`/api/v1/admin/employers/pending?${query}`)
+}
+
+export const callVerifyEmployer = (id: string) => {
+    return axios.put<IBackendRes<IUser>>(`/api/v1/admin/employers/${id}/verify`)
+}
+
+export const callRejectEmployer = (id: string) => {
+    return axios.put<IBackendRes<IUser>>(`/api/v1/admin/employers/${id}/reject`)
+}
 

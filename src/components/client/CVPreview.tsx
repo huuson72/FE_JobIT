@@ -52,40 +52,72 @@ interface CVPreviewProps {
     onDataChange?: (data: CVData) => void;
 }
 
+interface BaseTemplateProps {
+    data: CVData;
+    isEditable: boolean;
+    onEdit: (field: string, value: any) => void;
+    draggingField: string | null;
+    dropPosition: string;
+    onDeleteField: (fieldName: string) => void;
+    dropTarget: string | null;
+}
+
+interface ModernTemplateProps extends BaseTemplateProps {
+    onDropField: (fieldName: string, position?: string) => void;
+}
+
+interface CreativeTemplateProps extends BaseTemplateProps {
+    onDropField: (fieldName: string, position?: string) => void;
+}
+
+interface MinimalTemplateProps extends BaseTemplateProps {
+    onDropField: (fieldName: string, position?: string) => void;
+}
+
+interface TechnicalTemplateProps extends BaseTemplateProps {
+    onDropField: (fieldName: string, position?: string) => void;
+}
+
 interface DraggableFieldProps {
     name: string;
-    onDragStart: (name: string, position: string) => void;
+    onDragStart: (name: string) => void;
 }
 
 const DraggableField: React.FC<DraggableFieldProps> = ({ name, onDragStart }) => {
     return (
-        <div
-            className="draggable-field"
-        >
+        <div className="draggable-field">
             <div
                 draggable
-                onDragStart={() => onDragStart(name, 'left')}
+                onDragStart={() => onDragStart(name)}
                 className="draggable-field-content"
             >
                 <DragOutlined /> {name}
             </div>
             <div className="draggable-field-actions">
-                <div
-                    draggable
-                    onDragStart={() => onDragStart(name, 'middle')}
-                    className="draggable-field-middle-drop"
-                    title="Kéo để thêm vào giữa"
-                >
-                    <DownOutlined />
-                </div>
-                <div
-                    draggable
-                    onDragStart={() => onDragStart(name, 'right')}
-                    className="draggable-field-right-drop"
-                    title="Kéo để thêm vào bên phải"
-                >
-                    <ArrowRightOutlined />
-                </div>
+                <Tooltip title="Kéo để thêm vào giữa">
+                    <div
+                        draggable
+                        onDragStart={(e) => {
+                            e.stopPropagation();
+                            onDragStart(`middle_${name}`);
+                        }}
+                        className="draggable-field-middle"
+                    >
+                        <DownOutlined />
+                    </div>
+                </Tooltip>
+                <Tooltip title="Kéo để thêm vào bên phải">
+                    <div
+                        draggable
+                        onDragStart={(e) => {
+                            e.stopPropagation();
+                            onDragStart(`right_${name}`);
+                        }}
+                        className="draggable-field-right"
+                    >
+                        <ArrowRightOutlined />
+                    </div>
+                </Tooltip>
             </div>
         </div>
     );
@@ -108,6 +140,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, onDataChange }) =
     const [form] = Form.useForm();
     const [isSaved, setIsSaved] = useState<boolean>(false);
     const cvRef = useRef<HTMLDivElement>(null);
+    const [dropTarget, setDropTarget] = useState<string | null>(null);
 
     // Sync props data to local state when props change
     useEffect(() => {
@@ -221,25 +254,69 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, onDataChange }) =
         setFieldToDelete(null);
     };
 
-    const handleDropField = (fieldName: string, position: string = 'left') => {
-        if (!fieldName) return;
-
-        // Add prefix to fields based on the position they're dropped
-        let finalFieldName = fieldName;
-        if (position === 'right') {
-            finalFieldName = `right_${fieldName}`;
-        } else if (position === 'middle') {
-            finalFieldName = `middle_${fieldName}`;
-        }
-
-        // Open modal with the field name pre-filled
-        form.setFieldsValue({ fieldName: finalFieldName });
-        setIsAddFieldModalVisible(true);
+    const handleDragStart = (fieldName: string) => {
+        setDraggingField(fieldName);
     };
 
-    const handleDragStart = (fieldName: string, position: string) => {
-        setDraggingField(fieldName);
-        setDropPosition(position);
+    const handleDragOver = (e: React.DragEvent<HTMLDivElement>, targetArea: string) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setDropTarget(targetArea);
+    };
+
+    const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setDropTarget(null);
+    };
+
+    const handleDropField = (fieldNameOrEvent: string | React.DragEvent<HTMLDivElement>, position?: string) => {
+        if (fieldNameOrEvent instanceof Event) {
+            const e = fieldNameOrEvent as React.DragEvent<HTMLDivElement>;
+            e.preventDefault();
+            e.stopPropagation();
+            setDropTarget(null);
+
+            if (!draggingField) return;
+            position = position || 'left';
+        }
+
+        const fieldName = typeof fieldNameOrEvent === 'string' ? fieldNameOrEvent : draggingField;
+        if (!fieldName) return;
+
+        const fieldPrefix = position === 'right' ? 'right_' :
+            position === 'middle' ? 'middle_' : '';
+        const finalFieldName = `${fieldPrefix}${fieldName}`;
+
+        Modal.confirm({
+            title: 'Thêm trường mới',
+            content: (
+                <Form
+                    form={form}
+                    layout="vertical"
+                    initialValues={{ fieldName: finalFieldName }}
+                >
+                    <Form.Item
+                        name="fieldValue"
+                        label="Giá trị"
+                        rules={[{ required: true, message: 'Vui lòng nhập giá trị!' }]}
+                    >
+                        <Input placeholder="Nhập giá trị cho trường mới" />
+                    </Form.Item>
+                </Form>
+            ),
+            onOk: () => {
+                const values = form.getFieldsValue();
+                const updatedData = { ...cvData };
+                Object.assign(updatedData, { [finalFieldName]: values.fieldValue });
+                setCvData(updatedData);
+                form.resetFields();
+            },
+            okText: 'Thêm',
+            cancelText: 'Hủy',
+            maskClosable: true,
+            centered: true,
+        });
     };
 
     const templates = [
@@ -250,14 +327,19 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, onDataChange }) =
     ];
 
     const renderTemplate = () => {
-        const templateProps = {
+        const baseProps: BaseTemplateProps = {
             data: cvData,
             isEditable,
             onEdit: handleEdit,
             draggingField,
-            onDropField: handleDropField,
             dropPosition,
-            onDeleteField: (fieldName: string) => setFieldToDelete(fieldName)
+            onDeleteField: (fieldName: string) => setFieldToDelete(fieldName),
+            dropTarget,
+        };
+
+        const templateProps = {
+            ...baseProps,
+            onDropField: handleDropField,
         };
 
         switch (selectedTemplate) {

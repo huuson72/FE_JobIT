@@ -27,6 +27,7 @@ import ManageAccount from './modal/manage.account';
 import logoHSJob from '@/assets/Hsjob.png';
 import { LOCATION_LIST } from '@/config/utils';
 import { ProForm } from '@ant-design/pro-components';
+import { ISkill } from '@/types/backend';
 
 const LEVELS = [
     { label: 'INTERN', value: 'INTERN' },
@@ -35,11 +36,6 @@ const LEVELS = [
     { label: 'MIDDLE', value: 'MIDDLE' },
     { label: 'SENIOR', value: 'SENIOR' }
 ];
-
-interface ISkill {
-    id: number;
-    name: string;
-}
 
 const Header = (props: any) => {
     const { hideSearch = false } = props;
@@ -178,6 +174,8 @@ const Header = (props: any) => {
             key: 'manage-account',
             icon: <UserOutlined />
         },
+
+
         ...(user.role?.name === "HR" || user.role?.name === "SUPER_ADMIN" ? [
             {
                 label: <Link to={"/admin"}>Trang Quản Trị</Link>,

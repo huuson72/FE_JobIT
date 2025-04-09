@@ -18,6 +18,7 @@ import {
     AuditOutlined,
     DollarOutlined,
     FileDoneOutlined,
+    CheckCircleOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, Dropdown, Space, message, Avatar, Button } from 'antd';
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -124,6 +125,11 @@ const LayoutAdmin = () => {
                     label: <Link to='/admin?tab=revenue'>Thống kê doanh thu</Link>,
                     key: '/admin?tab=revenue',
                     icon: <DollarOutlined />
+                }] : []),
+                ...(user?.role?.name !== 'HR' ? [{
+                    label: <Link to='/admin/employer-verification'>Duyệt nhà tuyển dụng</Link>,
+                    key: '/admin/employer-verification',
+                    icon: <CheckCircleOutlined />
                 }] : []),
             ];
 

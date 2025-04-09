@@ -277,206 +277,212 @@ const CreateCVForm: React.FC = () => {
 
             <Row gutter={[24, 24]}>
                 <Col xs={24} lg={16}>
-                    <div className="form-section">
-                        <Title level={3}>Thông Tin Cá Nhân</Title>
-                        <Form
-                            form={form}
-                            layout="vertical"
-                            onValuesChange={handleInputChange}
-                            onFinish={() => false}
-                            autoComplete="off"
-                            initialValues={{
-                                fullName: '',
-                                email: '',
-                                phone: '',
-                                address: '',
-                                objective: '',
-                                education: [],
-                                experience: [],
-                                skills: []
-                            }}
-                        >
-                            <Form.Item
-                                name="fullName"
-                                label="Họ và Tên"
-                                rules={[{ required: true, message: 'Vui lòng nhập họ tên!' }]}
-                            >
-                                <Input placeholder="Nhập họ và tên của bạn" />
-                            </Form.Item>
-
-                            <Form.Item
-                                name="email"
-                                label="Email"
-                                rules={[
-                                    { required: true, message: 'Vui lòng nhập email!' },
-                                    { type: 'email', message: 'Email không hợp lệ!' }
-                                ]}
-                            >
-                                <Input placeholder="example@email.com" />
-                            </Form.Item>
-
-                            <Form.Item
-                                name="phone"
-                                label="Số Điện Thoại"
-                                rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' }]}
-                            >
-                                <Input placeholder="0123456789" />
-                            </Form.Item>
-
-                            <Form.Item
-                                name="address"
-                                label="Địa Chỉ"
-                                rules={[{ required: true, message: 'Vui lòng nhập địa chỉ!' }]}
-                            >
-                                <Input placeholder="Nhập địa chỉ của bạn" />
-                            </Form.Item>
-
-                            <Form.Item
-                                name="objective"
-                                label="Mục Tiêu Nghề Nghiệp"
-                            >
-                                <TextArea rows={4} placeholder="Mô tả mục tiêu nghề nghiệp của bạn" />
-                            </Form.Item>
-
-                            <Form.List name="education">
-                                {(fields, { add, remove }) => (
-                                    <>
-                                        <Title level={4}>Học Vấn</Title>
-                                        {fields.map(({ key, name, ...restField }) => (
-                                            <div key={key} className="form-item-group">
-                                                <Form.Item
-                                                    {...restField}
-                                                    name={[name, 'school']}
-                                                    label="Trường Học"
-                                                    rules={[{ required: true, message: 'Vui lòng nhập tên trường!' }]}
-                                                >
-                                                    <Input placeholder="Tên trường học" />
-                                                </Form.Item>
-                                                <Form.Item
-                                                    {...restField}
-                                                    name={[name, 'degree']}
-                                                    label="Bằng Cấp"
-                                                    rules={[{ required: true, message: 'Vui lòng nhập bằng cấp!' }]}
-                                                >
-                                                    <Input placeholder="Ví dụ: Cử nhân, Thạc sĩ" />
-                                                </Form.Item>
-                                                <Form.Item
-                                                    {...restField}
-                                                    name={[name, 'date']}
-                                                    label="Thời Gian"
-                                                    rules={[{ required: true, message: 'Vui lòng nhập thời gian!' }]}
-                                                >
-                                                    <Input placeholder="Ví dụ: 09/2019 - 06/2023" />
-                                                </Form.Item>
-                                                <Form.Item
-                                                    {...restField}
-                                                    name={[name, 'description']}
-                                                    label="Mô Tả"
-                                                >
-                                                    <TextArea rows={2} placeholder="Thành tích học tập" />
-                                                </Form.Item>
-                                                <Button type="link" danger onClick={() => remove(name)}>
-                                                    Xóa
-                                                </Button>
-                                            </div>
-                                        ))}
-                                        <Form.Item>
-                                            <Button type="dashed" onClick={() => add()} block>
-                                                + Thêm Học Vấn
-                                            </Button>
-                                        </Form.Item>
-                                    </>
-                                )}
-                            </Form.List>
-
-                            <Form.List name="experience">
-                                {(fields, { add, remove }) => (
-                                    <>
-                                        <Title level={4}>Kinh Nghiệm Làm Việc</Title>
-                                        {fields.map(({ key, name, ...restField }) => (
-                                            <div key={key} className="form-item-group">
-                                                <Form.Item
-                                                    {...restField}
-                                                    name={[name, 'company']}
-                                                    label="Công Ty"
-                                                    rules={[{ required: true, message: 'Vui lòng nhập tên công ty!' }]}
-                                                >
-                                                    <Input placeholder="Tên công ty" />
-                                                </Form.Item>
-                                                <Form.Item
-                                                    {...restField}
-                                                    name={[name, 'position']}
-                                                    label="Vị Trí"
-                                                    rules={[{ required: true, message: 'Vui lòng nhập vị trí!' }]}
-                                                >
-                                                    <Input placeholder="Vị trí công việc" />
-                                                </Form.Item>
-                                                <Form.Item
-                                                    {...restField}
-                                                    name={[name, 'date']}
-                                                    label="Thời Gian"
-                                                    rules={[{ required: true, message: 'Vui lòng nhập thời gian!' }]}
-                                                >
-                                                    <Input placeholder="Ví dụ: 03/2020 - 05/2022" />
-                                                </Form.Item>
-                                                <Form.Item
-                                                    {...restField}
-                                                    name={[name, 'description']}
-                                                    label="Mô Tả Công Việc"
-                                                    rules={[{ required: true, message: 'Vui lòng nhập mô tả công việc!' }]}
-                                                >
-                                                    <TextArea rows={4} placeholder="Mô tả chi tiết công việc và thành tích" />
-                                                </Form.Item>
-                                                <Button type="link" danger onClick={() => remove(name)}>
-                                                    Xóa
-                                                </Button>
-                                            </div>
-                                        ))}
-                                        <Form.Item>
-                                            <Button type="dashed" onClick={() => add()} block>
-                                                + Thêm Kinh Nghiệm
-                                            </Button>
-                                        </Form.Item>
-                                    </>
-                                )}
-                            </Form.List>
-
-                            <Form.Item
-                                name="skills"
-                                label="Kỹ Năng"
-                                rules={[{ required: true, message: 'Vui lòng nhập ít nhất một kỹ năng!' }]}
-                            >
-                                <Select
-                                    mode="tags"
-                                    placeholder="Nhập kỹ năng và nhấn Enter"
-                                    style={{ width: '100%' }}
-                                />
-                            </Form.Item>
-
-                            <Space className="form-actions">
-                                <Button
-                                    type="primary"
-                                    icon={<EyeOutlined />}
-                                    onClick={handlePreview}
-                                    htmlType="button"
+                    <Form
+                        form={form}
+                        layout="vertical"
+                        onValuesChange={handleInputChange}
+                        onFinish={() => false}
+                        autoComplete="off"
+                        initialValues={{
+                            fullName: '',
+                            email: '',
+                            phone: '',
+                            address: '',
+                            objective: '',
+                            education: [],
+                            experience: [],
+                            skills: []
+                        }}
+                    >
+                        <Row gutter={[24, 24]}>
+                            {/* Left Column */}
+                            <Col xs={24} md={12}>
+                                <Title level={3}>Thông Tin Cá Nhân</Title>
+                                <Form.Item
+                                    name="fullName"
+                                    label="Họ và Tên"
+                                    rules={[{ required: true, message: 'Vui lòng nhập họ tên!' }]}
                                 >
-                                    Xem Trước
-                                </Button>
-                                <Button
-                                    type="primary"
-                                    icon={<DownloadOutlined />}
-                                    onClick={(e: React.MouseEvent) => {
-                                        e.preventDefault();
-                                        handleDownload();
-                                    }}
-                                    loading={loading}
-                                    htmlType="button"
+                                    <Input placeholder="Nhập họ và tên của bạn" />
+                                </Form.Item>
+
+                                <Form.Item
+                                    name="email"
+                                    label="Email"
+                                    rules={[
+                                        { required: true, message: 'Vui lòng nhập email!' },
+                                        { type: 'email', message: 'Email không hợp lệ!' }
+                                    ]}
                                 >
-                                    Tải Xuống PDF
-                                </Button>
-                            </Space>
-                        </Form>
-                    </div>
+                                    <Input placeholder="example@email.com" />
+                                </Form.Item>
+
+                                <Form.Item
+                                    name="phone"
+                                    label="Số Điện Thoại"
+                                    rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' }]}
+                                >
+                                    <Input placeholder="0123456789" />
+                                </Form.Item>
+
+                                <Form.Item
+                                    name="address"
+                                    label="Địa Chỉ"
+                                    rules={[{ required: true, message: 'Vui lòng nhập địa chỉ!' }]}
+                                >
+                                    <Input placeholder="Nhập địa chỉ của bạn" />
+                                </Form.Item>
+
+                                <Form.Item
+                                    name="objective"
+                                    label="Mục Tiêu Nghề Nghiệp"
+                                >
+                                    <TextArea rows={4} placeholder="Mô tả mục tiêu nghề nghiệp của bạn" />
+                                </Form.Item>
+
+                                <Form.List name="education">
+                                    {(fields, { add, remove }) => (
+                                        <>
+                                            <Title level={4}>Học Vấn</Title>
+                                            {fields.map(({ key, name, ...restField }) => (
+                                                <div key={key} className="form-item-group">
+                                                    <Form.Item
+                                                        {...restField}
+                                                        name={[name, 'school']}
+                                                        label="Trường Học"
+                                                        rules={[{ required: true, message: 'Vui lòng nhập tên trường!' }]}
+                                                    >
+                                                        <Input placeholder="Tên trường học" />
+                                                    </Form.Item>
+                                                    <Form.Item
+                                                        {...restField}
+                                                        name={[name, 'degree']}
+                                                        label="Bằng Cấp"
+                                                        rules={[{ required: true, message: 'Vui lòng nhập bằng cấp!' }]}
+                                                    >
+                                                        <Input placeholder="Ví dụ: Cử nhân, Thạc sĩ" />
+                                                    </Form.Item>
+                                                    <Form.Item
+                                                        {...restField}
+                                                        name={[name, 'date']}
+                                                        label="Thời Gian"
+                                                        rules={[{ required: true, message: 'Vui lòng nhập thời gian!' }]}
+                                                    >
+                                                        <Input placeholder="Ví dụ: 09/2019 - 06/2023" />
+                                                    </Form.Item>
+                                                    <Form.Item
+                                                        {...restField}
+                                                        name={[name, 'description']}
+                                                        label="Mô Tả"
+                                                    >
+                                                        <TextArea rows={2} placeholder="Thành tích học tập" />
+                                                    </Form.Item>
+                                                    <Button type="link" danger onClick={() => remove(name)}>
+                                                        Xóa
+                                                    </Button>
+                                                </div>
+                                            ))}
+                                            <Form.Item>
+                                                <Button type="dashed" onClick={() => add()} block>
+                                                    + Thêm Học Vấn
+                                                </Button>
+                                            </Form.Item>
+                                        </>
+                                    )}
+                                </Form.List>
+                            </Col>
+
+                            {/* Right Column */}
+                            <Col xs={24} md={12}>
+                                <Form.List name="experience">
+                                    {(fields, { add, remove }) => (
+                                        <>
+                                            <Title level={3}>Kinh Nghiệm Làm Việc</Title>
+                                            {fields.map(({ key, name, ...restField }) => (
+                                                <div key={key} className="form-item-group">
+                                                    <Form.Item
+                                                        {...restField}
+                                                        name={[name, 'company']}
+                                                        label="Công Ty"
+                                                        rules={[{ required: true, message: 'Vui lòng nhập tên công ty!' }]}
+                                                    >
+                                                        <Input placeholder="Tên công ty" />
+                                                    </Form.Item>
+                                                    <Form.Item
+                                                        {...restField}
+                                                        name={[name, 'position']}
+                                                        label="Vị Trí"
+                                                        rules={[{ required: true, message: 'Vui lòng nhập vị trí!' }]}
+                                                    >
+                                                        <Input placeholder="Vị trí công việc" />
+                                                    </Form.Item>
+                                                    <Form.Item
+                                                        {...restField}
+                                                        name={[name, 'date']}
+                                                        label="Thời Gian"
+                                                        rules={[{ required: true, message: 'Vui lòng nhập thời gian!' }]}
+                                                    >
+                                                        <Input placeholder="Ví dụ: 03/2020 - 05/2022" />
+                                                    </Form.Item>
+                                                    <Form.Item
+                                                        {...restField}
+                                                        name={[name, 'description']}
+                                                        label="Mô Tả Công Việc"
+                                                        rules={[{ required: true, message: 'Vui lòng nhập mô tả công việc!' }]}
+                                                    >
+                                                        <TextArea rows={4} placeholder="Mô tả chi tiết công việc và thành tích" />
+                                                    </Form.Item>
+                                                    <Button type="link" danger onClick={() => remove(name)}>
+                                                        Xóa
+                                                    </Button>
+                                                </div>
+                                            ))}
+                                            <Form.Item>
+                                                <Button type="dashed" onClick={() => add()} block>
+                                                    + Thêm Kinh Nghiệm
+                                                </Button>
+                                            </Form.Item>
+                                        </>
+                                    )}
+                                </Form.List>
+
+                                <Title level={4}>Kỹ Năng</Title>
+                                <Form.Item
+                                    name="skills"
+                                    rules={[{ required: true, message: 'Vui lòng nhập ít nhất một kỹ năng!' }]}
+                                >
+                                    <Select
+                                        mode="tags"
+                                        placeholder="Nhập kỹ năng và nhấn Enter"
+                                        style={{ width: '100%' }}
+                                    />
+                                </Form.Item>
+
+                                <Space className="form-actions">
+                                    <Button
+                                        type="primary"
+                                        icon={<EyeOutlined />}
+                                        onClick={handlePreview}
+                                        htmlType="button"
+                                    >
+                                        Xem Trước
+                                    </Button>
+                                    <Button
+                                        type="primary"
+                                        icon={<DownloadOutlined />}
+                                        onClick={(e: React.MouseEvent) => {
+                                            e.preventDefault();
+                                            handleDownload();
+                                        }}
+                                        loading={loading}
+                                        htmlType="button"
+                                    >
+                                        Tải Xuống PDF
+                                    </Button>
+                                </Space>
+                            </Col>
+                        </Row>
+                    </Form>
                 </Col>
 
                 <Col xs={24} lg={8}>

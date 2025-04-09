@@ -80,6 +80,8 @@ export interface IUser {
     age: number;
     gender: string;
     address: string;
+    phone?: string;
+    businessLicense?: string;
     createdBy?: string;
     isDeleted?: boolean;
     deletedAt?: boolean | null;
@@ -294,4 +296,17 @@ export interface IPromotion {
     updatedAt?: string;
     createdBy?: string;
     updatedBy?: string;
+}
+
+export interface IChangePasswordRequest {
+    currentPassword: string;
+    newPassword: string;
+    confirmNewPassword: string;
+}
+
+export interface IUpdateProfileRequest {
+    fullName: string;
+    email: string;
+    phone: string;
+    address: string;
 } 

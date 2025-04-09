@@ -74,6 +74,9 @@ public class EmployerRegisterController {
             user.setGender(registerRequest.getGender());
             user.setPhone(registerRequest.getPhone());
             
+            // Lưu đường dẫn giấy phép kinh doanh
+            user.setBusinessLicense(registerRequest.getBusinessLicense());
+            
             // Gán công ty cho người dùng
             user.setCompany(savedCompany);
             
