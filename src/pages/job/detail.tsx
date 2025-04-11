@@ -15,6 +15,7 @@ dayjs.extend(relativeTime)
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import { message } from "antd";
 import { useSelector } from "react-redux";
+import { useFavorites } from "@/contexts/FavoriteContext";
 
 const ClientJobDetailPage = (props: any) => {
     const [jobDetail, setJobDetail] = useState<IJob | null>(null);
@@ -26,7 +27,8 @@ const ClientJobDetailPage = (props: any) => {
     const id = params?.get("id"); // job id
     const [isFavourite, setIsFavourite] = useState<boolean>(false);
 
-    const userId = useSelector((state: any) => state.account.user.id);
+    const userId = useSelector((state: any) => state.account.user?.id);
+    const { isJobFavorited, toggleFavorite } = useFavorites();
 
     const handleToggleFavourite = async () => {
         if (!jobDetail || !jobDetail.id) {
@@ -46,7 +48,7 @@ const ClientJobDetailPage = (props: any) => {
                 if (response.success) {
                     message.success("Đã xóa khỏi danh sách yêu thích!");
                     setIsFavourite(false);
-                    localStorage.removeItem(`favourite_${jobDetail.id}`);
+                    toggleFavorite(Number(jobDetail.id), false);
                 } else {
                     message.error(response.message || "Có lỗi xảy ra khi xóa khỏi yêu thích!");
                 }
@@ -56,7 +58,7 @@ const ClientJobDetailPage = (props: any) => {
                 if (response.success) {
                     message.success("Đã thêm vào danh sách yêu thích!");
                     setIsFavourite(true);
-                    localStorage.setItem(`favourite_${jobDetail.id}`, 'true');
+                    toggleFavorite(Number(jobDetail.id), true);
                 } else {
                     message.error(response.message || "Có lỗi xảy ra khi thêm vào yêu thích!");
                 }
@@ -74,14 +76,14 @@ const ClientJobDetailPage = (props: any) => {
                 const res = await callFetchJobById(id);
                 if (res?.data) {
                     setJobDetail(res.data);
-                    const savedFavourite = localStorage.getItem(`favourite_${res.data.id}`);
-                    setIsFavourite(savedFavourite === 'true');
+                    // Check if job is in favorites using our context
+                    setIsFavourite(isJobFavorited(Number(res.data.id)));
                 }
                 setIsLoading(false);
             }
         };
         init();
-    }, [id]);
+    }, [id, isJobFavorited]);
 
     return (
         <div className={`${styles["container"]} ${styles["detail-job-section"]}`}>

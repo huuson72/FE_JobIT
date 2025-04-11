@@ -216,9 +216,27 @@ const SubscriptionPurchasePage = () => {
             }
         } catch (error: any) {
             console.error("Error creating VNPay payment:", error);
+
+            // Extract error message from the response
+            let errorMessage = 'Không thể tạo liên kết thanh toán. Vui lòng thử lại sau.';
+
+            if (error.response && error.response.data) {
+                // If the error is in the response data
+                if (typeof error.response.data === 'string') {
+                    errorMessage = error.response.data;
+                } else if (error.response.data.message) {
+                    errorMessage = error.response.data.message;
+                } else if (error.response.data.error) {
+                    errorMessage = error.response.data.error;
+                }
+            } else if (error.message) {
+                // If the error is in the error object
+                errorMessage = error.message;
+            }
+
             notification.error({
                 message: 'Lỗi',
-                description: error.message || 'Không thể tạo liên kết thanh toán. Vui lòng thử lại sau.',
+                description: errorMessage,
             });
             setVnpayProcessing(false);
         }

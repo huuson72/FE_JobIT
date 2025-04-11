@@ -28,6 +28,7 @@ import logoHSJob from '@/assets/Hsjob.png';
 import { LOCATION_LIST } from '@/config/utils';
 import { ProForm } from '@ant-design/pro-components';
 import { ISkill } from '@/types/backend';
+import { useFavorites } from '@/contexts/FavoriteContext';
 
 const LEVELS = [
     { label: 'INTERN', value: 'INTERN' },
@@ -52,6 +53,7 @@ const Header = (props: any) => {
     const [suggestionSkills, setSuggestionSkills] = useState<{ label: string; value: string }[]>([]);
     const [jobCount, setJobCount] = useState<number>(0);
     const [form] = Form.useForm();
+    const { favoriteJobs } = useFavorites();
 
     useEffect(() => {
         setCurrent(location.pathname);
@@ -174,7 +176,11 @@ const Header = (props: any) => {
             key: 'manage-account',
             icon: <UserOutlined />
         },
-
+        {
+            label: <Link to="/favourites">Công việc yêu thích ({favoriteJobs.length})</Link>,
+            key: 'favourites',
+            icon: <FireOutlined />
+        },
 
         ...(user.role?.name === "HR" || user.role?.name === "SUPER_ADMIN" ? [
             {

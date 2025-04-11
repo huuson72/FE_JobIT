@@ -30,6 +30,7 @@ import type { MenuProps } from 'antd';
 import { setLogoutAction } from '@/redux/slice/accountSlide';
 import { ALL_PERMISSIONS } from '@/config/permissions';
 import { motion } from 'framer-motion';
+import { useFavorites } from '@/contexts/FavoriteContext';
 
 const { Content, Sider } = Layout;
 
@@ -45,6 +46,7 @@ const LayoutAdmin = () => {
 
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
+    const { favoriteJobs } = useFavorites();
 
     useEffect(() => {
         const ACL_ENABLE = import.meta.env.VITE_ACL_ENABLE;
@@ -170,6 +172,10 @@ const LayoutAdmin = () => {
         {
             label: <Link to={'/'}>Trang chủ</Link>,
             key: 'home',
+        },
+        {
+            label: <Link to={'/favourites'}>Công việc yêu thích ({favoriteJobs.length})</Link>,
+            key: 'favourites',
         },
         {
             label: <label

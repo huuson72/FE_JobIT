@@ -286,11 +286,37 @@ const SubscriptionPage = () => {
                     description: 'Không thể tạo đường dẫn thanh toán. Vui lòng thử lại sau.',
                 });
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error calling VNPay API:", error);
+
+            // Extract error message from the response
+            let errorMessage = 'Đã xảy ra lỗi khi tạo đơn hàng. Vui lòng thử lại sau.';
+
+            if (error.response && error.response.data) {
+                // If the error is in the response data
+                if (typeof error.response.data === 'string') {
+                    errorMessage = error.response.data;
+                } else if (error.response.data.message) {
+                    errorMessage = error.response.data.message;
+                } else if (error.response.data.error) {
+                    errorMessage = error.response.data.error;
+                }
+            } else if (error.message) {
+                // If the error is in the error object
+                errorMessage = error.message;
+            }
+
+            // Check if the error is related to account verification
+            const verificationKeywords = ['xác minh', 'phê duyệt', 'verify', 'approve', 'verified', 'approved'];
+            const isVerificationError = verificationKeywords.some(keyword =>
+                errorMessage.toLowerCase().includes(keyword.toLowerCase())
+            );
+
             notification.error({
                 message: 'Lỗi thanh toán',
-                description: 'Đã xảy ra lỗi khi tạo đơn hàng. Vui lòng thử lại sau.',
+                description: isVerificationError
+                    ? 'Tài khoản của bạn chưa được xác minh. Vui lòng xác minh tài khoản trước khi thực hiện thanh toán.'
+                    : errorMessage,
             });
         } finally {
             setPaymentProcessing(prev => ({ ...prev, [packageId]: false }));

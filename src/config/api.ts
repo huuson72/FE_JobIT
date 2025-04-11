@@ -727,7 +727,17 @@ export const callCreateVNPayPayment = (data: any) => {
                 }
                 
                 // Nếu không phải URL trực tiếp, thử parse JSON
-                return JSON.parse(responseData);
+                const parsedData = JSON.parse(responseData);
+                
+                // Kiểm tra nếu có lỗi trong response
+                if (parsedData.error || parsedData.message) {
+                    return {
+                        error: true,
+                        message: parsedData.message || parsedData.error
+                    };
+                }
+                
+                return parsedData;
             } catch (error) {
                 console.log("Error parsing VNPay response:", error);
                 // Nếu không parse được JSON và có vẻ là URL, trả về trực tiếp
@@ -737,9 +747,18 @@ export const callCreateVNPayPayment = (data: any) => {
                         paymentUrl: responseData.trim() 
                     };
                 }
+                
+                // Nếu response là một chuỗi lỗi, trả về nó
+                if (responseData && typeof responseData === 'string') {
+                    return { 
+                        error: true, 
+                        message: responseData 
+                    };
+                }
+                
                 return { 
                     error: true, 
-                    message: responseData 
+                    message: "Không thể xử lý phản hồi từ máy chủ" 
                 };
             }
         }],
@@ -787,9 +806,14 @@ export interface IPromotion {
     discountPercentage: number;
     startDate: string;
     endDate: string;
-    isActive: boolean;
+    active: boolean;
     code: string;
     subscriptionPackageId: number;
+    subscriptionPackage?: ISubscriptionPackage;
+    createdAt?: string;
+    updatedAt?: string;
+    createdBy?: string;
+    updatedBy?: string;
 }
 
 export const callGetAllPromotions = () => {

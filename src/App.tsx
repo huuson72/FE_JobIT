@@ -40,6 +40,7 @@ import MyPackagesPage from './pages/client/subscription/my-packages';
 import PaymentResultPage from './pages/client/subscription/payment-result';
 import SubscriptionManagement from './pages/admin/subscription';
 import ProfilePage from './pages/profile';
+import { FavoriteProvider } from './contexts/FavoriteContext';
 
 
 const LayoutClient = () => {
@@ -236,8 +237,12 @@ export default function App() {
   ]);
 
   return (
-    <>
-      {isLoading ? <Loading /> : <RouterProvider router={router} />}
-    </>
-  )
+    <FavoriteProvider>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <RouterProvider router={router} />
+      )}
+    </FavoriteProvider>
+  );
 }

@@ -1,39 +1,22 @@
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { callFetchUserFavourites } from "@/config/api";
-import { IJob } from "@/types/backend";
+import { useEffect } from "react";
 import { Row, Col, Skeleton, message } from "antd";
 import FavouriteJobCard from "@/components/client/card/favouritejobcard";
+import { useFavorites } from "@/contexts/FavoriteContext";
+import { useSelector } from "react-redux";
 
 const FavouriteJobsPage = () => {
-    const [favouriteJobs, setFavouriteJobs] = useState<IJob[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const userId = useSelector((state: any) => state.account.user.id);
+    const { favoriteJobs, isLoading, refreshFavorites } = useFavorites();
+    const userId = useSelector((state: any) => state.account.user?.id);
 
-    const fetchFavourites = async () => {
+    useEffect(() => {
         if (!userId) {
             message.error("Bạn cần đăng nhập để xem danh sách yêu thích!");
             return;
         }
-        setIsLoading(true);
-        try {
-            const res = await callFetchUserFavourites(userId);
-            if (res?.data) {
-                setFavouriteJobs(res.data);
-            }
-        } catch (error) {
-            message.error("Lỗi khi tải danh sách yêu thích!");
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchFavourites();
     }, [userId]);
 
     const handleRemoveFromFavourites = () => {
-        fetchFavourites(); // Tải lại danh sách sau khi xóa
+        refreshFavorites(); // Tải lại danh sách sau khi xóa
     };
 
     return (
@@ -43,11 +26,11 @@ const FavouriteJobsPage = () => {
             </h2>
             {isLoading ? (
                 <Skeleton />
-            ) : favouriteJobs.length === 0 ? (
+            ) : favoriteJobs.length === 0 ? (
                 <p style={{ textAlign: 'center', color: '#888', fontSize: '16px' }}>Bạn chưa có công việc yêu thích nào.</p>
             ) : (
                 <Row gutter={[20, 20]}>
-                    {favouriteJobs.map((job) => (
+                    {favoriteJobs.map((job) => (
                         <Col key={job.id} xs={24} sm={12} md={8} lg={6}>
                             <FavouriteJobCard
                                 job={job}

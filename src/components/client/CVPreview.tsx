@@ -511,7 +511,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, onDataChange }) =
             </div>
 
             {isEditable && (hoveredOnHelp || showFieldsPanel) && (
-                <div className="edit-instructions">
+                <div className="edit-instructions" style={{ position: 'absolute', marginTop: '-60px', backgroundColor: 'white', padding: '10px', borderRadius: '5px', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', zIndex: 1000, width: '250px' }}>
                     <p style={{ margin: 0, color: '#eb2f96' }}>
                         <strong>Chế độ chỉnh sửa đang bật!</strong>
                     </p>
