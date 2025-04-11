@@ -1,11 +1,13 @@
 import { callFetchCompany } from '@/config/api';
 import { convertSlug } from '@/config/utils';
 import { ICompany } from '@/types/backend';
-import { Card, Col, Divider, Empty, Pagination, Row, Spin } from 'antd';
+import { Card, Col, Empty, Pagination, Row, Spin } from 'antd';
 import { useState, useEffect } from 'react';
 import { isMobile } from 'react-device-detect';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from 'styles/client.module.scss';
+import cardStyles from 'styles/card.module.scss';
+import { EnvironmentOutlined } from '@ant-design/icons';
 
 interface IProps {
     showPagination?: boolean;
@@ -46,7 +48,6 @@ const CompanyCard = (props: IProps) => {
         setIsLoading(false)
     }
 
-
     const handleOnchangePage = (pagination: { current: number, pageSize: number }) => {
         if (pagination && pagination.current !== current) {
             setCurrent(pagination.current)
@@ -65,69 +66,67 @@ const CompanyCard = (props: IProps) => {
     }
 
     return (
-        <div className={`${styles["company-section"]}`}>
-            <div className={styles["company-content"]}>
-                <Spin spinning={isLoading} tip="Loading...">
-                    <Row gutter={[20, 20]}>
-                        <Col span={24}>
-                            <div className={isMobile ? styles["dflex-mobile"] : ""}
-                                style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
-                                <span className={styles["title"]} style={{ fontWeight: "bold", fontSize: "1.2rem" }}>Các nhà tuyển dụng hàng đầu</span>
-                                {!showPagination &&
-                                    <Link to="company" style={{ marginLeft: "auto" }}>Xem tất cả</Link>
-                                }
-                            </div>
+        <div className={cardStyles["card-container"]}>
+            <Spin spinning={isLoading} tip="Loading...">
+                <div className={cardStyles["card-header"]}>
+                    <h2 className={cardStyles["card-title"]}>Các nhà tuyển dụng hàng đầu</h2>
+                    {!showPagination && (
+                        <Link to="company" className={cardStyles["view-all"]}>
+                            Xem tất cả
+                        </Link>
+                    )}
+                </div>
 
-
+                <Row gutter={[20, 20]}>
+                    {displayCompany?.map(item => (
+                        <Col span={24} md={6} key={item.id}>
+                            <Card
+                                className={cardStyles["company-card"]}
+                                hoverable
+                                onClick={() => handleViewDetailJob(item)}
+                            >
+                                <div className={cardStyles["company-logo-container"]}>
+                                    <img
+                                        alt={`${item.name} logo`}
+                                        src={`${import.meta.env.VITE_BACKEND_URL}/storage/company/${item?.logo}`}
+                                    />
+                                </div>
+                                <div className={cardStyles["company-info"]}>
+                                    <h3 className={cardStyles["company-name"]}>{item.name}</h3>
+                                    {item.address && (
+                                        <div className={cardStyles["company-location"]}>
+                                            <EnvironmentOutlined />
+                                            {item.address}
+                                        </div>
+                                    )}
+                                </div>
+                            </Card>
                         </Col>
+                    ))}
 
-                        {displayCompany?.map(item => {
-                            return (
-                                <Col span={24} md={6} key={item.id}>
-                                    <Card
-                                        onClick={() => handleViewDetailJob(item)}
-                                        style={{ height: 350 }}
-                                        hoverable
-                                        cover={
-                                            <div className={styles["card-customize"]} >
-                                                <img
-                                                    style={{ maxWidth: "200px" }}
-                                                    alt="example"
-                                                    src={`${import.meta.env.VITE_BACKEND_URL}/storage/company/${item?.logo}`}
-                                                />
-                                            </div>
-                                        }
-                                    >
-                                        <Divider />
-                                        <h3 style={{ textAlign: "center" }}>{item.name}</h3>
-                                    </Card>
-                                </Col>
-                            )
-                        })}
-
-                        {(!displayCompany || displayCompany && displayCompany.length === 0)
-                            && !isLoading &&
-                            <div className={styles["empty"]}>
+                    {(!displayCompany || displayCompany.length === 0) && !isLoading && (
+                        <Col span={24}>
+                            <div className={cardStyles["empty-state"]}>
                                 <Empty description="Không có dữ liệu" />
                             </div>
-                        }
-                    </Row>
-                    {showPagination && <>
-                        <div style={{ marginTop: 30 }}></div>
-                        <Row style={{ display: "flex", justifyContent: "center" }}>
-                            <Pagination
-                                current={current}
-                                total={total}
-                                pageSize={pageSize}
-                                responsive
-                                onChange={(p: number, s: number) => handleOnchangePage({ current: p, pageSize: s })}
-                            />
-                        </Row>
-                    </>}
-                </Spin>
-            </div>
+                        </Col>
+                    )}
+                </Row>
+
+                {showPagination && (
+                    <div className={cardStyles["pagination-container"]}>
+                        <Pagination
+                            current={current}
+                            total={total}
+                            pageSize={pageSize}
+                            responsive
+                            onChange={(p: number, s: number) => handleOnchangePage({ current: p, pageSize: s })}
+                        />
+                    </div>
+                )}
+            </Spin>
         </div>
-    )
+    );
 }
 
 export default CompanyCard;

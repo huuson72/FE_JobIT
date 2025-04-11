@@ -1,0 +1,54 @@
+.admin-user-dropdown {
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.admin-user-dropdown:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Menu item hover effect */
+.ant-menu-dark .ant-menu-item:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Selected menu item */
+.ant-menu-dark .ant-menu-item-selected {
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Menu item active state */
+.ant-menu-dark .ant-menu-item:active {
+    background: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Smooth transitions */
+.ant-layout-sider {
+    transition: all 0.3s ease !important;
+}
+
+.ant-menu-item {
+    transition: all 0.3s ease !important;
+}
+
+/* Content area scrollbar */
+.ant-layout-content::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.ant-layout-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.ant-layout-content::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.ant-layout-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
+} 

@@ -31,6 +31,7 @@ import { setLogoutAction } from '@/redux/slice/accountSlide';
 import { ALL_PERMISSIONS } from '@/config/permissions';
 import { motion } from 'framer-motion';
 import { useFavorites } from '@/contexts/FavoriteContext';
+import './layout.admin.css';
 
 const { Content, Sider } = Layout;
 
@@ -195,26 +196,56 @@ const LayoutAdmin = () => {
 
                 {!isMobile ?
                     <Sider
-                        theme='light'
+                        theme='dark'
                         collapsible
                         collapsed={collapsed}
                         onCollapse={(value) => setCollapsed(value)}
                         style={{
-                            background: 'linear-gradient(to right, #000000, #8B0000)',
-                            boxShadow: '2px 0 8px 0 rgba(0, 0, 0, 0.2)', // Shadow đậm hơn
-                            transition: 'all 0.3s ease', // Thêm animation
+                            background: 'linear-gradient(180deg, #001529 0%, #003a70 100%)',
+                            boxShadow: '2px 0 8px 0 rgba(0, 0, 0, 0.15)',
+                            transition: 'all 0.3s ease',
+                            position: 'relative',
+                            zIndex: 1,
                         }}
+                        width={256}
                     >
-                        <div style={{ height: 64, margin: 16, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <CrownOutlined style={{ fontSize: 24, color: '#fff' }} /> {/* Thay thế icon */}
-                            {!collapsed && <span style={{ marginLeft: 8, fontWeight: 'bold', fontSize: 18, color: '#fff' }}>ADMIN</span>}
+                        <div
+                            style={{
+                                height: 64,
+                                margin: '16px 0',
+                                textAlign: 'center',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                background: 'rgba(255, 255, 255, 0.05)',
+                                borderRadius: '8px',
+                                padding: '0 16px',
+                            }}
+                        >
+                            <CrownOutlined style={{ fontSize: 24, color: '#fff', marginRight: collapsed ? 0 : 12 }} />
+                            {!collapsed && (
+                                <span style={{
+                                    color: '#fff',
+                                    fontSize: '18px',
+                                    fontWeight: 500,
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis'
+                                }}>
+                                    Admin Panel
+                                </span>
+                            )}
                         </div>
                         <Menu
                             selectedKeys={[activeMenu]}
                             mode="inline"
                             items={menuItems}
                             onClick={(e) => setActiveMenu(e.key)}
-                            style={{ borderRight: 0, background: 'transparent' }}
+                            style={{
+                                borderRight: 0,
+                                background: 'transparent',
+                                padding: '8px 0',
+                            }}
                             theme="dark"
                         />
                     </Sider>
@@ -229,7 +260,6 @@ const LayoutAdmin = () => {
 
 
                 <Layout>
-
                     {!isMobile &&
                         <div
                             className='admin-header'
@@ -237,11 +267,13 @@ const LayoutAdmin = () => {
                                 display: "flex",
                                 justifyContent: "space-between",
                                 alignItems: "center",
-                                padding: '0 20px',
-                                background: 'linear-gradient(to right, #000000, #8B0000)',
-                                boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.2)', // Shadow đậm hơn
+                                padding: '0 24px',
+                                background: 'linear-gradient(90deg, #001529 0%, #003a70 100%)',
                                 height: 64,
-                                color: '#fff', // Màu chữ trắng
+                                color: '#fff',
+                                boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.15)',
+                                position: 'relative',
+                                zIndex: 1,
                             }}
                         >
                             <Button
@@ -252,16 +284,26 @@ const LayoutAdmin = () => {
                                     fontSize: '16px',
                                     width: 64,
                                     height: 64,
-                                    color: '#fff', // Màu icon trắng
+                                    color: '#fff',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
                                 }}
                             />
 
                             <Dropdown menu={{ items: itemsDropdown }} trigger={['click']}>
-                                <Space style={{ cursor: "pointer" }}>
-                                    <span style={{ fontWeight: 500 }}>Welcome, {user?.name}</span>
+                                <Space className="admin-user-dropdown">
+                                    <span style={{
+                                        fontWeight: 500,
+                                        fontSize: '14px',
+                                    }}>Welcome, {user?.name}</span>
                                     <Avatar
-                                        style={{ backgroundColor: '#fff', color: '#1890ff', verticalAlign: 'middle' }}
-                                        size="default"
+                                        style={{
+                                            backgroundColor: '#1890ff',
+                                            color: '#fff',
+                                            verticalAlign: 'middle',
+                                            cursor: 'pointer',
+                                        }}
                                     >
                                         {user?.name?.substring(0, 2)?.toUpperCase()}
                                     </Avatar>
@@ -272,8 +314,9 @@ const LayoutAdmin = () => {
                     <Content
                         style={{
                             padding: '24px',
-                            background: 'linear-gradient(135deg, #f0f2f5, #e6e9ef)', // Gradient nhẹ
-                            minHeight: 'calc(100vh - 64px)', // Đảm bảo content chiếm hết chiều cao còn lại
+                            background: '#f0f2f5',
+                            minHeight: 'calc(100vh - 64px)',
+                            position: 'relative',
                         }}
                     >
                         <motion.div
@@ -285,6 +328,7 @@ const LayoutAdmin = () => {
                                 padding: 24,
                                 borderRadius: 8,
                                 boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.1)',
+                                minHeight: 'calc(100vh - 112px)',
                             }}
                         >
                             <Outlet />

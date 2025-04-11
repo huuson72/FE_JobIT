@@ -1,12 +1,13 @@
 import { callFetchJob } from '@/config/api';
 import { convertSlug, getLocationName } from '@/config/utils';
 import { IJob } from '@/types/backend';
-import { EnvironmentOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import { EnvironmentOutlined, ThunderboltOutlined, BankOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import { Card, Col, Empty, Pagination, Row, Spin } from 'antd';
 import { useState, useEffect } from 'react';
 import { isMobile } from 'react-device-detect';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import styles from 'styles/client.module.scss';
+import cardStyles from 'styles/card.module.scss';
 import { sfIn } from 'spring-filter-query-builder';
 
 import dayjs from 'dayjs';
@@ -97,62 +98,85 @@ const JobCard = ({ showPagination = false, jobs }: IProps) => {
     };
 
     return (
-        <div className={styles["card-job-section"]}>
-            <div className={styles["job-content"]}>
-                <Spin spinning={isLoading} tip="Loading...">
-                    <Row gutter={[20, 20]}>
-                        <Col span={24}>
-                            <div className={isMobile ? styles["dflex-mobile"] : styles["dflex-pc"]}>
-                                <span className={styles["title"]} style={{ fontWeight: "bold", fontSize: "1.2rem" }}>Việc làm mới</span>
-                                {!showPagination && <Link to="job">Xem tất cả</Link>}
-                            </div>
-                        </Col>
+        <div className={cardStyles["card-container"]}>
+            <Spin spinning={isLoading} tip="Loading...">
+                <div className={cardStyles["card-header"]}>
+                    <h2 className={cardStyles["card-title"]}>Việc làm mới</h2>
+                    {!showPagination && (
+                        <Link to="job" className={cardStyles["view-all"]}>
+                            Xem tất cả
+                        </Link>
+                    )}
+                </div>
 
-                        {displayJob.length > 0 ? (
-                            displayJob.map((item) => (
-                                <Col span={24} md={12} key={item.id}>
-                                    <Card size="small" hoverable onClick={() => handleViewDetailJob(item)}>
-                                        <div className={styles["card-job-content"]}>
-                                            <div className={styles["card-job-left"]}>
-                                                <img
-                                                    alt="company logo"
-                                                    src={`${import.meta.env.VITE_BACKEND_URL}/storage/company/${item.company?.logo}`}
-                                                />
+                <Row gutter={[20, 20]}>
+                    {displayJob.length > 0 ? (
+                        displayJob.map((item) => (
+                            <Col span={24} md={12} key={item.id}>
+                                <Card
+                                    className={cardStyles["job-card"]}
+                                    hoverable
+                                    onClick={() => handleViewDetailJob(item)}
+                                >
+                                    <div className={cardStyles["job-card-content"]}>
+                                        <div className={cardStyles["company-logo"]}>
+                                            <img
+                                                alt={`${item.company?.name || 'Company'} logo`}
+                                                src={`${import.meta.env.VITE_BACKEND_URL}/storage/company/${item.company?.logo}`}
+                                            />
+                                        </div>
+                                        <div className={cardStyles["job-details"]}>
+                                            <h3 className={cardStyles["job-title"]}>{item.name}</h3>
+
+                                            <div className={cardStyles["job-meta"]}>
+                                                <div className={`${cardStyles["meta-item"]} ${cardStyles["location"]}`}>
+                                                    <EnvironmentOutlined className={cardStyles["icon"]} />
+                                                    {getLocationName(item.location)}
+                                                </div>
+                                                <div className={`${cardStyles["meta-item"]} ${cardStyles["salary"]}`}>
+                                                    <ThunderboltOutlined className={cardStyles["icon"]} />
+                                                    {(item.salary || 0).toLocaleString()} đ
+                                                </div>
                                             </div>
-                                            <div className={styles["card-job-right"]}>
-                                                <div className={styles["job-title"]}>{item.name}</div>
-                                                <div className={styles["job-location"]}>
-                                                    <EnvironmentOutlined style={{ color: '#58aaab' }} /> {getLocationName(item.location)}
+
+                                            <div className={cardStyles["job-footer"]}>
+                                                <div className={cardStyles["company-name"]}>
+                                                    <BankOutlined style={{ marginRight: 4 }} />
+                                                    {item.company?.name}
                                                 </div>
-                                                <div>
-                                                    <ThunderboltOutlined style={{ color: 'orange' }} /> {(item.salary || 0).toLocaleString()} đ
-                                                </div>
-                                                <div className={styles["job-updatedAt"]}>
-                                                    {dayjs(item.updatedAt || item.createdAt).locale('en').fromNow()}
+                                                <div className={cardStyles["posted-time"]}>
+                                                    <ClockCircleOutlined style={{ marginRight: 4 }} />
+                                                    {dayjs(item.updatedAt || item.createdAt).locale('vi').fromNow()}
                                                 </div>
                                             </div>
                                         </div>
-                                    </Card>
-                                </Col>
-                            ))
-                        ) : (
-                            !isLoading && <Empty description="Không có dữ liệu" className={styles["empty"]} />
-                        )}
-                    </Row>
-
-                    {showPagination && (
-                        <Row justify="center" style={{ marginTop: 30 }}>
-                            <Pagination
-                                current={current}
-                                total={total}
-                                pageSize={pageSize}
-                                responsive
-                                onChange={handleOnChangePage}
-                            />
-                        </Row>
+                                    </div>
+                                </Card>
+                            </Col>
+                        ))
+                    ) : (
+                        !isLoading && (
+                            <Col span={24}>
+                                <div className={cardStyles["empty-state"]}>
+                                    <Empty description="Không có dữ liệu" />
+                                </div>
+                            </Col>
+                        )
                     )}
-                </Spin>
-            </div>
+                </Row>
+
+                {showPagination && (
+                    <div className={cardStyles["pagination-container"]}>
+                        <Pagination
+                            current={current}
+                            total={total}
+                            pageSize={pageSize}
+                            responsive
+                            onChange={handleOnChangePage}
+                        />
+                    </div>
+                )}
+            </Spin>
         </div>
     );
 };
