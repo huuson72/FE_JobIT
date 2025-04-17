@@ -8,8 +8,9 @@
   "scripts": {
     "dev": "vite",
     "start": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "vite build && echo '/* /index.html 200' > dist/_redirects",
+    "preview": "vite preview",
+    "postbuild": "bash setup-spa.sh"
   },
   "dependencies": {
     "@ant-design/charts": "^2.2.7",

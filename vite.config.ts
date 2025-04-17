@@ -20,7 +20,9 @@ export default defineConfig(({ command, mode }) => {
       // visualizer() as PluginOption
     ],
     server: {
-      port: parseInt(env.PORT)
+      port: parseInt(env.PORT),
+      // Add this for proper history API fallback in development
+      historyApiFallback: true
     },
     resolve: {
       alias: {
@@ -31,5 +33,16 @@ export default defineConfig(({ command, mode }) => {
         pages: `${path.resolve(__dirname, "./src/pages/")}`,
       },
     },
+    // Add this to handle client-side routing
+    build: {
+      outDir: 'dist',
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ['react', 'react-dom', 'react-router-dom'],
+          }
+        }
+      }
+    }
   }
 })
