@@ -46,7 +46,7 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#82ca9d', '#8884d8'
 const RevenueStatisticsPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [statistics, setStatistics] = useState<RevenueStatisticsDTO | null>(null);
+    const [statistics, setStatistics] = useState<RevenueStatisticsDTO['data'] | null>(null);
     const [dateRange, setDateRange] = useState<[dayjs.Dayjs, dayjs.Dayjs] | null>(null);
 
     useEffect(() => {
@@ -61,7 +61,17 @@ const RevenueStatisticsPage = () => {
 
             if (response.data) {
                 console.log("Parsed statistics data:", response.data);
-                setStatistics(response.data);
+                // The API response has a double-nested structure: response.data.data.data
+                // Check both data structures to ensure we get the correct data
+                if (response.data.data) {
+                    setStatistics(response.data.data);
+                } else if (response.data && typeof response.data === 'object' && 'data' in response.data) {
+                    // Handle the case where the API returns { data: { data: { ... } } }
+                    const nestedData = (response.data as any).data;
+                    setStatistics(nestedData);
+                } else {
+                    setError("Không có dữ liệu thống kê");
+                }
             } else {
                 setError("Không có dữ liệu thống kê");
             }
@@ -88,7 +98,19 @@ const RevenueStatisticsPage = () => {
 
             const response = await callGetRevenueStatisticsByDateRange(startDate, endDate);
             if (response.data) {
-                setStatistics(response.data);
+                // The API response has a double-nested structure: response.data.data.data
+                // Check both data structures to ensure we get the correct data
+                if (response.data.data) {
+                    setStatistics(response.data.data);
+                } else if (response.data && typeof response.data === 'object' && 'data' in response.data) {
+                    // Handle the case where the API returns { data: { data: { ... } } }
+                    const nestedData = (response.data as any).data;
+                    setStatistics(nestedData);
+                } else {
+                    setError("Không có dữ liệu thống kê");
+                }
+            } else {
+                setError("Không có dữ liệu thống kê");
             }
         } catch (error: any) {
             setError(error.message || "Có lỗi xảy ra khi tải dữ liệu thống kê doanh thu theo khoảng thời gian");
@@ -271,7 +293,7 @@ const RevenueStatisticsPage = () => {
                                                 dataKey="revenue"
                                                 nameKey="packageName"
                                             >
-                                                {statistics.revenueByPackage.map((entry, index) => (
+                                                {statistics.revenueByPackage.map((entry: { packageName: string, revenue: number, count: number }, index: number) => (
                                                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                                 ))}
                                             </Pie>
@@ -298,7 +320,7 @@ const RevenueStatisticsPage = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {statistics.revenueByPackage.map((pkg, index) => (
+                                            {statistics.revenueByPackage.map((pkg: { packageName: string, revenue: number, count: number }, index: number) => (
                                                 <tr key={index} style={{ backgroundColor: index % 2 === 0 ? 'white' : '#f9f9f9' }}>
                                                     <td style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>
                                                         <Tag color={COLORS[index % COLORS.length]}>{pkg.packageName}</Tag>

@@ -101,8 +101,22 @@ const DashboardPage = () => {
         try {
             setLoading(true);
             const response: IBackendRes<AdminStatisticsDTO> = await callGetAllStatistics();
+            console.log("Overview statistics full response:", response);
+
             if (response.data) {
-                setStatistics(response.data);
+                console.log("Overview Response.data:", response.data);
+                // Check if response might have a nested data structure
+                if (response.data && typeof response.data === 'object' && 'data' in response.data) {
+                    // Handle the case where the API returns nested data
+                    const nestedData = (response.data as any).data;
+                    console.log("Nested overview data found:", nestedData);
+                    setStatistics(nestedData);
+                } else {
+                    // Regular data structure
+                    setStatistics(response.data);
+                }
+            } else {
+                console.log("No data in overview response");
             }
         } catch (error: any) {
             setError(error.message || "Có lỗi xảy ra khi tải dữ liệu thống kê");
@@ -117,10 +131,23 @@ const DashboardPage = () => {
         try {
             setRevenueLoading(true);
             const response: IBackendRes<RevenueStatisticsDTO> = await callGetRevenueStatistics();
-            console.log("Revenue statistics response:", response);
+            console.log("Revenue statistics full response:", response);
 
             if (response.data) {
-                setRevenueStats(response.data.data);
+                console.log("Response.data:", response.data);
+                if (response.data.data) {
+                    console.log("Response.data.data:", response.data.data);
+                    setRevenueStats(response.data.data);
+                } else if (response.data && typeof response.data === 'object' && 'data' in response.data) {
+                    // Handle the case where the API returns { data: { data: { ... } } }
+                    const nestedData = (response.data as any).data;
+                    console.log("Nested data found:", nestedData);
+                    setRevenueStats(nestedData);
+                } else {
+                    console.log("No nested data structure found");
+                }
+            } else {
+                console.log("No data in response");
             }
         } catch (error: any) {
             setRevenueError(error.message || "Có lỗi xảy ra khi tải dữ liệu thống kê doanh thu");
@@ -148,7 +175,17 @@ const DashboardPage = () => {
             console.log("Revenue statistics by date range response:", response);
 
             if (response.data) {
-                setRevenueStats(response.data.data);
+                // The API response has a double-nested structure: response.data.data.data
+                // Check both data structures to ensure we get the correct data
+                if (response.data.data) {
+                    setRevenueStats(response.data.data);
+                } else if (response.data && typeof response.data === 'object' && 'data' in response.data) {
+                    // Handle the case where the API returns { data: { data: { ... } } }
+                    const nestedData = (response.data as any).data;
+                    setRevenueStats(nestedData);
+                } else {
+                    setRevenueError("Không có dữ liệu thống kê");
+                }
             } else {
                 setRevenueError("Không có dữ liệu thống kê");
             }
