@@ -817,7 +817,15 @@ export interface IPromotion {
 }
 
 export const callGetAllPromotions = () => {
-    return axios.get<IBackendRes<IPromotion[]>>('/api/v1/promotions');
+    return axios.get<IBackendRes<{
+        meta: {
+            page: number;
+            pageSize: number;
+            pages: number;
+            total: number;
+        };
+        result: IPromotion[];
+    }>>('/api/v1/promotions');
 };
 
 export const callGetPromotionById = (id: number) => {
@@ -887,38 +895,40 @@ export const callDeleteCV = (id: string) => {
 
 // API thống kê doanh thu
 export interface RevenueStatisticsDTO {
-    totalRevenue: number;
-    todayRevenue: number;
-    lastWeekRevenue: number;
-    lastMonthRevenue: number;
-    revenueByPackage: {
-        packageName: string;
-        revenue: number;
-        count: number;
-    }[];
-    revenueByCompany: {
-        companyName: string;
-        revenue: number;
-        count: number;
-    }[];
-    revenueByMonth: {
-        month: number;
-        revenue: number;
-    }[];
-    transactionCountByStatus: {
-        status: string;
-        count: number;
-    }[];
-    dailyRevenueLastWeek: {
-        date: string;
-        revenue: number;
-    }[];
-    growthRateLastWeek: number | null;
-    growthRateLastMonth: number | null;
-    totalTransactions: number;
-    successfulTransactions: number;
-    failedTransactions: number;
-    successRate: number;
+    data: {
+        totalRevenue: number;
+        todayRevenue: number;
+        lastWeekRevenue: number;
+        lastMonthRevenue: number;
+        revenueByPackage: {
+            packageName: string;
+            revenue: number;
+            count: number;
+        }[];
+        revenueByCompany: {
+            companyName: string;
+            revenue: number;
+            count: number;
+        }[];
+        revenueByMonth: {
+            month: number;
+            revenue: number;
+        }[];
+        transactionCountByStatus: {
+            status: string;
+            count: number;
+        }[];
+        dailyRevenueLastWeek: {
+            date: string;
+            revenue: number;
+        }[];
+        growthRateLastWeek: number | null;
+        growthRateLastMonth: number | null;
+        totalTransactions: number;
+        successfulTransactions: number;
+        failedTransactions: number;
+        successRate: number;
+    }
 }
 
 export const callGetRevenueStatistics = () => {

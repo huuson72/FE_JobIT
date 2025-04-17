@@ -17,8 +17,10 @@ import {
     callGetAllStatistics,
     callGetRevenueStatistics,
     callGetRevenueStatisticsByDateRange,
-    RevenueStatisticsDTO
+    RevenueStatisticsDTO,
+    AdminStatisticsDTO
 } from "@/config/api";
+import { IBackendRes } from "@/types/backend";
 import {
     BarChart,
     Bar,
@@ -66,7 +68,7 @@ const DashboardPage = () => {
     // Thêm state cho thống kê doanh thu
     const [revenueLoading, setRevenueLoading] = useState(true);
     const [revenueError, setRevenueError] = useState<string | null>(null);
-    const [revenueStats, setRevenueStats] = useState<RevenueStatisticsDTO | null>(null);
+    const [revenueStats, setRevenueStats] = useState<RevenueStatisticsDTO['data'] | null>(null);
     const [dateRange, setDateRange] = useState<[dayjs.Dayjs, dayjs.Dayjs] | null>(null);
 
     // Xử lý tab từ query param
@@ -98,9 +100,9 @@ const DashboardPage = () => {
     const fetchStatistics = async () => {
         try {
             setLoading(true);
-            const response = await callGetAllStatistics();
-            if (response.data?.data) {
-                setStatistics(response.data.data);
+            const response: IBackendRes<AdminStatisticsDTO> = await callGetAllStatistics();
+            if (response.data) {
+                setStatistics(response.data);
             }
         } catch (error: any) {
             setError(error.message || "Có lỗi xảy ra khi tải dữ liệu thống kê");
@@ -114,10 +116,10 @@ const DashboardPage = () => {
     const fetchRevenueStatistics = async () => {
         try {
             setRevenueLoading(true);
-            const response = await callGetRevenueStatistics();
+            const response: IBackendRes<RevenueStatisticsDTO> = await callGetRevenueStatistics();
             console.log("Revenue statistics response:", response);
 
-            if (response.data?.data) {
+            if (response.data) {
                 setRevenueStats(response.data.data);
             }
         } catch (error: any) {
@@ -142,13 +144,11 @@ const DashboardPage = () => {
             const startDate = dates[0].format('YYYY-MM-DDTHH:mm:ss');
             const endDate = dates[1].format('YYYY-MM-DDTHH:mm:ss');
 
-            const response = await callGetRevenueStatisticsByDateRange(startDate, endDate);
+            const response: IBackendRes<RevenueStatisticsDTO> = await callGetRevenueStatisticsByDateRange(startDate, endDate);
             console.log("Revenue statistics by date range response:", response);
 
-            if (response.data?.data?.data) {
-                const data = response.data.data.data;
-                console.log("Parsed statistics data:", data);
-                setRevenueStats(data);
+            if (response.data) {
+                setRevenueStats(response.data.data);
             } else {
                 setRevenueError("Không có dữ liệu thống kê");
             }
@@ -375,6 +375,18 @@ const DashboardPage = () => {
             );
         }
 
+        // Add default empty values if revenueStats is null
+        const stats = revenueStats || {
+            totalRevenue: 0,
+            totalTransactions: 0,
+            lastMonthRevenue: 0,
+            lastWeekRevenue: 0,
+            dailyRevenueLastWeek: [],
+            revenueByMonth: [],
+            revenueByPackage: [],
+            transactionCountByStatus: []
+        };
+
         return (
             <>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
@@ -388,205 +400,201 @@ const DashboardPage = () => {
                     </Button>
                 </div>
 
-                {revenueStats && (
-                    <>
-                        {/* Thống kê tổng quan */}
-                        <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
-                            <Col xs={24} sm={6}>
-                                <Card>
-                                    <Statistic
-                                        title="Tổng doanh thu"
-                                        value={revenueStats.totalRevenue}
-                                        formatter={moneyFormatter}
-                                        prefix={<DollarOutlined style={{ color: '#52c41a' }} />}
-                                        valueStyle={{ color: '#3f8600' }}
-                                    />
-                                </Card>
-                            </Col>
-                            <Col xs={24} sm={6}>
-                                <Card>
-                                    <Statistic
-                                        title="Tổng số giao dịch"
-                                        value={revenueStats.totalTransactions}
-                                        formatter={formatter}
-                                        prefix={<ShoppingOutlined style={{ color: '#1890ff' }} />}
-                                        valueStyle={{ color: '#1890ff' }}
-                                    />
-                                </Card>
-                            </Col>
-                            <Col xs={24} sm={6}>
-                                <Card>
-                                    <Statistic
-                                        title="Doanh thu tháng"
-                                        value={revenueStats.lastMonthRevenue}
-                                        formatter={moneyFormatter}
-                                        prefix={<DollarOutlined style={{ color: '#722ed1' }} />}
-                                        valueStyle={{ color: '#722ed1' }}
-                                    />
-                                </Card>
-                            </Col>
-                            <Col xs={24} sm={6}>
-                                <Card>
-                                    <Statistic
-                                        title="Doanh thu tuần"
-                                        value={revenueStats.lastWeekRevenue}
-                                        formatter={moneyFormatter}
-                                        prefix={<DollarOutlined style={{ color: '#fa8c16' }} />}
-                                        valueStyle={{ color: '#fa8c16' }}
-                                    />
-                                </Card>
-                            </Col>
-                        </Row>
+                {/* Thống kê tổng quan */}
+                <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
+                    <Col xs={24} sm={6}>
+                        <Card>
+                            <Statistic
+                                title="Tổng doanh thu"
+                                value={stats.totalRevenue}
+                                formatter={moneyFormatter}
+                                prefix={<DollarOutlined style={{ color: '#52c41a' }} />}
+                                valueStyle={{ color: '#3f8600' }}
+                            />
+                        </Card>
+                    </Col>
+                    <Col xs={24} sm={6}>
+                        <Card>
+                            <Statistic
+                                title="Tổng số giao dịch"
+                                value={stats.totalTransactions}
+                                formatter={formatter}
+                                prefix={<ShoppingOutlined style={{ color: '#1890ff' }} />}
+                                valueStyle={{ color: '#1890ff' }}
+                            />
+                        </Card>
+                    </Col>
+                    <Col xs={24} sm={6}>
+                        <Card>
+                            <Statistic
+                                title="Doanh thu tháng"
+                                value={stats.lastMonthRevenue}
+                                formatter={moneyFormatter}
+                                prefix={<DollarOutlined style={{ color: '#722ed1' }} />}
+                                valueStyle={{ color: '#722ed1' }}
+                            />
+                        </Card>
+                    </Col>
+                    <Col xs={24} sm={6}>
+                        <Card>
+                            <Statistic
+                                title="Doanh thu tuần"
+                                value={stats.lastWeekRevenue}
+                                formatter={moneyFormatter}
+                                prefix={<DollarOutlined style={{ color: '#fa8c16' }} />}
+                                valueStyle={{ color: '#fa8c16' }}
+                            />
+                        </Card>
+                    </Col>
+                </Row>
 
-                        {/* Biểu đồ doanh thu theo ngày */}
-                        <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
-                            <Col span={24}>
-                                <Card title="Doanh thu theo ngày" style={{ height: '100%' }}>
-                                    <div style={{ height: 300 }}>
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <LineChart
-                                                data={revenueStats.dailyRevenueLastWeek}
-                                                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                                            >
-                                                <CartesianGrid strokeDasharray="3 3" />
-                                                <XAxis dataKey="date" />
-                                                <YAxis />
-                                                <Tooltip formatter={(value) => [`${value.toLocaleString()} VND`, 'Doanh thu']} />
-                                                <Legend />
-                                                <Line
-                                                    type="monotone"
-                                                    dataKey="revenue"
-                                                    name="Doanh thu"
-                                                    stroke="#8884d8"
-                                                    activeDot={{ r: 8 }}
-                                                />
-                                            </LineChart>
-                                        </ResponsiveContainer>
-                                    </div>
-                                </Card>
-                            </Col>
-                        </Row>
+                {/* Biểu đồ doanh thu theo ngày */}
+                <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
+                    <Col span={24}>
+                        <Card title="Doanh thu theo ngày" style={{ height: '100%' }}>
+                            <div style={{ height: 300 }}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <LineChart
+                                        data={stats.dailyRevenueLastWeek}
+                                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                                    >
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="date" />
+                                        <YAxis />
+                                        <Tooltip formatter={(value) => [`${value.toLocaleString()} VND`, 'Doanh thu']} />
+                                        <Legend />
+                                        <Line
+                                            type="monotone"
+                                            dataKey="revenue"
+                                            name="Doanh thu"
+                                            stroke="#8884d8"
+                                            activeDot={{ r: 8 }}
+                                        />
+                                    </LineChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </Card>
+                    </Col>
+                </Row>
 
-                        {/* Biểu đồ doanh thu theo tháng và theo gói */}
-                        <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
-                            <Col xs={24} lg={12}>
-                                <Card title="Doanh thu theo tháng" style={{ height: '100%' }}>
-                                    <div style={{ height: 300 }}>
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <BarChart
-                                                data={revenueStats.revenueByMonth}
-                                                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                                            >
-                                                <CartesianGrid strokeDasharray="3 3" />
-                                                <XAxis dataKey="month" />
-                                                <YAxis />
-                                                <Tooltip formatter={(value) => [`${value.toLocaleString()} VND`, 'Doanh thu']} />
-                                                <Legend />
-                                                <Bar
-                                                    dataKey="revenue"
-                                                    name="Doanh thu"
-                                                    fill="#8884d8"
-                                                />
-                                            </BarChart>
-                                        </ResponsiveContainer>
-                                    </div>
-                                </Card>
-                            </Col>
-                            <Col xs={24} lg={12}>
-                                <Card title="Doanh thu theo gói dịch vụ" style={{ height: '100%' }}>
-                                    <div style={{ height: 300 }}>
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <PieChart>
-                                                <Pie
-                                                    data={revenueStats.revenueByPackage}
-                                                    cx="50%"
-                                                    cy="50%"
-                                                    labelLine={false}
-                                                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                                                    outerRadius={80}
-                                                    fill="#8884d8"
-                                                    dataKey="revenue"
-                                                    nameKey="packageName"
-                                                >
-                                                    {revenueStats.revenueByPackage.map((entry, index) => (
-                                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                                    ))}
-                                                </Pie>
-                                                <Tooltip formatter={(value) => `${value.toLocaleString()} VND`} />
-                                                <Legend />
-                                            </PieChart>
-                                        </ResponsiveContainer>
-                                    </div>
-                                </Card>
-                            </Col>
-                        </Row>
+                {/* Biểu đồ doanh thu theo tháng và theo gói */}
+                <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
+                    <Col xs={24} lg={12}>
+                        <Card title="Doanh thu theo tháng" style={{ height: '100%' }}>
+                            <div style={{ height: 300 }}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart
+                                        data={stats.revenueByMonth}
+                                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                                    >
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="month" />
+                                        <YAxis />
+                                        <Tooltip formatter={(value) => [`${value.toLocaleString()} VND`, 'Doanh thu']} />
+                                        <Legend />
+                                        <Bar
+                                            dataKey="revenue"
+                                            name="Doanh thu"
+                                            fill="#8884d8"
+                                        />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </Card>
+                    </Col>
+                    <Col xs={24} lg={12}>
+                        <Card title="Doanh thu theo gói dịch vụ" style={{ height: '100%' }}>
+                            <div style={{ height: 300 }}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <PieChart>
+                                        <Pie
+                                            data={stats.revenueByPackage}
+                                            cx="50%"
+                                            cy="50%"
+                                            labelLine={false}
+                                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                                            outerRadius={80}
+                                            fill="#8884d8"
+                                            dataKey="revenue"
+                                            nameKey="packageName"
+                                        >
+                                            {stats.revenueByPackage.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip formatter={(value) => `${value.toLocaleString()} VND`} />
+                                        <Legend />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </Card>
+                    </Col>
+                </Row>
 
-                        {/* Bảng gói bán chạy */}
-                        <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
-                            <Col span={24}>
-                                <Card title="Top gói dịch vụ bán chạy" style={{ height: '100%' }}>
-                                    <div style={{ overflow: 'auto' }}>
-                                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                                            <thead>
-                                                <tr style={{ backgroundColor: '#f0f0f0' }}>
-                                                    <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>Tên gói</th>
-                                                    <th style={{ padding: '12px', textAlign: 'center', borderBottom: '1px solid #ddd' }}>Số lượng bán</th>
-                                                    <th style={{ padding: '12px', textAlign: 'right', borderBottom: '1px solid #ddd' }}>Doanh thu</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {revenueStats.revenueByPackage.map((pkg, index) => (
-                                                    <tr key={index} style={{ backgroundColor: index % 2 === 0 ? 'white' : '#f9f9f9' }}>
-                                                        <td style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>
-                                                            <Tag color={COLORS[index % COLORS.length]}>{pkg.packageName}</Tag>
-                                                        </td>
-                                                        <td style={{ padding: '12px', textAlign: 'center', borderBottom: '1px solid #ddd' }}>{pkg.count}</td>
-                                                        <td style={{ padding: '12px', textAlign: 'right', borderBottom: '1px solid #ddd', fontWeight: 'bold' }}>
-                                                            {new Intl.NumberFormat('vi-VN').format(pkg.revenue)} VND
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </Card>
-                            </Col>
-                        </Row>
+                {/* Bảng gói bán chạy */}
+                <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
+                    <Col span={24}>
+                        <Card title="Top gói dịch vụ bán chạy" style={{ height: '100%' }}>
+                            <div style={{ overflow: 'auto' }}>
+                                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                    <thead>
+                                        <tr style={{ backgroundColor: '#f0f0f0' }}>
+                                            <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>Tên gói</th>
+                                            <th style={{ padding: '12px', textAlign: 'center', borderBottom: '1px solid #ddd' }}>Số lượng bán</th>
+                                            <th style={{ padding: '12px', textAlign: 'right', borderBottom: '1px solid #ddd' }}>Doanh thu</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {stats.revenueByPackage.map((pkg, index) => (
+                                            <tr key={index} style={{ backgroundColor: index % 2 === 0 ? 'white' : '#f9f9f9' }}>
+                                                <td style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>
+                                                    <Tag color={COLORS[index % COLORS.length]}>{pkg.packageName}</Tag>
+                                                </td>
+                                                <td style={{ padding: '12px', textAlign: 'center', borderBottom: '1px solid #ddd' }}>{pkg.count}</td>
+                                                <td style={{ padding: '12px', textAlign: 'right', borderBottom: '1px solid #ddd', fontWeight: 'bold' }}>
+                                                    {new Intl.NumberFormat('vi-VN').format(pkg.revenue)} VND
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </Card>
+                    </Col>
+                </Row>
 
-                        {/* Bảng giao dịch gần đây */}
-                        <Row gutter={[16, 16]}>
-                            <Col span={24}>
-                                <Card title="Giao dịch gần đây">
-                                    <Table
-                                        columns={[
-                                            {
-                                                title: 'Trạng thái',
-                                                dataIndex: 'status',
-                                                key: 'status',
-                                                render: (status: string) => (
-                                                    <Tag color={
-                                                        status === 'SUCCESS' ? 'success' :
-                                                            status === 'PENDING' ? 'warning' :
-                                                                'error'
-                                                    }>{status}</Tag>
-                                                )
-                                            },
-                                            {
-                                                title: 'Số lượng',
-                                                dataIndex: 'count',
-                                                key: 'count',
-                                                align: 'center'
-                                            }
-                                        ]}
-                                        dataSource={revenueStats.transactionCountByStatus}
-                                        rowKey="status"
-                                        pagination={false}
-                                    />
-                                </Card>
-                            </Col>
-                        </Row>
-                    </>
-                )}
+                {/* Bảng giao dịch gần đây */}
+                <Row gutter={[16, 16]}>
+                    <Col span={24}>
+                        <Card title="Giao dịch gần đây">
+                            <Table
+                                columns={[
+                                    {
+                                        title: 'Trạng thái',
+                                        dataIndex: 'status',
+                                        key: 'status',
+                                        render: (status: string) => (
+                                            <Tag color={
+                                                status === 'SUCCESS' ? 'success' :
+                                                    status === 'PENDING' ? 'warning' :
+                                                        'error'
+                                            }>{status}</Tag>
+                                        )
+                                    },
+                                    {
+                                        title: 'Số lượng',
+                                        dataIndex: 'count',
+                                        key: 'count',
+                                        align: 'center'
+                                    }
+                                ]}
+                                dataSource={stats.transactionCountByStatus}
+                                rowKey="status"
+                                pagination={false}
+                            />
+                        </Card>
+                    </Col>
+                </Row>
             </>
         );
     };

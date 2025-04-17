@@ -35,7 +35,9 @@ import {
     Cell
 } from 'recharts';
 import { callGetRevenueStatistics, callGetRevenueStatisticsByDateRange, RevenueStatisticsDTO } from "@/config/api";
+import { IBackendRes } from "@/types/backend";
 import dayjs from "dayjs";
+import axios from 'axios';
 
 const { RangePicker } = DatePicker;
 
@@ -57,10 +59,9 @@ const RevenueStatisticsPage = () => {
             const response = await callGetRevenueStatistics();
             console.log("Revenue statistics response:", response);
 
-            if (response.data?.data?.data) {
-                const data = response.data.data.data;
-                console.log("Parsed statistics data:", data);
-                setStatistics(data);
+            if (response.data) {
+                console.log("Parsed statistics data:", response.data);
+                setStatistics(response.data);
             } else {
                 setError("Không có dữ liệu thống kê");
             }
@@ -86,8 +87,8 @@ const RevenueStatisticsPage = () => {
             const endDate = dates[1].format('YYYY-MM-DDTHH:mm:ss');
 
             const response = await callGetRevenueStatisticsByDateRange(startDate, endDate);
-            if (response.data?.data) {
-                setStatistics(response.data.data);
+            if (response.data) {
+                setStatistics(response.data);
             }
         } catch (error: any) {
             setError(error.message || "Có lỗi xảy ra khi tải dữ liệu thống kê doanh thu theo khoảng thời gian");
