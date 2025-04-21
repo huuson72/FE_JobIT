@@ -14,11 +14,27 @@ interface AccessTokenResponse {
  * Creates an initial 'axios' instance with custom settings.
  */
 const config = getEnvironmentConfig();
+const isDevelopment = import.meta.env.MODE === 'development';
+
+// Log để debug
+console.log("Current environment:", isDevelopment ? "development" : "production");
+console.log("Backend URL:", config.backendUrl);
 
 const instance = axiosClient.create({
     baseURL: config.backendUrl,
-    withCredentials: true
+    withCredentials: isDevelopment // Chỉ bật withCredentials ở môi trường development
 });
+
+// Thêm interceptor để log request
+instance.interceptors.request.use(
+    (config) => {
+        console.log(`Request to: ${config.baseURL}${config.url}`);
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 const mutex = new Mutex();
 const NO_RETRY_HEADER = 'x-no-retry';
