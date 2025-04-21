@@ -37,7 +37,7 @@ import {
     Line
 } from 'recharts';
 import { useNavigate, useLocation } from 'react-router-dom';
-import dayjs from 'dayjs';
+import dayjs from '@/config/dayjs';
 import { useAppSelector } from '@/redux/hooks';
 
 const { TabPane } = Tabs;

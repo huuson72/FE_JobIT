@@ -2,6 +2,7 @@ import { IPermission } from '@/types/backend';
 import { grey, green, blue, red, orange } from '@ant-design/colors';
 import groupBy from 'lodash/groupBy';
 import map from 'lodash/map';
+import dayjs from 'dayjs';
 
 export const SKILLS_LIST =
     [
@@ -93,4 +94,37 @@ export const groupByPermission = (data: any[]): { module: string; permissions: I
     return map(groupedData, (value, key) => {
         return { module: key, permissions: value as IPermission[] };
     });
+};
+
+export const calculateDaysFromNow = (date: string | Date): string => {
+    const now = dayjs();
+    const targetDate = dayjs(date);
+    const diffInDays = now.diff(targetDate, 'day');
+    
+    if (diffInDays === 0) return 'hôm nay';
+    if (diffInDays === 1) return '1 ngày trước';
+    return `${diffInDays} ngày trước`;
+};
+
+export const convertRelativeTime = (timeString: string): string => {
+    // First try to extract the number and unit
+    const matches = timeString.match(/(\d+)\s*(秒前|分钟前|小时前|天前|周前|个月前|年前)/);
+    if (!matches) return timeString;
+
+    const number = matches[1];
+    const unit = matches[2];
+
+    // Convert Chinese units to Vietnamese
+    const timeMap: { [key: string]: string } = {
+        '秒前': 'giây trước',
+        '分钟前': 'phút trước',
+        '小时前': 'giờ trước',
+        '天前': 'ngày trước',
+        '周前': 'tuần trước',
+        '个月前': 'tháng trước',
+        '年前': 'năm trước'
+    };
+
+    const vietnameseUnit = timeMap[unit] || unit;
+    return `${number} ${vietnameseUnit}`;
 };

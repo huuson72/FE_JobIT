@@ -104,7 +104,7 @@ const LayoutAdmin = () => {
                     key: '/admin/job',
                     icon: <ScheduleOutlined />
                 }] : []),
-                ...(viewResume || ACL_ENABLE === 'false' ? [{
+                ...(viewResume && user?.role?.name !== 'SUPER_ADMIN' || ACL_ENABLE === 'false' ? [{
                     label: <Link to='/admin/resume'>Trạng thái</Link>,
                     key: '/admin/resume',
                     icon: <AliwangwangOutlined />

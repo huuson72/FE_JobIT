@@ -1,6 +1,6 @@
 import { IUser } from "@/types/backend";
 import { Badge, Descriptions, Drawer } from "antd";
-import dayjs from 'dayjs';
+import dayjs from '@/config/dayjs';
 
 interface IProps {
     onClose: (v: boolean) => void;

@@ -1,4 +1,3 @@
-
 import DataTable from "@/components/client/data-table";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { ISkill } from "@/types/backend";
@@ -6,7 +5,7 @@ import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { ActionType, ProColumns } from '@ant-design/pro-components';
 import { Button, Popconfirm, Space, message, notification } from "antd";
 import { useState, useRef } from 'react';
-import dayjs from 'dayjs';
+import dayjs from '@/config/dayjs';
 import { callDeleteSkill } from "@/config/api";
 import queryString from 'query-string';
 import { sfLike } from "spring-filter-query-builder";

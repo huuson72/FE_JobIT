@@ -14,7 +14,7 @@ import {
     callGetPackagePriceWithDiscount
 } from '@/config/api';
 import type { ColumnsType } from 'antd/es/table';
-import dayjs from 'dayjs';
+import dayjs from '@/config/dayjs';
 
 const { Title } = Typography;
 const { TabPane } = Tabs;

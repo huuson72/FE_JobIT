@@ -4,7 +4,7 @@ import { IUser } from "@/types/backend";
 import { ActionType, ProColumns } from '@ant-design/pro-components';
 import { Button, Popconfirm, Space, message, notification, Drawer, Descriptions, Badge } from "antd";
 import { useState, useRef } from 'react';
-import dayjs from 'dayjs';
+import dayjs from '@/config/dayjs';
 import { callVerifyEmployer, callRejectEmployer } from "@/config/api";
 import queryString from 'query-string';
 import DataTable from "@/components/client/data-table";

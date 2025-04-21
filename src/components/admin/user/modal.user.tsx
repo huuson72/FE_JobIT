@@ -73,16 +73,40 @@ const ModalUser = (props: IProps) => {
                 }
             }
 
-            const res = await callUpdateUser(user);
-            if (res.data) {
-                message.success("Cập nhật user thành công");
-                handleReset();
-                reloadTable();
-            } else {
-                notification.error({
-                    message: 'Có lỗi xảy ra',
-                    description: res.message
-                });
+            try {
+                const res = await callUpdateUser(user);
+                if (res.data) {
+                    message.success("Cập nhật user thành công");
+                    handleReset();
+                    reloadTable();
+                } else {
+                    // Kiểm tra nếu là lỗi trùng email
+                    if (res.statusCode === 400 && res.message?.toLowerCase().includes('email')) {
+                        notification.error({
+                            message: 'Lỗi cập nhật',
+                            description: 'Email đã tồn tại trong hệ thống'
+                        });
+                    } else {
+                        notification.error({
+                            message: 'Có lỗi xảy ra',
+                            description: res.message
+                        });
+                    }
+                }
+            } catch (error: any) {
+                // Xử lý lỗi từ API
+                const errorMessage = error.response?.data?.message || 'Có lỗi xảy ra khi cập nhật user';
+                if (error.response?.status === 400 && errorMessage.toLowerCase().includes('email')) {
+                    notification.error({
+                        message: 'Lỗi cập nhật',
+                        description: 'Email đã tồn tại trong hệ thống'
+                    });
+                } else {
+                    notification.error({
+                        message: 'Có lỗi xảy ra',
+                        description: errorMessage
+                    });
+                }
             }
         } else {
             //create
@@ -99,16 +123,40 @@ const ModalUser = (props: IProps) => {
                     name: company.label
                 }
             }
-            const res = await callCreateUser(user);
-            if (res.data) {
-                message.success("Thêm mới user thành công");
-                handleReset();
-                reloadTable();
-            } else {
-                notification.error({
-                    message: 'Có lỗi xảy ra',
-                    description: res.message
-                });
+            try {
+                const res = await callCreateUser(user);
+                if (res.data) {
+                    message.success("Thêm mới user thành công");
+                    handleReset();
+                    reloadTable();
+                } else {
+                    // Kiểm tra nếu là lỗi trùng email
+                    if (res.statusCode === 400 && res.message?.toLowerCase().includes('email')) {
+                        notification.error({
+                            message: 'Lỗi tạo mới',
+                            description: 'Email đã tồn tại trong hệ thống'
+                        });
+                    } else {
+                        notification.error({
+                            message: 'Có lỗi xảy ra',
+                            description: res.message
+                        });
+                    }
+                }
+            } catch (error: any) {
+                // Xử lý lỗi từ API
+                const errorMessage = error.response?.data?.message || 'Có lỗi xảy ra khi tạo user';
+                if (error.response?.status === 400 && errorMessage.toLowerCase().includes('email')) {
+                    notification.error({
+                        message: 'Lỗi tạo mới',
+                        description: 'Email đã tồn tại trong hệ thống'
+                    });
+                } else {
+                    notification.error({
+                        message: 'Có lỗi xảy ra',
+                        description: errorMessage
+                    });
+                }
             }
         }
     }

@@ -36,7 +36,7 @@ import {
 } from 'recharts';
 import { callGetRevenueStatistics, callGetRevenueStatisticsByDateRange, RevenueStatisticsDTO } from "@/config/api";
 import { IBackendRes } from "@/types/backend";
-import dayjs from "dayjs";
+import dayjs from '@/config/dayjs';
 import axios from 'axios';
 
 const { RangePicker } = DatePicker;

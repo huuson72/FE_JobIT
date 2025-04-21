@@ -5,7 +5,7 @@ import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { ActionType, ProColumns } from '@ant-design/pro-components';
 import { Button, Popconfirm, Space, Tooltip, message, notification } from "antd";
 import { useState, useRef } from 'react';
-import dayjs from 'dayjs';
+import dayjs from '@/config/dayjs';
 import { callDeletePermission } from "@/config/api";
 import queryString from 'query-string';
 import { fetchPermission } from "@/redux/slice/permissionSlide";

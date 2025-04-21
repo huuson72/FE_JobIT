@@ -4,7 +4,7 @@ import { IResume } from "@/types/backend";
 import { ActionType, ProColumns, ProFormSelect } from '@ant-design/pro-components';
 import { Space, message, notification, Button } from "antd";
 import { useState, useRef } from 'react';
-import dayjs from 'dayjs';
+import dayjs from '@/config/dayjs';
 import { callDeleteResume } from "@/config/api";
 import queryString from 'query-string';
 import { fetchResume } from "@/redux/slice/resumeSlide";

@@ -6,7 +6,7 @@ import { DeleteOutlined, EditOutlined, PlusOutlined, EyeOutlined } from "@ant-de
 import { ActionType, ProColumns } from '@ant-design/pro-components';
 import { Button, Popconfirm, Space, message, notification } from "antd";
 import { useState, useRef } from 'react';
-import dayjs from 'dayjs';
+import dayjs from '@/config/dayjs';
 import { callDeleteUser } from "@/config/api";
 import queryString from 'query-string';
 import ModalUser from "@/components/admin/user/modal.user";

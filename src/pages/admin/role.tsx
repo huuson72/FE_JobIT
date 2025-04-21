@@ -5,7 +5,7 @@ import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { ActionType, ProColumns } from '@ant-design/pro-components';
 import { Button, Popconfirm, Space, Tag, message, notification } from "antd";
 import { useState, useRef, useEffect } from 'react';
-import dayjs from 'dayjs';
+import dayjs from '@/config/dayjs';
 import { callDeleteRole, callFetchPermission } from "@/config/api";
 import queryString from 'query-string';
 import { fetchRole } from "@/redux/slice/roleSlide";

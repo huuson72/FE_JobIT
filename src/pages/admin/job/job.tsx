@@ -5,7 +5,7 @@ import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { ActionType, ProColumns, ProFormSelect } from '@ant-design/pro-components';
 import { Button, Popconfirm, Space, Tag, message, notification } from "antd";
 import { useRef } from 'react';
-import dayjs from 'dayjs';
+import dayjs from '@/config/dayjs';
 import { callDeleteJob } from "@/config/api";
 import queryString from 'query-string';
 import { useNavigate } from "react-router-dom";
@@ -13,6 +13,7 @@ import { fetchJob } from "@/redux/slice/jobSlide";
 import Access from "@/components/share/access";
 import { ALL_PERMISSIONS } from "@/config/permissions";
 import { sfIn } from "spring-filter-query-builder";
+import { JOB_STATUS, JOB_STATUS_LABEL } from "@/config/constants";
 import axios, { AxiosError } from 'axios';
 
 const JobPage = () => {
@@ -126,9 +127,10 @@ const JobPage = () => {
             title: 'Trạng thái',
             dataIndex: 'active',
             render(dom, entity, index, action, schema) {
+                const isActive = entity.active === JOB_STATUS.ACTIVE;
                 return <>
-                    <Tag color={entity.active ? "lime" : "red"} >
-                        {entity.active ? "ACTIVE" : "INACTIVE"}
+                    <Tag color={isActive ? "lime" : "red"} >
+                        {isActive ? JOB_STATUS_LABEL[String(true)] : JOB_STATUS_LABEL[String(false)]}
                     </Tag>
                 </>
             },

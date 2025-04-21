@@ -4,9 +4,7 @@ import { Card, Col, Empty, Row } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from 'styles/client.module.scss';
 import { convertSlug, getLocationName } from '@/config/utils';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
-dayjs.extend(relativeTime);
+import dayjs from '@/config/dayjs';
 
 interface IProps {
     jobs: IJob[]; // Nhận danh sách công việc từ bên ngoài
@@ -44,7 +42,7 @@ const CompanyJobCard = ({ jobs }: IProps) => {
                                                 <ThunderboltOutlined style={{ color: 'orange' }} /> {(job.salary || 0).toLocaleString()} đ
                                             </div>
                                             <div className={styles["job-updatedAt"]}>
-                                                {dayjs(job.updatedAt || job.createdAt).locale('en').fromNow()}
+                                                {dayjs(job.updatedAt || job.createdAt).fromNow()}
                                             </div>
                                         </div>
                                     </div>

@@ -1,6 +1,7 @@
 import { IBackendRes, ICompany, IAccount, IUser, IModelPaginate, IGetAccount, IJob, IResume, IPermission, IRole, ISkill, ISubscribers, IReview, ICreateCVRequest, ICV, IEmployerSubscription, IPurchaseSubscriptionRequest, ISubscriptionPackage, ISubscriptionStatus, IChangePasswordRequest, IUpdateProfileRequest } from '@/types/backend';
 
 import axios from 'config/axios-customize';
+import { getEnvironmentConfig } from './environment';
 
 /**
  * 
@@ -698,11 +699,13 @@ export const callGetSubscriptionStatus = (userId: number, companyId: number) => 
  * Create VNPay payment for subscription package
  */
 export const callCreateVNPayPayment = (data: any) => {
+    const config = getEnvironmentConfig();
+    
     // Đảm bảo returnUrl trỏ về frontend
     const updatedData = {
         ...data,
-        // Điều chỉnh returnUrl để đảm bảo nó trỏ về frontend thay vì backend
-        returnUrl: `${window.location.origin}/subscription/payment-result`
+        // Sử dụng URL từ cấu hình môi trường
+        returnUrl: config.vnpayReturnUrl
     };
     
     console.log("Gọi API tạo VNPay payment, request data:", updatedData);
@@ -711,7 +714,7 @@ export const callCreateVNPayPayment = (data: any) => {
         headers: {
             'Content-Type': 'application/json'
         },
-        responseType: 'text', // Thay đổi responseType thành 'text' vì backend trả về chuỗi URL trực tiếp
+        responseType: 'text',
         transformResponse: [(responseData) => {
             // Xử lý response gốc từ backend
             console.log("VNPay API raw response:", responseData);

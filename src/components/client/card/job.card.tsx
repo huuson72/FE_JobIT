@@ -1,18 +1,17 @@
 import { callFetchJob } from '@/config/api';
-import { convertSlug, getLocationName } from '@/config/utils';
+import { convertSlug, getLocationName, calculateDaysFromNow } from '@/config/utils';
 import { IJob } from '@/types/backend';
-import { EnvironmentOutlined, ThunderboltOutlined, BankOutlined, ClockCircleOutlined } from '@ant-design/icons';
-import { Card, Col, Empty, Pagination, Row, Spin } from 'antd';
+import { EnvironmentOutlined, ThunderboltOutlined, BankOutlined, ClockCircleOutlined, DollarOutlined, HistoryOutlined } from '@ant-design/icons';
+import { Card, Col, Empty, Pagination, Row, Spin, Divider, Tag } from 'antd';
 import { useState, useEffect } from 'react';
 import { isMobile } from 'react-device-detect';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import styles from 'styles/client.module.scss';
 import cardStyles from 'styles/card.module.scss';
 import { sfIn } from 'spring-filter-query-builder';
+import { JOB_STATUS } from '@/config/constants';
 
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
-dayjs.extend(relativeTime);
+import dayjs from '@/config/dayjs';
 
 interface IProps {
     showPagination?: boolean;
@@ -62,6 +61,9 @@ const JobCard = ({ showPagination = false, jobs }: IProps) => {
         if (queryMinSalary) q.push(`salary>=${queryMinSalary}`);
         if (queryMaxSalary) q.push(`salary<=${queryMaxSalary}`);
 
+        // Thêm điều kiện chỉ hiển thị job active
+        q.push(`active:true`);
+
         // Gộp các filter lại bằng "and"
         if (q.length > 0) {
             query += `&filter=${encodeURIComponent(q.join(" and "))}`;
@@ -76,7 +78,9 @@ const JobCard = ({ showPagination = false, jobs }: IProps) => {
             console.log("API Response:", res?.data);
 
             if (res?.data) {
-                setDisplayJob(res.data.result);
+                // Lọc thêm một lần nữa ở client để đảm bảo
+                const activeJobs = res.data.result.filter(job => job.active === true);
+                setDisplayJob(activeJobs);
                 setTotal(res.data.meta.total);
             }
         } catch (error) {
@@ -146,7 +150,7 @@ const JobCard = ({ showPagination = false, jobs }: IProps) => {
                                                 </div>
                                                 <div className={cardStyles["posted-time"]}>
                                                     <ClockCircleOutlined style={{ marginRight: 4 }} />
-                                                    {dayjs(item.updatedAt || item.createdAt).locale('vi').fromNow()}
+                                                    {calculateDaysFromNow(item.updatedAt || item.createdAt || '')}
                                                 </div>
                                             </div>
                                         </div>

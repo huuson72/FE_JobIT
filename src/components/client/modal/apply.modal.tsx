@@ -8,6 +8,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import type { UploadProps } from 'antd';
 import { callCreateResume, callUploadSingleFile } from "@/config/api";
 import { useState } from 'react';
+import dayjs from 'dayjs';
 
 interface IProps {
     isModalOpen: boolean;
@@ -36,6 +37,16 @@ const ApplyModal = (props: IProps) => {
         else {
             //todo
             if (jobDetail) {
+                // Kiểm tra ngày hết hạn
+                const now = dayjs();
+                const endDate = dayjs(jobDetail.endDate);
+
+                if (now.isAfter(endDate)) {
+                    message.error("Công việc này đã hết hạn nộp CV!");
+                    setIsModalOpen(false);
+                    return;
+                }
+
                 const res = await callCreateResume(urlCV, jobDetail?.id, user.email, user.id);
                 if (res.data) {
                     message.success("Rải CV thành công!");

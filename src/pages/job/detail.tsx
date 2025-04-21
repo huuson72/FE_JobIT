@@ -6,12 +6,10 @@ import { callAddToFavourite, callFetchJobById, callRemoveFromFavourite } from "@
 import styles from 'styles/client.module.scss';
 import parse from 'html-react-parser';
 import { Col, Divider, Row, Skeleton, Tag } from "antd";
-import { DollarOutlined, EnvironmentOutlined, HistoryOutlined } from "@ant-design/icons";
-import { getLocationName } from "@/config/utils";
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
+import { DollarOutlined, EnvironmentOutlined, HistoryOutlined, CalendarOutlined, ClockCircleOutlined } from "@ant-design/icons";
+import { getLocationName, calculateDaysFromNow } from "@/config/utils";
+import dayjs from '@/config/dayjs';
 import ApplyModal from "@/components/client/modal/apply.modal";
-dayjs.extend(relativeTime)
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import { message } from "antd";
 import { useSelector } from "react-redux";
@@ -125,7 +123,16 @@ const ClientJobDetailPage = (props: any) => {
                                     <EnvironmentOutlined style={{ color: '#58aaab' }} />&nbsp;{getLocationName(jobDetail.location)}
                                 </div>
                                 <div>
-                                    <HistoryOutlined /> {jobDetail.updatedAt ? dayjs(jobDetail.updatedAt).locale("en").fromNow() : dayjs(jobDetail.createdAt).locale("en").fromNow()}
+                                    <HistoryOutlined /> Cập nhật {jobDetail.updatedAt ?
+                                        calculateDaysFromNow(jobDetail.updatedAt || '') :
+                                        calculateDaysFromNow(jobDetail.createdAt || '')
+                                    }
+                                </div>
+                                <div>
+                                    <CalendarOutlined /> Ngày tạo: {dayjs(jobDetail.createdAt).format('DD/MM/YYYY')}
+                                </div>
+                                <div>
+                                    <ClockCircleOutlined /> Hạn nộp: {dayjs(jobDetail.endDate).format('DD/MM/YYYY')}
                                 </div>
                                 <Divider />
                                 {parse(jobDetail.description)}

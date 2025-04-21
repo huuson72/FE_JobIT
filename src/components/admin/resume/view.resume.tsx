@@ -1,7 +1,7 @@
 import { callUpdateResumeStatus } from "@/config/api";
 import { IResume } from "@/types/backend";
 import { Badge, Button, Descriptions, Drawer, Form, Select, message, notification } from "antd";
-import dayjs from 'dayjs';
+import dayjs from '@/config/dayjs';
 import { useState, useEffect } from 'react';
 const { Option } = Select;
 

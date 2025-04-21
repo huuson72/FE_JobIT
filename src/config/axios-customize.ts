@@ -4,6 +4,8 @@ import axiosClient from "axios";
 import { store } from "@/redux/store";
 import { setRefreshTokenAction } from "@/redux/slice/accountSlide";
 import { notification } from "antd";
+import { getEnvironmentConfig } from './environment';
+
 interface AccessTokenResponse {
     access_token: string;
 }
@@ -11,9 +13,10 @@ interface AccessTokenResponse {
 /**
  * Creates an initial 'axios' instance with custom settings.
  */
+const config = getEnvironmentConfig();
 
 const instance = axiosClient.create({
-    baseURL: import.meta.env.VITE_BACKEND_URL as string,
+    baseURL: config.backendUrl,
     withCredentials: true
 });
 
