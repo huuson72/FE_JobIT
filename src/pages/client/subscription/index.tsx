@@ -13,6 +13,7 @@ import { CrownOutlined, CheckCircleOutlined, DollarOutlined, ArrowUpOutlined } f
 import styles from '@/styles/subscription.module.scss';
 import { notification } from 'antd';
 import { useAppSelector } from '@/redux/hooks';
+import { getEnvironmentConfig } from '@/config/environment';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -209,7 +210,7 @@ const SubscriptionPage = () => {
             orderType: "billpayment",
             orderInfo: "Thanh toan goi VIP",
             amount: finalPrice, // Sử dụng giá sau giảm giá
-            returnUrl: getFullReturnUrl()
+            returnUrl: getEnvironmentConfig().vnpayReturnUrl
         };
 
         console.log("VNPay request data:", requestData);

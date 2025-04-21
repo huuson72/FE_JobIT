@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { callGetPackageById, callPurchaseSubscription, callCreateVNPayPayment } from '@/config/api';
 import { useAppSelector } from '@/redux/hooks';
 import { ISubscriptionPackage } from '@/types/backend';
+import { getEnvironmentConfig } from '@/config/environment';
 import {
     Card,
     Typography,
@@ -189,8 +190,8 @@ const SubscriptionPurchasePage = () => {
         try {
             setVnpayProcessing(true);
 
-            // Tạo đường dẫn callback
-            const returnUrl = `${window.location.origin}/subscription/payment-result`;
+            // Lấy cấu hình từ environment
+            const config = getEnvironmentConfig();
 
             // Tạo thông tin đơn hàng
             const orderInfo = `Thanh toán gói VIP: ${packageData.name}`;
@@ -201,7 +202,7 @@ const SubscriptionPurchasePage = () => {
                 packageId: packageData.id,
                 amount: packageData.price * 100,
                 orderInfo: orderInfo,
-                returnUrl: returnUrl
+                returnUrl: config.vnpayReturnUrl
             });
 
             if (res && res.data && res.data.paymentUrl) {
