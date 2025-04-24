@@ -701,11 +701,12 @@ export const callGetSubscriptionStatus = (userId: number, companyId: number) => 
 export const callCreateVNPayPayment = (data: any) => {
     const config = getEnvironmentConfig();
     
-    // Đảm bảo returnUrl trỏ về frontend
+    // Đảm bảo returnUrl trỏ về frontend và backend
     const updatedData = {
         ...data,
         // Sử dụng URL từ cấu hình môi trường
-        returnUrl: config.vnpayReturnUrl
+        returnUrl: config.vnpayReturnUrl,
+        backendReturnUrl: config.vnpayBackendReturnUrl
     };
     
     console.log("Gọi API tạo VNPay payment, request data:", updatedData);

@@ -202,7 +202,8 @@ const SubscriptionPurchasePage = () => {
                 packageId: packageData.id,
                 amount: packageData.price * 100,
                 orderInfo: orderInfo,
-                returnUrl: config.vnpayReturnUrl
+                returnUrl: config.vnpayReturnUrl,
+                backendReturnUrl: config.vnpayBackendReturnUrl
             });
 
             if (res && res.data && res.data.paymentUrl) {
