@@ -203,7 +203,8 @@ const SubscriptionPurchasePage = () => {
                 amount: packageData.price * 100,
                 orderInfo: orderInfo,
                 returnUrl: config.vnpayReturnUrl,
-                backendReturnUrl: config.vnpayBackendReturnUrl
+                backendReturnUrl: config.vnpayBackendReturnUrl,
+                environment: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'local' : 'production'
             });
 
             if (res && res.data && res.data.paymentUrl) {

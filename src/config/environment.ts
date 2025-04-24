@@ -2,25 +2,32 @@ export const getEnvironmentConfig = () => {
     // Kiểm tra xem có phải đang chạy trên local không
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     
+    // Lấy URL từ biến môi trường
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || (isLocal ? 'http://localhost:8080' : 'https://be-jobit.onrender.com');
+    
+    // URL production
+    const PROD_FRONTEND_URL = 'https://hsjobit.onrender.com';
+    const PROD_BACKEND_URL = 'https://be-jobit.onrender.com';
+    
+    // URL local
+    const LOCAL_FRONTEND_URL = 'http://localhost:5173';
+    const LOCAL_BACKEND_URL = 'http://localhost:8080';
+    
     return {
         // URL của frontend
-        frontendUrl: isLocal
-            ? 'http://localhost:5173'  // URL local
-            : 'https://hsjobit.onrender.com', // URL production
+        frontendUrl: isLocal ? LOCAL_FRONTEND_URL : PROD_FRONTEND_URL,
             
         // URL của backend
-        backendUrl: isLocal
-            ? 'http://localhost:8080'  // URL local
-            : 'https://be-jobit.onrender.com', // URL production
+        backendUrl: backendUrl,
             
         // URL callback cho VNPay
-        vnpayReturnUrl: isLocal
-            ? 'http://localhost:5173/subscription/payment-result'  // URL local
-            : 'https://hsjobit.onrender.com/subscription/payment-result', // URL production
+        vnpayReturnUrl: isLocal 
+            ? `${LOCAL_FRONTEND_URL}/subscription/payment-result`
+            : `${PROD_FRONTEND_URL}/subscription/payment-result`,
             
         // URL callback cho VNPay (dành cho backend)
         vnpayBackendReturnUrl: isLocal
-            ? 'http://localhost:8080/api/v1/payments/vnpay-callback'  // URL local
-            : 'https://be-jobit.onrender.com/api/v1/payments/vnpay-callback' // URL production
+            ? `${LOCAL_BACKEND_URL}/api/v1/payments/vnpay-callback`
+            : `${PROD_BACKEND_URL}/api/v1/payments/vnpay-callback`
     };
 }; 
