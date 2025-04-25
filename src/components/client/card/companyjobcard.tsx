@@ -1,9 +1,9 @@
 import { IJob } from '@/types/backend';
-import { EnvironmentOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import { EnvironmentOutlined, ThunderboltOutlined, BankOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import { Card, Col, Empty, Row } from 'antd';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styles from 'styles/client.module.scss';
-import { convertSlug, getLocationName } from '@/config/utils';
+import { convertSlug, getLocationName, calculateDaysFromNow } from '@/config/utils';
 import dayjs from '@/config/dayjs';
 
 interface IProps {
@@ -27,6 +27,7 @@ const CompanyJobCard = ({ jobs }: IProps) => {
                             <Col span={24} md={12} key={job.id}>
                                 <Card size="small" hoverable onClick={() => handleViewDetailJob(job)}>
                                     <div className={styles["card-job-content"]}>
+                                        {!job.active && <div className={styles["expired-tag"]}>Đã hết hạn</div>}
                                         <div className={styles["card-job-left"]}>
                                             <img
                                                 alt="company logo"
@@ -35,14 +36,23 @@ const CompanyJobCard = ({ jobs }: IProps) => {
                                         </div>
                                         <div className={styles["card-job-right"]}>
                                             <div className={styles["job-title"]}>{job.name}</div>
-                                            <div className={styles["job-location"]}>
-                                                <EnvironmentOutlined style={{ color: '#58aaab' }} /> {getLocationName(job.location)}
+                                            <div className={styles["job-meta"]}>
+                                                <div className={styles["job-location"]}>
+                                                    <EnvironmentOutlined style={{ color: '#58aaab' }} /> {getLocationName(job.location)}
+                                                </div>
+                                                <div className={styles["job-salary"]}>
+                                                    <ThunderboltOutlined style={{ color: 'orange' }} /> {(job.salary || 0).toLocaleString()} đ
+                                                </div>
                                             </div>
-                                            <div>
-                                                <ThunderboltOutlined style={{ color: 'orange' }} /> {(job.salary || 0).toLocaleString()} đ
-                                            </div>
-                                            <div className={styles["job-updatedAt"]}>
-                                                {dayjs(job.updatedAt || job.createdAt).fromNow()}
+                                            <div className={styles["job-footer"]}>
+                                                <div className={styles["company-name"]}>
+                                                    <BankOutlined style={{ marginRight: 4 }} />
+                                                    {job.company?.name}
+                                                </div>
+                                                <div className={styles["posted-time"]}>
+                                                    <ClockCircleOutlined style={{ marginRight: 4 }} />
+                                                    {calculateDaysFromNow(job.updatedAt || job.createdAt || '')}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

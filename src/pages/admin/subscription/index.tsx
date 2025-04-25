@@ -142,11 +142,24 @@ const SubscriptionManagement = () => {
 
     const handleDelete = async (id: number) => {
         try {
-            await callDeletePackage(id);
-            message.success('Xóa gói VIP thành công');
+            // Lấy thông tin gói VIP hiện tại
+            const currentPackage = packages.find(pkg => pkg.id === id);
+            if (!currentPackage) {
+                message.error('Không tìm thấy gói VIP');
+                return;
+            }
+
+            // Cập nhật trạng thái và giữ nguyên các thông tin khác
+            await callUpdatePackage(id, {
+                ...currentPackage,
+                isActive: false,
+                updatedAt: new Date().toISOString()
+            });
+            message.success('Đã tắt gói VIP thành công');
             fetchPackages();
         } catch (error) {
-            message.error('Không thể xóa gói VIP');
+            console.error('Lỗi khi tắt gói VIP:', error);
+            message.error('Không thể tắt gói VIP');
         }
     };
 

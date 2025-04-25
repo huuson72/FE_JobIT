@@ -10,7 +10,7 @@ const HomePage = () => {
             <CompanyCard />
             <div style={{ flex: 1 }}></div> {/* Phần này giúp đẩy nội dung mở rộng */}
             <Divider />
-            <JobCard />
+            <JobCard showPagination={true} sortQuery="sort=createdAt,desc" />
         </div>
     );
 };

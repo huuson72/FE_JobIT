@@ -47,10 +47,9 @@ interface StatisticsData {
     totalUsers: number;
     totalCompanies: number;
     totalJobs: number;
-    totalCVs: number;
 }
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#82ca9d', '#8884d8'];
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#82ca9d'];
 
 const DashboardPage = () => {
     const navigate = useNavigate();
@@ -61,8 +60,7 @@ const DashboardPage = () => {
     const [statistics, setStatistics] = useState<StatisticsData>({
         totalUsers: 0,
         totalCompanies: 0,
-        totalJobs: 0,
-        totalCVs: 0
+        totalJobs: 0
     });
 
     // Thêm state cho thống kê doanh thu
@@ -212,15 +210,13 @@ const DashboardPage = () => {
     const barChartData = [
         { name: 'Người dùng', value: statistics.totalUsers },
         { name: 'Công ty', value: statistics.totalCompanies },
-        { name: 'Việc làm', value: statistics.totalJobs },
-        { name: 'CV', value: statistics.totalCVs }
+        { name: 'Việc làm', value: statistics.totalJobs }
     ];
 
     const pieChartData = [
         { name: 'Người dùng', value: statistics.totalUsers },
         { name: 'Công ty', value: statistics.totalCompanies },
-        { name: 'Việc làm', value: statistics.totalJobs },
-        { name: 'CV', value: statistics.totalCVs }
+        { name: 'Việc làm', value: statistics.totalJobs }
     ];
 
     // Columns cho bảng giao dịch gần đây
@@ -326,20 +322,6 @@ const DashboardPage = () => {
                                 value={statistics.totalJobs}
                                 formatter={formatter}
                                 prefix={<RiseOutlined />}
-                            />
-                        </Card>
-                    </Col>
-                    <Col xs={24} sm={12} lg={6}>
-                        <Card
-                            hoverable
-                            onClick={() => handleCardClick('/admin/cv')}
-                            style={{ cursor: 'pointer' }}
-                        >
-                            <Statistic
-                                title="Tổng số CV"
-                                value={statistics.totalCVs}
-                                formatter={formatter}
-                                prefix={<FileTextOutlined />}
                             />
                         </Card>
                     </Col>

@@ -1,7 +1,7 @@
 import { callFetchJob } from '@/config/api';
 import { convertSlug, getLocationName, calculateDaysFromNow } from '@/config/utils';
 import { IJob } from '@/types/backend';
-import { EnvironmentOutlined, ThunderboltOutlined, BankOutlined, ClockCircleOutlined, DollarOutlined, HistoryOutlined } from '@ant-design/icons';
+import { EnvironmentOutlined, ThunderboltOutlined, BankOutlined, ClockCircleOutlined, DollarOutlined, HistoryOutlined, CalendarOutlined } from '@ant-design/icons';
 import { Card, Col, Empty, Pagination, Row, Spin, Divider, Tag } from 'antd';
 import { useState, useEffect } from 'react';
 import { isMobile } from 'react-device-detect';
@@ -16,9 +16,10 @@ import dayjs from '@/config/dayjs';
 interface IProps {
     showPagination?: boolean;
     jobs?: IJob[]; // Nhận danh sách công việc từ bên ngoài
+    sortQuery?: string; // Thêm sortQuery vào interface
 }
 
-const JobCard = ({ showPagination = false, jobs }: IProps) => {
+const JobCard = ({ showPagination = false, jobs, sortQuery = "sort=createdAt,desc" }: IProps) => {
     const [displayJob, setDisplayJob] = useState<IJob[]>(jobs || []);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -26,7 +27,6 @@ const JobCard = ({ showPagination = false, jobs }: IProps) => {
     const [pageSize, setPageSize] = useState(6);
     const [total, setTotal] = useState(0);
     const [filter, setFilter] = useState("");
-    const [sortQuery, setSortQuery] = useState("sort=updatedAt,desc");
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const location = useLocation();
@@ -123,6 +123,7 @@ const JobCard = ({ showPagination = false, jobs }: IProps) => {
                                     onClick={() => handleViewDetailJob(item)}
                                 >
                                     <div className={cardStyles["job-card-content"]}>
+                                        {!item.active && <div className={styles["expired-tag"]}>Đã hết hạn</div>}
                                         <div className={cardStyles["company-logo"]}>
                                             <img
                                                 alt={`${item.company?.name || 'Company'} logo`}
@@ -151,6 +152,10 @@ const JobCard = ({ showPagination = false, jobs }: IProps) => {
                                                 <div className={cardStyles["posted-time"]}>
                                                     <ClockCircleOutlined style={{ marginRight: 4 }} />
                                                     {calculateDaysFromNow(item.updatedAt || item.createdAt || '')}
+                                                </div>
+                                                <div className={cardStyles["job-dates"]}>
+                                                    <CalendarOutlined style={{ marginRight: 4 }} />
+                                                    {dayjs(item.createdAt).format('DD/MM/YYYY')} - {dayjs(item.endDate).format('DD/MM/YYYY')}
                                                 </div>
                                             </div>
                                         </div>

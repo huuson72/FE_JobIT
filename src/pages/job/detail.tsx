@@ -95,7 +95,21 @@ const ClientJobDetailPage = (props: any) => {
                                 <div className={styles["header"]}>
                                     {jobDetail.name}
                                 </div>
-                                <button onClick={() => setIsModalOpen(true)} className={styles["btn-apply"]} >Apply Now</button>
+                                {(() => {
+                                    const now = dayjs();
+                                    const endDate = dayjs(jobDetail.endDate);
+                                    const isExpired = now.isAfter(endDate);
+
+                                    return (
+                                        <button
+                                            onClick={() => setIsModalOpen(true)}
+                                            className={`${styles["btn-apply"]} ${isExpired ? styles["btn-apply-disabled"] : ''}`}
+                                            disabled={isExpired}
+                                        >
+                                            {isExpired ? 'Đã hết hạn nộp CV' : 'Apply Now'}
+                                        </button>
+                                    );
+                                })()}
                                 <div className={styles["extra-buttons"]} style={{ marginTop: '20px' }}>
                                     <Link to="/favourites" style={{ marginLeft: '10px', marginBottom: '20px', color: '#1890ff', textDecoration: 'none', fontWeight: 'bold' }}>❤️ Công việc yêu thích</Link>
                                     <button
