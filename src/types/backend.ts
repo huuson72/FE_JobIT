@@ -21,6 +21,8 @@ export interface IAccount {
         id: string;
         email: string;
         name: string;
+        phone: string;
+        address: string;
         role: {
             id: string;
             name: string;
@@ -31,6 +33,16 @@ export interface IAccount {
                 method: string;
                 module: string;
             }[]
+        };
+        company?: {
+            id: string;
+            name: string;
+            address: string;
+            phone: string;
+            email: string;
+            website?: string;
+            description?: string;
+            logo?: string;
         }
     }
 }
@@ -38,16 +50,14 @@ export interface IAccount {
 export interface IGetAccount extends Omit<IAccount, "access_token"> { }
 
 export interface ICompany {
-    id?: string;
-    name?: string;
-    address?: string;
-    logo: string;
+    id: string;
+    name: string;
+    address: string;
+    phone: string;
+    email: string;
+    website?: string;
     description?: string;
-    createdBy?: string;
-    isDeleted?: boolean;
-    deletedAt?: boolean | null;
-    createdAt?: string;
-    updatedAt?: string;
+    logo: string;
 }
 
 export interface ISkill {
@@ -64,29 +74,23 @@ export interface IUser {
     id: string;
     email: string;
     name: string;
+    address: string;
+    phone: string;
+    age: number;
+    gender: 'MALE' | 'FEMALE' | 'OTHER';
+    businessLicense: string;
     role: {
         id?: string;
         name?: string;
-        permissions?: IPermission[]
+        permissions?: {
+            id: string;
+            name: string;
+            apiPath: string;
+            method: string;
+            module: string;
+        }[];
     };
-    company?: {
-        id: number;
-        name: string;
-        address?: string;
-        description?: string;
-        logo?: string;
-    };
-    password?: string;
-    age: number;
-    gender: string;
-    address: string;
-    phone?: string;
-    businessLicense?: string;
-    createdBy?: string;
-    isDeleted?: boolean;
-    deletedAt?: boolean | null;
-    createdAt?: string;
-    updatedAt?: string;
+    company?: ICompany;
 }
 
 export interface IJob {
@@ -309,4 +313,49 @@ export interface IUpdateProfileRequest {
     email: string;
     phone: string;
     address: string;
+}
+
+export interface IUpdateCompanyInfoRequest {
+    companyId: string;
+    companyName: string;
+    companyAddress: string;
+    companyPhone: string;
+    companyEmail: string;
+    companyWebsite?: string;
+    companyDescription?: string;
+}
+
+export interface IHRUpdateCompanyRequest {
+    // Thông tin cá nhân
+    name: string;
+    address: string;
+    phone: string;
+    age: number;
+    gender: 'MALE' | 'FEMALE' | 'OTHER';
+    businessLicense: string;
+    // Thông tin công ty
+    companyName: string;
+    companyAddress: string;
+    companyDescription: string;
+    companyLogo: string;
+}
+
+export interface IHRUpdateCompanyResponse {
+    id: number;
+    email: string;
+    name: string;
+    gender: string | null;
+    address: string;
+    phone: string;
+    age: number;
+    updatedAt: string;
+    createdAt: string;
+    company: {
+        id: number;
+        name: string;
+    };
+    role: {
+        id: number;
+        name: string;
+    };
 } 

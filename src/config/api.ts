@@ -1,4 +1,4 @@
-import { IBackendRes, ICompany, IAccount, IUser, IModelPaginate, IGetAccount, IJob, IResume, IPermission, IRole, ISkill, ISubscribers, IReview, ICreateCVRequest, ICV, IEmployerSubscription, IPurchaseSubscriptionRequest, ISubscriptionPackage, ISubscriptionStatus, IChangePasswordRequest, IUpdateProfileRequest } from '@/types/backend';
+import { IBackendRes, ICompany, IAccount, IUser, IModelPaginate, IGetAccount, IJob, IResume, IPermission, IRole, ISkill, ISubscribers, IReview, ICreateCVRequest, ICV, IEmployerSubscription, IPurchaseSubscriptionRequest, ISubscriptionPackage, ISubscriptionStatus, IChangePasswordRequest, IUpdateProfileRequest, IUpdateCompanyInfoRequest, IHRUpdateCompanyRequest, IHRUpdateCompanyResponse } from '@/types/backend';
 
 import axios from 'config/axios-customize';
 import { getEnvironmentConfig } from './environment';
@@ -107,6 +107,10 @@ export const callFetchCompany = (query: string) => {
 
 export const callFetchCompanyById = (id: string) => {
     return axios.get<IBackendRes<ICompany>>(`/api/v1/companies/${id}`);
+}
+
+export const callUpdateCompanyInfo = (data: IUpdateCompanyInfoRequest) => {
+    return axios.patch<IBackendRes<ICompany>>('/api/v1/companies/update', data);
 }
 
 /**
@@ -1022,5 +1026,14 @@ export const callVerifyEmployer = (id: string) => {
 
 export const callRejectEmployer = (id: string) => {
     return axios.put<IBackendRes<IUser>>(`/api/v1/admin/employers/${id}/reject`)
+}
+
+export const callHRUpdateCompany = (data: IHRUpdateCompanyRequest) => {
+    return axios.put<IBackendRes<IHRUpdateCompanyResponse>>('/api/v1/hr/update-info', data, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        }
+    });
 }
 
