@@ -6,13 +6,14 @@ import styles from 'styles/admin.module.scss';
 import { LOCATION_LIST, SKILLS_LIST } from "@/config/utils";
 import { ICompanySelect } from "../user/modal.user";
 import { useState, useEffect } from 'react';
-import { callCreateJob, callFetchAllSkill, callFetchCompany, callFetchJobById, callUpdateJob } from "@/config/api";
+import { callCreateJob, callFetchAllSkill, callFetchCompany, callFetchHRCompany, callFetchJobById, callUpdateJob } from "@/config/api";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { CheckSquareOutlined } from "@ant-design/icons";
 import enUS from 'antd/lib/locale/en_US';
 import dayjs from '@/config/dayjs';
-import { IJob, ISkill } from "@/types/backend";
+import { IJob, ISkill, IHRCompanyResponse, IBackendRes } from "@/types/backend";
+import { useAppSelector } from "@/redux/hooks";
 
 interface ISkillSelect {
     label: string;
@@ -23,6 +24,13 @@ interface ISkillSelect {
 const ViewUpsertJob = (props: any) => {
     const [companies, setCompanies] = useState<ICompanySelect[]>([]);
     const [skills, setSkills] = useState<ISkillSelect[]>([]);
+    const user = useAppSelector(state => state.account.user);
+    const isHR = user?.role?.name?.toUpperCase() === 'HR';
+    const [hrCompany, setHrCompany] = useState<any>(null);
+
+    console.log("User role:", user?.role?.name);
+    console.log("Is HR:", isHR);
+    console.log("User company:", user?.company);
 
     const navigate = useNavigate();
     const [value, setValue] = useState<string>("");
@@ -32,6 +40,66 @@ const ViewUpsertJob = (props: any) => {
     const id = params?.get("id"); // job id
     const [dataUpdate, setDataUpdate] = useState<IJob | null>(null);
     const [form] = Form.useForm();
+
+    // Load HR company data
+    useEffect(() => {
+        if (isHR) {
+            const loadHRCompany = async () => {
+                try {
+                    const res = await callFetchHRCompany();
+                    console.log("HR Company raw response:", res);
+                    console.log("HR Company data:", res.data);
+
+                    // Properly handle the nested response structure
+                    if (res.data && typeof res.data === 'object') {
+                        let company;
+
+                        // Log all levels to help debug
+                        console.log("Level 1:", res.data);
+                        if (res.data.data) console.log("Level 2:", res.data.data);
+                        if (res.data.data?.data) console.log("Level 3:", res.data.data.data);
+
+                        // Try to find company data at different nesting levels
+                        if (res.data.id) {
+                            company = res.data; // Direct data
+                        } else if (res.data.data?.id) {
+                            company = res.data.data; // One level nesting
+                        } else if (res.data.data?.data?.id) {
+                            company = res.data.data.data; // Two level nesting
+                        }
+
+                        if (company && company.id) {
+                            console.log("Found company data:", company);
+                            setHrCompany(company);
+
+                            const companyValue = {
+                                label: company.name,
+                                value: `${company.id}@#$${company.logo || ''}`,
+                                key: company.id.toString()
+                            };
+
+                            console.log("Setting company value:", companyValue);
+                            setCompanies([companyValue]);
+
+                            // Only pre-fill the form if we're not editing an existing job
+                            if (!id) {
+                                form.setFieldsValue({
+                                    company: companyValue
+                                });
+                            }
+                        } else {
+                            console.error("No valid company data found in response");
+                        }
+                    } else {
+                        console.error("Invalid response format:", res.data);
+                    }
+                } catch (error) {
+                    console.error("Error loading HR company:", error);
+                }
+            };
+            loadHRCompany();
+        }
+    }, [isHR, id, form]);
 
     useEffect(() => {
         const init = async () => {
@@ -73,21 +141,51 @@ const ViewUpsertJob = (props: any) => {
         }
         init();
         return () => form.resetFields()
-    }, [id])
+    }, [id, form]);
 
     // Usage of DebounceSelect
     async function fetchCompanyList(name: string): Promise<ICompanySelect[]> {
+        if (isHR) {
+            try {
+                const res = await callFetchHRCompany();
+                console.log("HR Company dropdown response:", res);
+
+                // Find company data at different nesting levels
+                let company;
+                if (res.data?.id) {
+                    company = res.data;
+                } else if (res.data?.data?.id) {
+                    company = res.data.data;
+                } else if (res.data?.data?.data?.id) {
+                    company = res.data.data.data;
+                }
+
+                if (company && company.id) {
+                    console.log("Using company for dropdown:", company);
+                    return [{
+                        label: company.name,
+                        value: `${company.id}@#$${company.logo || ''}`,
+                        key: company.id.toString()
+                    }];
+                } else {
+                    console.error("No valid company found for dropdown");
+                }
+            } catch (error) {
+                console.error("Error fetching HR company for dropdown:", error);
+            }
+            return [];
+        }
+        // Nếu không phải HR, tìm kiếm bình thường
         const res = await callFetchCompany(`page=1&size=100&name ~ '${name}'`);
         if (res && res.data) {
             const list = res.data.result;
-            const temp = list.map(item => {
-                return {
-                    label: item.name as string,
-                    value: `${item.id}@#$${item.logo}` as string
-                }
-            })
-            return temp;
-        } else return [];
+            return list.map(item => ({
+                label: item.name as string,
+                value: `${item.id}@#$${item.logo || ''}` as string,
+                key: item.id.toString()
+            }));
+        }
+        return [];
     }
 
     async function fetchSkillList(): Promise<ISkillSelect[]> {
@@ -247,9 +345,15 @@ const ViewUpsertJob = (props: any) => {
                                 <ProFormSelect
                                     name="location"
                                     label="Địa điểm"
-                                    options={LOCATION_LIST.filter(item => item.value !== 'ALL')}
+                                    options={LOCATION_LIST}
                                     placeholder="Please select a location"
                                     rules={[{ required: true, message: 'Vui lòng chọn địa điểm!' }]}
+                                    fieldProps={{
+                                        showSearch: true,
+                                        filterOption: (input, option) =>
+                                            (typeof option?.label === 'string' ? option.label.toLowerCase() : '').includes(input.toLowerCase()),
+                                        optionFilterProp: "label"
+                                    }}
                                 />
                             </Col>
                             <Col span={24} md={6}>
@@ -296,22 +400,38 @@ const ViewUpsertJob = (props: any) => {
                                         label="Thuộc Công Ty"
                                         rules={[{ required: true, message: 'Vui lòng chọn company!' }]}
                                     >
-                                        <DebounceSelect
-                                            allowClear
-                                            showSearch
-                                            defaultValue={companies}
-                                            value={companies}
-                                            placeholder="Chọn công ty"
-                                            fetchOptions={fetchCompanyList}
-                                            onChange={(newValue: any) => {
-                                                if (newValue?.length === 0 || newValue?.length === 1) {
-                                                    setCompanies(newValue as ICompanySelect[]);
-                                                }
-                                            }}
-                                            style={{ width: '100%' }}
-                                        />
+                                        {isHR && companies.length > 0 ? (
+                                            // Simple text display for HR users
+                                            <div style={{
+                                                padding: '4px 11px',
+                                                border: '1px solid #d9d9d9',
+                                                borderRadius: '2px',
+                                                minHeight: '32px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                backgroundColor: '#f5f5f5'
+                                            }}>
+                                                {companies[0]?.label || 'Loading...'}
+                                            </div>
+                                        ) : (
+                                            // Regular dropdown for non-HR users
+                                            <DebounceSelect
+                                                allowClear={false}
+                                                showSearch={!isHR}
+                                                value={companies[0] || null}
+                                                placeholder="Chọn công ty"
+                                                fetchOptions={fetchCompanyList}
+                                                onChange={(newValue: any) => {
+                                                    if (!isHR) { // Only allow changes for non-HR users
+                                                        setCompanies([newValue]);
+                                                        form.setFieldsValue({ company: newValue });
+                                                    }
+                                                }}
+                                                style={{ width: '100%' }}
+                                                disabled={isHR}
+                                            />
+                                        )}
                                     </ProForm.Item>
-
                                 </Col>
                             }
 

@@ -5,6 +5,33 @@ export interface IBackendRes<T> {
     data?: T;
 }
 
+export interface IHRCompanyResponse {
+    statusCode: number;
+    error: null;
+    message: string;
+    data: {
+        statusCode: number;
+        error: null;
+        message: string;
+        data: {
+            id: number;
+            name: string;
+            description: string;
+            address: string;
+            logo: string;
+            createdAt: string;
+            updatedAt: string;
+            createdBy: string;
+            updatedBy: string;
+        };
+    };
+}
+
+export interface ICompanySelect {
+    label: string;
+    value: string;
+    key: string;
+}
 export interface IModelPaginate<T> {
     meta: {
         page: number;
@@ -57,7 +84,7 @@ export interface ICompany {
     email: string;
     website?: string;
     description?: string;
-    logo: string;
+    logo?: string;
 }
 
 export interface ISkill {

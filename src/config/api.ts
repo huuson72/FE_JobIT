@@ -1,4 +1,4 @@
-import { IBackendRes, ICompany, IAccount, IUser, IModelPaginate, IGetAccount, IJob, IResume, IPermission, IRole, ISkill, ISubscribers, IReview, ICreateCVRequest, ICV, IEmployerSubscription, IPurchaseSubscriptionRequest, ISubscriptionPackage, ISubscriptionStatus, IChangePasswordRequest, IUpdateProfileRequest, IUpdateCompanyInfoRequest, IHRUpdateCompanyRequest, IHRUpdateCompanyResponse } from '@/types/backend';
+import { IBackendRes, ICompany, IAccount, IUser, IModelPaginate, IGetAccount, IJob, IResume, IPermission, IRole, ISkill, ISubscribers, IReview, ICreateCVRequest, ICV, IEmployerSubscription, IPurchaseSubscriptionRequest, ISubscriptionPackage, ISubscriptionStatus, IChangePasswordRequest, IUpdateProfileRequest, IUpdateCompanyInfoRequest, IHRUpdateCompanyRequest, IHRUpdateCompanyResponse, IHRCompanyResponse } from '@/types/backend';
 
 import axios from 'config/axios-customize';
 import { getEnvironmentConfig } from './environment';
@@ -111,6 +111,55 @@ export const callFetchCompanyById = (id: string) => {
 
 export const callUpdateCompanyInfo = (data: IUpdateCompanyInfoRequest) => {
     return axios.patch<IBackendRes<ICompany>>('/api/v1/companies/update', data);
+}
+
+export const callFetchHRCompany = () => {
+    const token = localStorage.getItem("access_token");
+    console.log("Fetching HR company with token:", token ? "Token exists" : "No token");
+    
+    return axios.get('/api/v1/jobs/hr-company', {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    }).then(response => {
+        console.log("HR Company API raw response:", response.data);
+        
+        // Handle different nesting levels by checking each level
+        const nestedData = response.data?.data;
+        if (nestedData) {
+            console.log("First level data:", nestedData);
+            
+            // Check if we have double nesting
+            if (nestedData.data?.data) {
+                console.log("Found double nested data");
+                return {
+                    ...response,
+                    data: {
+                        ...response.data,
+                        data: nestedData.data.data
+                    }
+                };
+            }
+            
+            // Check if we have single nesting
+            if (nestedData.data) {
+                console.log("Found single nested data");
+                return {
+                    ...response,
+                    data: {
+                        ...response.data,
+                        data: nestedData.data
+                    }
+                };
+            }
+        }
+        
+        console.log("Returning original response structure");
+        return response;
+    }).catch(error => {
+        console.error("Error fetching HR company:", error.response?.data || error.message);
+        throw error;
+    });
 }
 
 /**

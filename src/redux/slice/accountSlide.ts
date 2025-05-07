@@ -84,6 +84,7 @@ export const accountSlide = createSlice({
             state.user.phone = action.payload.phone || "";
             state.user.address = action.payload.address || "";
             state.user.role = action?.payload?.role;
+            state.user.company = action?.payload?.company;
 
             if (!action?.payload?.user?.role) state.user.role = {};
             state.user.role.permissions = action?.payload?.role?.permissions ?? [];
@@ -131,6 +132,7 @@ export const accountSlide = createSlice({
                 state.user.phone = action.payload.user?.phone || "";
                 state.user.address = action.payload.user?.address || "";
                 state.user.role = action?.payload?.user?.role;
+                state.user.company = action?.payload?.user?.company;
                 if (!action?.payload?.user?.role) state.user.role = {};
                 state.user.role.permissions = action?.payload?.user?.role?.permissions ?? [];
             }

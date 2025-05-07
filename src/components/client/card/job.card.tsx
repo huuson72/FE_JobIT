@@ -48,12 +48,24 @@ const JobCard = ({ showPagination = false, jobs, sortQuery = "sort=createdAt,des
         const queryLocation = searchParams.get("location");
         const querySkills = searchParams.get("skills");
         const queryLevel = searchParams.get("level");
-        const queryMinSalary = searchParams.get("minSalary"); // Thêm minSalary
-        const queryMaxSalary = searchParams.get("maxSalary"); // Thêm maxSalary
+        const queryMinSalary = searchParams.get("minSalary");
+        const queryMaxSalary = searchParams.get("maxSalary");
 
         // Xây dựng mảng filter
         let q = [];
-        if (queryLocation) q.push(sfIn("location", queryLocation.split(",")).toString());
+
+        // Xử lý filter location
+        if (queryLocation) {
+            const locations = queryLocation.split(",");
+            if (locations.includes("Others")) {
+                // Nếu có chọn "Others", tìm các job không thuộc HANOI, HOCHIMINH, DANANG
+                q.push(`location not in ('HANOI','HOCHIMINH','DANANG')`);
+            } else {
+                // Nếu không chọn "Others", tìm theo các location được chọn
+                q.push(sfIn("location", locations).toString());
+            }
+        }
+
         if (querySkills) q.push(sfIn("skills", querySkills.split(",")).toString());
         if (queryLevel) q.push(sfIn("level", queryLevel.split(",")).toString());
 
@@ -73,14 +85,10 @@ const JobCard = ({ showPagination = false, jobs, sortQuery = "sort=createdAt,des
 
         try {
             const res = await callFetchJob(query);
-
-            // Log dữ liệu API trả về
-            console.log("API Response:", res?.data);
+            console.log("API Response:", res?.data); // Debug response
 
             if (res?.data) {
-                // Lọc thêm một lần nữa ở client để đảm bảo
-                const activeJobs = res.data.result.filter(job => job.active === true);
-                setDisplayJob(activeJobs);
+                setDisplayJob(res.data.result);
                 setTotal(res.data.meta.total);
             }
         } catch (error) {
