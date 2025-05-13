@@ -42,6 +42,26 @@ const PaymentResultPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    // Redirect to localhost if this is render.com and we're in development mode
+    useEffect(() => {
+        // Check if we're on the production site and need to redirect to localhost
+        const isProduction = window.location.hostname === 'hsjobit.onrender.com';
+        const queryParams = new URLSearchParams(location.search);
+        const hasVNPayParams = queryParams.has('vnp_ResponseCode');
+
+        if (isProduction && hasVNPayParams) {
+            // We need to check if the user might be developing locally
+            const shouldRedirectLocal = localStorage.getItem('devMode') === 'true';
+
+            if (shouldRedirectLocal) {
+                console.log("Redirecting from production to localhost...");
+                const redirectUrl = `http://localhost:3000${location.pathname}${location.search}`;
+                window.location.href = redirectUrl;
+                return;
+            }
+        }
+    }, [location]);
+
     // Hàm kiểm tra trạng thái thanh toán dựa vào orderId
     const checkPaymentStatus = async (orderId: string) => {
         try {

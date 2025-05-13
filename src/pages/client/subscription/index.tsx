@@ -57,6 +57,15 @@ const SubscriptionPage = () => {
     // Lấy thông tin user từ redux store
     const user = useAppSelector(state => state.account.user);
 
+    // Set development mode flag for payment redirect
+    useEffect(() => {
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        if (isLocal) {
+            localStorage.setItem('devMode', 'true');
+            console.log("Development mode enabled. VNPay will redirect to localhost.");
+        }
+    }, []);
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -210,7 +219,10 @@ const SubscriptionPage = () => {
             orderType: "billpayment",
             orderInfo: "Thanh toan goi VIP",
             amount: finalPrice, // Sử dụng giá sau giảm giá
-            returnUrl: getEnvironmentConfig().vnpayReturnUrl
+            // Hardcode returnUrl to always point to localhost:3000 in development
+            returnUrl: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                ? 'http://localhost:3000/subscription/payment-result'
+                : getEnvironmentConfig().vnpayReturnUrl
         };
 
         console.log("VNPay request data:", requestData);
@@ -260,14 +272,58 @@ const SubscriptionPage = () => {
             }
 
             if (paymentUrl) {
-                console.log("🚀 Redirecting to VNPay URL:", paymentUrl);
+                console.log("🚀 Original VNPay URL:", paymentUrl);
+
+                // IMPORTANT: Direct modification of VNPay URL for local development
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    try {
+                        // Parse the URL from VNPay
+                        const urlObj = new URL(paymentUrl);
+                        const params = new URLSearchParams(urlObj.search);
+
+                        // Find any parameter that looks like a return URL
+                        for (const [key, value] of params.entries()) {
+                            if ((key.includes('return') || key.includes('redirect') || key === 'vnp_ReturnUrl') &&
+                                (value.includes('http') || value.includes('https'))) {
+                                console.log(`Found return URL parameter: ${key}=${value}`);
+
+                                // Replace the production domain with localhost in the return URL
+                                const localReturnUrl = value.replace(
+                                    'https://hsjobit.onrender.com',
+                                    'http://localhost:3000'
+                                ).replace(
+                                    'http://hsjobit.onrender.com',
+                                    'http://localhost:3000'
+                                );
+
+                                console.log(`Modified return URL: ${localReturnUrl}`);
+                                params.set(key, localReturnUrl);
+                            }
+                        }
+
+                        // If vnp_ReturnUrl doesn't exist, add it explicitly
+                        if (!params.has('vnp_ReturnUrl')) {
+                            console.log("Adding explicit vnp_ReturnUrl parameter");
+                            params.set('vnp_ReturnUrl', 'http://localhost:3000/subscription/payment-result');
+                        }
+
+                        // Rebuild the payment URL with modified parameters
+                        const newPaymentUrl = `${urlObj.origin}${urlObj.pathname}?${params.toString()}`;
+                        console.log("🔄 Modified VNPay URL:", newPaymentUrl);
+                        paymentUrl = newPaymentUrl;
+                    } catch (error) {
+                        console.error("Failed to modify VNPay URL:", error);
+                    }
+                }
 
                 // Mở URL VNPay trong tab mới
                 setTimeout(() => {
                     try {
+                        console.log("Opening URL:", paymentUrl);
                         const newWindow = window.open(paymentUrl, '_blank');
                         if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
                             // Thử phương pháp chuyển hướng
+                            console.log("Falling back to location.href");
                             window.location.href = paymentUrl;
                         }
                     } catch (error) {

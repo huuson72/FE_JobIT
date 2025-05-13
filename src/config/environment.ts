@@ -10,8 +10,11 @@ export const getEnvironmentConfig = () => {
     const PROD_BACKEND_URL = 'https://be-jobit.onrender.com';
     
     // URL local
-    const LOCAL_FRONTEND_URL = 'http://localhost:5173';
+    const LOCAL_FRONTEND_URL = 'http://localhost:3000';
     const LOCAL_BACKEND_URL = 'http://localhost:8080';
+    
+    // Force local for VNPay (thêm mới)
+    const forceLocalVNPay = true; // Đặt thành true để luôn sử dụng URL local cho VNPay
     
     return {
         // URL của frontend
@@ -21,12 +24,12 @@ export const getEnvironmentConfig = () => {
         backendUrl: backendUrl,
             
         // URL callback cho VNPay
-        vnpayReturnUrl: isLocal 
+        vnpayReturnUrl: forceLocalVNPay || isLocal 
             ? `${LOCAL_FRONTEND_URL}/subscription/payment-result`
             : `${PROD_FRONTEND_URL}/subscription/payment-result`,
             
         // URL callback cho VNPay (dành cho backend)
-        vnpayBackendReturnUrl: isLocal
+        vnpayBackendReturnUrl: forceLocalVNPay || isLocal
             ? `${LOCAL_BACKEND_URL}/api/v1/payments/vnpay-callback`
             : `${PROD_BACKEND_URL}/api/v1/payments/vnpay-callback`
     };
