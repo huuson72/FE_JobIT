@@ -85,7 +85,7 @@ const JobPage = () => {
             hideInSearch: true,
         },
         {
-            title: 'Tên Job',
+            title: 'Tên việc',
             dataIndex: 'name',
             sorter: true,
         },
@@ -258,7 +258,7 @@ const JobPage = () => {
             >
                 <DataTable<IJob>
                     actionRef={tableRef}
-                    headerTitle="Danh sách Jobs"
+                    headerTitle="Danh sách công việc"
                     rowKey="id"
                     loading={isFetching}
                     columns={columns}
@@ -282,7 +282,7 @@ const JobPage = () => {
                         return (
                             <Button
                                 icon={<PlusOutlined />}
-                                type="primary"
+                                style={{ backgroundColor: "#52c41a", borderColor: "#52c41a", color: "white" }}
                                 onClick={() => navigate('upsert')}
                             >
                                 Thêm mới

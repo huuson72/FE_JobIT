@@ -119,75 +119,37 @@ const PermissionPage = () => {
             render: (_value, entity, _index, _action) => (
                 <Space>
                     <Access
-                        permission={ALL_PERMISSIONS.COMPANIES.UPDATE}
+                        permission={ALL_PERMISSIONS.PERMISSIONS.UPDATE}
                         hideChildren
                     >
-                        <Tooltip title="Chỉnh sửa">
-                            <div
-                                style={{
-                                    padding: '8px',
-                                    borderRadius: '50%',
-                                    backgroundColor: '#fff',
-                                    cursor: 'pointer',
-                                    transition: 'background-color 0.3s',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    border: '1px solid #d9d9d9',
-                                }}
-                                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f0f5ff')}
-                                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#fff')}
-                                onClick={() => {
-                                    setOpenModal(true);
-                                    setDataInit(entity);
-                                }}
-                            >
-                                <EditOutlined
-                                    style={{
-                                        fontSize: 18,
-                                        color: '#1890ff',
-                                    }}
-                                />
-                            </div>
-                        </Tooltip>
+                        <Button
+                            type="primary"
+                            icon={<EditOutlined />}
+                            size="small"
+                            onClick={() => {
+                                setOpenModal(true);
+                                setDataInit(entity);
+                            }}
+                        >
+                            Sửa
+                        </Button>
                     </Access>
                     <Access
-                        permission={ALL_PERMISSIONS.COMPANIES.DELETE}
+                        permission={ALL_PERMISSIONS.PERMISSIONS.DELETE}
                         hideChildren
                     >
-                        <Tooltip title="Xóa">
-                            <Popconfirm
-                                placement="leftTop"
-                                title={"Xác nhận xóa company"}
-                                description={"Bạn có chắc chắn muốn xóa permission   này ?"}
-                                onConfirm={() => handleDeletePermission(entity.id)}
-                                okText="Xác nhận"
-                                cancelText="Hủy"
-                            >
-                                <div
-                                    style={{
-                                        padding: '8px',
-                                        borderRadius: '50%',
-                                        backgroundColor: '#fff',
-                                        cursor: 'pointer',
-                                        transition: 'background-color 0.3s',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        border: '1px solid #d9d9d9',
-                                    }}
-                                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#fff1f0')}
-                                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#fff')}
-                                >
-                                    <DeleteOutlined
-                                        style={{
-                                            fontSize: 18,
-                                            color: '#ff4d4f',
-                                        }}
-                                    />
-                                </div>
-                            </Popconfirm>
-                        </Tooltip>
+                        <Popconfirm
+                            placement="leftTop"
+                            title={"Xác nhận xóa permission"}
+                            description={"Bạn có chắc chắn muốn xóa permission này ?"}
+                            onConfirm={() => handleDeletePermission(entity.id)}
+                            okText="Xác nhận"
+                            cancelText="Hủy"
+                        >
+                            <Button danger icon={<DeleteOutlined />} size="small">
+                                Xóa
+                            </Button>
+                        </Popconfirm>
                     </Access>
                 </Space>
             ),

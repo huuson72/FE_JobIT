@@ -1,7 +1,7 @@
-import { callFetchJob } from '@/config/api';
+import { callFetchJob, callGetJobApplicationsCount } from '@/config/api';
 import { convertSlug, getLocationName, calculateDaysFromNow } from '@/config/utils';
 import { IJob } from '@/types/backend';
-import { EnvironmentOutlined, ThunderboltOutlined, BankOutlined, ClockCircleOutlined, DollarOutlined, HistoryOutlined, CalendarOutlined } from '@ant-design/icons';
+import { EnvironmentOutlined, ThunderboltOutlined, BankOutlined, ClockCircleOutlined, DollarOutlined, HistoryOutlined, CalendarOutlined, UserOutlined } from '@ant-design/icons';
 import { Card, Col, Empty, Pagination, Row, Spin, Divider, Tag } from 'antd';
 import { useState, useEffect } from 'react';
 import { isMobile } from 'react-device-detect';
@@ -22,6 +22,7 @@ interface IProps {
 const JobCard = ({ showPagination = false, jobs, sortQuery = "sort=createdAt,desc" }: IProps) => {
     const [displayJob, setDisplayJob] = useState<IJob[]>(jobs || []);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [applicationCounts, setApplicationCounts] = useState<Record<number | string, number>>({});
 
     const [current, setCurrent] = useState(1);
     const [pageSize, setPageSize] = useState(6);
@@ -35,6 +36,12 @@ const JobCard = ({ showPagination = false, jobs, sortQuery = "sort=createdAt,des
     useEffect(() => {
         if (!jobs) fetchJob();
     }, [current, pageSize, filter, sortQuery, location]);
+
+    useEffect(() => {
+        if (displayJob.length > 0) {
+            fetchApplicationCounts();
+        }
+    }, [displayJob]);
 
     const fetchJob = async () => {
         setIsLoading(true);
@@ -98,6 +105,47 @@ const JobCard = ({ showPagination = false, jobs, sortQuery = "sort=createdAt,des
         setIsLoading(false);
     };
 
+    const fetchApplicationCounts = async () => {
+        try {
+            const counts: Record<number | string, number> = {};
+
+            // Create an array of promises for parallel fetching
+            const promises = displayJob.map(job => {
+                // Make sure job.id is a valid string or number
+                const jobId = job.id;
+                if (jobId) {
+                    return callGetJobApplicationsCount(jobId)
+                        .then(res => {
+                            // Log the full response to debug
+                            console.log(`Application count for job ${jobId}:`, res.data);
+
+                            // Based on the log, the API response has a single nesting:
+                            // { statusCode, error, message, data: { jobId, jobName, totalApplications, cvCount, resumeCount } }
+                            if (res?.data?.data?.totalApplications !== undefined) {
+                                // Direct access to the totalApplications field
+                                counts[jobId] = res.data.data.totalApplications;
+                                console.log(`Job ${jobId} has ${res.data.data.totalApplications} applications`);
+                            } else {
+                                console.warn(`Missing application count data for job ${jobId}`, res.data);
+                            }
+                        })
+                        .catch(error => {
+                            console.error(`Error fetching applications count for job ${jobId}:`, error);
+                        });
+                }
+                return Promise.resolve(); // Return resolved promise for jobs without id
+            });
+
+            // Wait for all promises to resolve
+            await Promise.all(promises);
+
+            // Update state with the counts
+            setApplicationCounts(counts);
+            console.log("Final application counts:", counts);
+        } catch (error) {
+            console.error("Error fetching application counts:", error);
+        }
+    };
 
     const handleOnChangePage = (page: number, size: number) => {
         setCurrent(page);
@@ -123,54 +171,63 @@ const JobCard = ({ showPagination = false, jobs, sortQuery = "sort=createdAt,des
 
                 <Row gutter={[20, 20]}>
                     {displayJob.length > 0 ? (
-                        displayJob.map((item) => (
-                            <Col span={24} md={12} key={item.id}>
-                                <Card
-                                    className={cardStyles["job-card"]}
-                                    hoverable
-                                    onClick={() => handleViewDetailJob(item)}
-                                >
-                                    <div className={cardStyles["job-card-content"]}>
-                                        {!item.active && <div className={styles["expired-tag"]}>Đã hết hạn</div>}
-                                        <div className={cardStyles["company-logo"]}>
-                                            <img
-                                                alt={`${item.company?.name || 'Company'} logo`}
-                                                src={`${import.meta.env.VITE_BACKEND_URL}/storage/company/${item.company?.logo}`}
-                                            />
-                                        </div>
-                                        <div className={cardStyles["job-details"]}>
-                                            <h3 className={cardStyles["job-title"]}>{item.name}</h3>
+                        displayJob.map((item) => {
+                            const jobId = item.id;
+                            return (
+                                <Col span={24} md={12} key={jobId}>
+                                    <Card
+                                        className={cardStyles["job-card"]}
+                                        hoverable
+                                        onClick={() => handleViewDetailJob(item)}
+                                    >
+                                        <div className={cardStyles["job-card-content"]}>
+                                            {!item.active && <div className={styles["expired-tag"]}>Đã hết hạn</div>}
+                                            <div className={cardStyles["company-logo"]}>
+                                                <img
+                                                    alt={`${item.company?.name || 'Company'} logo`}
+                                                    src={`${import.meta.env.VITE_BACKEND_URL}/storage/company/${item.company?.logo}`}
+                                                />
+                                            </div>
+                                            <div className={cardStyles["job-details"]}>
+                                                <h3 className={cardStyles["job-title"]}>{item.name}</h3>
 
-                                            <div className={cardStyles["job-meta"]}>
-                                                <div className={`${cardStyles["meta-item"]} ${cardStyles["location"]}`}>
-                                                    <EnvironmentOutlined className={cardStyles["icon"]} />
-                                                    {getLocationName(item.location)}
+                                                <div className={cardStyles["job-meta"]}>
+                                                    <div className={`${cardStyles["meta-item"]} ${cardStyles["location"]}`}>
+                                                        <EnvironmentOutlined className={cardStyles["icon"]} />
+                                                        {getLocationName(item.location)}
+                                                    </div>
+                                                    <div className={`${cardStyles["meta-item"]} ${cardStyles["salary"]}`}>
+                                                        <ThunderboltOutlined className={cardStyles["icon"]} />
+                                                        {(item.salary || 0).toLocaleString()} đ
+                                                    </div>
+                                                    <div className={`${cardStyles["meta-item"]} ${cardStyles["applications"]}`}>
+                                                        <UserOutlined className={cardStyles["icon"]} />
+                                                        {jobId && applicationCounts[jobId] !== undefined
+                                                            ? `${applicationCounts[jobId]} ứng viên`
+                                                            : "Đang tải..."}
+                                                    </div>
                                                 </div>
-                                                <div className={`${cardStyles["meta-item"]} ${cardStyles["salary"]}`}>
-                                                    <ThunderboltOutlined className={cardStyles["icon"]} />
-                                                    {(item.salary || 0).toLocaleString()} đ
+
+                                                <div className={cardStyles["job-footer"]}>
+                                                    <div className={cardStyles["company-name"]}>
+                                                        <BankOutlined style={{ marginRight: 4 }} />
+                                                        {item.company?.name}
+                                                    </div>
+                                                    <div className={cardStyles["posted-time"]}>
+                                                        <ClockCircleOutlined style={{ marginRight: 4 }} />
+                                                        {calculateDaysFromNow(item.updatedAt || item.createdAt || '')}
+                                                    </div>
+                                                    <div className={cardStyles["job-dates"]}>
+                                                        <CalendarOutlined style={{ marginRight: 4 }} />
+                                                        {dayjs(item.createdAt).format('DD/MM/YYYY')} - {dayjs(item.endDate).format('DD/MM/YYYY')}
+                                                    </div>
                                                 </div>
                                             </div>
-
-                                            <div className={cardStyles["job-footer"]}>
-                                                <div className={cardStyles["company-name"]}>
-                                                    <BankOutlined style={{ marginRight: 4 }} />
-                                                    {item.company?.name}
-                                                </div>
-                                                <div className={cardStyles["posted-time"]}>
-                                                    <ClockCircleOutlined style={{ marginRight: 4 }} />
-                                                    {calculateDaysFromNow(item.updatedAt || item.createdAt || '')}
-                                                </div>
-                                                <div className={cardStyles["job-dates"]}>
-                                                    <CalendarOutlined style={{ marginRight: 4 }} />
-                                                    {dayjs(item.createdAt).format('DD/MM/YYYY')} - {dayjs(item.endDate).format('DD/MM/YYYY')}
-                                                </div>
-                                            </div>
                                         </div>
-                                    </div>
-                                </Card>
-                            </Col>
-                        ))
+                                    </Card>
+                                </Col>
+                            );
+                        })
                     ) : (
                         !isLoading && (
                             <Col span={24}>

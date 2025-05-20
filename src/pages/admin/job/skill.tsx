@@ -57,7 +57,7 @@ const SkillPage = () => {
             hideInSearch: true,
         },
         {
-            title: 'Name',
+            title: 'Tên',
             dataIndex: 'name',
             sorter: true,
         },
@@ -106,18 +106,17 @@ const SkillPage = () => {
             width: 50,
             render: (_value, entity, _index, _action) => (
                 <Space>
-
-                    <EditOutlined
-                        style={{
-                            fontSize: 20,
-                            color: '#ffa500',
-                        }}
-                        type=""
+                    <Button
+                        type="primary"
+                        icon={<EditOutlined />}
+                        size="small"
                         onClick={() => {
                             setOpenModal(true);
                             setDataInit(entity);
                         }}
-                    />
+                    >
+                        Sửa
+                    </Button>
 
                     <Popconfirm
                         placement="leftTop"
@@ -127,14 +126,9 @@ const SkillPage = () => {
                         okText="Xác nhận"
                         cancelText="Hủy"
                     >
-                        <span style={{ cursor: "pointer", margin: "0 10px" }}>
-                            <DeleteOutlined
-                                style={{
-                                    fontSize: 20,
-                                    color: '#ff4d4f',
-                                }}
-                            />
-                        </span>
+                        <Button danger icon={<DeleteOutlined />} size="small">
+                            Xóa
+                        </Button>
                     </Popconfirm>
                 </Space>
             ),
@@ -181,7 +175,7 @@ const SkillPage = () => {
         <div>
             <DataTable<ISkill>
                 actionRef={tableRef}
-                headerTitle="Danh sách Skill"
+                headerTitle="Danh sách kĩ năng"
                 rowKey="id"
                 loading={isFetching}
                 columns={columns}

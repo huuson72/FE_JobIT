@@ -240,6 +240,15 @@ export const callFetchJobById = (id: string) => {
 }
 
 /**
+ * Get the count of applications for a specific job
+ */
+export const callGetJobApplicationsCount = (jobId: string | number) => {
+    // The API response has a double-nested structure:
+    // { statusCode, error, message, data: { statusCode, error, message, data: { actual data } } }
+    return axios.get(`/api/v1/jobs/${jobId}/applications/count`);
+}
+
+/**
  * 
 Module Resume
  */

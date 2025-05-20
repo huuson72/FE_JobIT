@@ -447,7 +447,7 @@ const SubscriptionManagement = () => {
                             </Title>
                             <Button
                                 type="primary"
-                                icon={<PlusOutlined />}
+                                style={{ backgroundColor: "#52c41a", borderColor: "#52c41a", color: "white" }}
                                 onClick={handleCreate}
                             >
                                 Thêm gói VIP
@@ -475,7 +475,7 @@ const SubscriptionManagement = () => {
                             </Title>
                             <Button
                                 type="primary"
-                                icon={<PlusOutlined />}
+                                style={{ backgroundColor: "#52c41a", borderColor: "#52c41a", color: "white" }}
                                 onClick={handleCreatePromotion}
                             >
                                 Thêm ưu đãi
