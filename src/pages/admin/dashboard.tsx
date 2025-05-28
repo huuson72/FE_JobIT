@@ -89,7 +89,7 @@ const DashboardPage = () => {
     const handleTabChange = (key: string) => {
         setActiveTab(key);
         if (key === "2") {
-            navigate('/admin/revenue', { replace: true });
+            navigate('/admin?tab=revenue', { replace: true });
         } else {
             navigate('/admin', { replace: true });
         }

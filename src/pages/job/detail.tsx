@@ -110,12 +110,13 @@ const ClientJobDetailPage = (props: any) => {
                                         </button>
                                     );
                                 })()}
-                                <div className={styles["extra-buttons"]} style={{ marginTop: '20px' }}>
-                                    <Link to="/favourites" style={{ marginLeft: '10px', marginBottom: '20px', color: '#1890ff', textDecoration: 'none', fontWeight: 'bold' }}>❤️ Công việc yêu thích</Link>
+                                <div className={styles["extra-buttons-container"]}>
+                                    <Link to="/favourites" className={styles["favourite-link"]}>
+                                        ❤️ Công việc yêu thích
+                                    </Link>
                                     <button
                                         onClick={handleToggleFavourite}
                                         className={`${styles["btn-favourite"]} ${isFavourite ? styles["favourite-active"] : styles["favourite-inactive"]}`}
-                                        style={{ marginLeft: "10px", padding: '10px 20px', backgroundColor: isFavourite ? "#ff4d4f" : "#ddd", color: "#fff", borderRadius: '8px', border: 'none', cursor: 'pointer' }}
                                     >
                                         {isFavourite ? <HeartFilled /> : <HeartOutlined />} &nbsp; {isFavourite ? 'Bỏ yêu thích' : 'Lưu vào yêu thích'}
                                     </button>

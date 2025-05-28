@@ -202,6 +202,16 @@ export const callFetchUser = (query: string) => {
     return axios.get<IBackendRes<IModelPaginate<IUser>>>(`/api/v1/users?${query}`);
 }
 
+export const callFetchUserById = async (userId: number) => {
+    try {
+        const res = await axios.get<IBackendRes<IUser>>(`${import.meta.env.VITE_BACKEND_URL}/api/v1/users/${userId}`);
+        return res;
+    } catch (error) {
+        console.error('Error fetching user by ID:', error);
+        throw error;
+    }
+}
+
 /**
  * 
 Module Job
@@ -1094,4 +1104,27 @@ export const callHRUpdateCompany = (data: IHRUpdateCompanyRequest) => {
         }
     });
 }
+
+export const callFetchHRProfile = (userId: string | number) => {
+    return axios.get<IBackendRes<any>>(`/api/profile/hr/${userId}`);
+};
+
+export const callFetchUserProfile = (userId: string | number) => {
+    console.log(`Fetching user profile for userId: ${userId}`);
+    const token = localStorage.getItem("access_token");
+    
+    return axios.get<IBackendRes<any>>(`/api/v1/users/${userId}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
+    .then(response => {
+        console.log("User profile API raw response:", response.data);
+        return response;
+    })
+    .catch(error => {
+        console.error("Error fetching user profile:", error.response?.data || error.message);
+        throw error;
+    });
+};
 

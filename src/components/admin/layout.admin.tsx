@@ -85,7 +85,7 @@ const LayoutAdmin = () => {
 
             const full = [
                 ...(user?.role?.name !== 'HR' ? [{
-                    label: <Link to='/admin'>Dashboard</Link>,
+                    label: <Link to='/admin'>Tổng quan</Link>,
                     key: '/admin',
                     icon: <AppstoreOutlined />
                 }] : []),
@@ -109,23 +109,23 @@ const LayoutAdmin = () => {
                     key: '/admin/resume',
                     icon: <AliwangwangOutlined />
                 }] : []),
-                ...(viewPermission && user?.role?.name !== 'HR' ? [{
-                    label: <Link to='/admin/permission'>Quyền hạn</Link>,
-                    key: '/admin/permission',
-                    icon: <ApiOutlined />
-                }] : []),
+                // ...(viewPermission && user?.role?.name !== 'HR' ? [{
+                //     label: <Link to='/admin/permission'>Quyền hạn</Link>,
+                //     key: '/admin/permission',
+                //     icon: <ApiOutlined />
+                // }] : []),
                 ...(viewRole && user?.role?.name !== 'HR' ? [{
                     label: <Link to='/admin/role'>Vai trò</Link>,
                     key: '/admin/role',
                     icon: <ExceptionOutlined />
                 }] : []),
                 ...(user?.role?.name !== 'HR' ? [{
-                    label: <Link to='/admin/subscription'>Quản lý gói VIP</Link>,
+                    label: <Link to='/admin/subscription'>Gói VIP</Link>,
                     key: '/admin/subscription',
                     icon: <CrownOutlined />
                 }] : []),
                 ...(user?.role?.name !== 'HR' ? [{
-                    label: <Link to='/admin?tab=revenue'>Thống kê doanh thu</Link>,
+                    label: <Link to='/admin?tab=revenue'>Doanh thu</Link>,
                     key: '/admin?tab=revenue',
                     icon: <DollarOutlined />
                 }] : []),
@@ -140,8 +140,14 @@ const LayoutAdmin = () => {
         }
     }, [permissions, user])
     useEffect(() => {
-        const currentPath = location.pathname + location.search;
-        setActiveMenu(currentPath);
+        const currentPath = location.pathname;
+        const currentSearch = location.search;
+
+        if (currentPath === '/admin' && currentSearch === '?tab=revenue') {
+            setActiveMenu('/admin?tab=revenue');
+        } else {
+            setActiveMenu(currentPath);
+        }
 
         // Redirect HR users to jobs page when accessing admin dashboard
         if (user?.role?.name === 'HR' && location.pathname === '/admin') {

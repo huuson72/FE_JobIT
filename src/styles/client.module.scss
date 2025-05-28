@@ -705,3 +705,70 @@
         }
     }
 }
+
+.search-bar {
+    position: relative;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    .search-input {
+        flex-grow: 1;
+    }
+}
+
+/* Styles for Job Detail Page - Favourite Section */
+.extra-buttons-container {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adjust spacing between link and button */
+    /* Optional: Add padding-bottom if needed for layout */
+    padding-bottom: 20px; 
+}
+
+.favourite-link {
+    color: #1890ff; /* Ant Design Primary Color */
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+
+    &:hover {
+        color: #096dd9; /* Darker shade on hover */
+        text-decoration: underline;
+    }
+}
+
+.btn-favourite {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    display: flex; /* To align icon and text */
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+
+    /* Ensure text color is white for both states */
+    color: #fff;
+}
+
+.favourite-active {
+    background-color: #ff4d4f; /* Ant Design Error Red */
+
+    &:hover {
+        background-color: #f5222d; /* Darker red on hover */
+        opacity: 0.9; /* Slightly reduce opacity on hover */
+    }
+}
+
+.favourite-inactive {
+    background-color: #ddd; /* Grey */
+
+     &:hover {
+        background-color: #ccc; /* Darker grey on hover */
+        opacity: 0.9; /* Slightly reduce opacity on hover */
+    }
+}
