@@ -1,4 +1,6 @@
-### JobIT là nền tảng tìm kiếm việc làm hiện đại kết nối người tìm việc với nhà tuyển dụng. Nền tảng cung cấp các tính năng cho cả người tìm việc và nhà tuyển dụng, với trọng tâm đặc biệt vào các gói đăng ký VIP để tăng khả năng hiển thị và tuyển dụng.
+
+### Tổng Quan
+JobIT là nền tảng tìm kiếm việc làm hiện đại kết nối người tìm việc với nhà tuyển dụng. Nền tảng cung cấp các tính năng cho cả người tìm việc và nhà tuyển dụng, với trọng tâm đặc biệt vào các gói đăng ký VIP để tăng khả năng hiển thị và tuyển dụng.
 
 ### Tính Năng Chính
 
@@ -29,7 +31,7 @@
 ### Công Nghệ Sử Dụng
 - Frontend: React, TypeScript, Ant Design
 - Backend: Spring Boot, Java
-- Cơ sở dữ liệu: PostgreSQL
+- Cơ sở dữ liệu: MySQL
 - Tích hợp thanh toán: VNPay
 - Xác thực: JWT
 
@@ -38,7 +40,7 @@
 #### Yêu Cầu
 - Node.js (v14 trở lên)
 - Java JDK 11 trở lên
-- PostgreSQL
+- MySQL 8.0 trở lên
 - npm hoặc yarn
 
 #### Cài Đặt
@@ -66,9 +68,11 @@ VITE_BACKEND_URL=http://localhost:8080
 VITE_VNPAY_RETURN_URL=http://localhost:3000/subscription/payment-result
 
 # Backend (application.properties)
-spring.datasource.url=jdbc:postgresql://localhost:5432/jobit
+spring.datasource.url=jdbc:mysql://localhost:3306/jobit?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
 spring.datasource.username=your_username
 spring.datasource.password=your_password
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
 ```
 
 5. Khởi động ứng dụng
@@ -82,6 +86,3 @@ npm run dev
 
 ### Đóng Góp
 Vui lòng đọc [CONTRIBUTING.md](CONTRIBUTING.md) để biết thêm chi tiết về quy tắc ứng xử và quy trình gửi pull request.
-
-### Giấy Phép
-Dự án này được cấp phép theo MIT License - xem file [LICENSE.md](LICENSE.md) để biết thêm chi tiết. 
