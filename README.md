@@ -1,5 +1,4 @@
-
-JobIT là nền tảng tìm kiếm việc làm hiện đại kết nối người tìm việc với nhà tuyển dụng. Nền tảng cung cấp các tính năng cho cả người tìm việc và nhà tuyển dụng, với trọng tâm đặc biệt vào các gói đăng ký VIP để tăng khả năng hiển thị và tuyển dụng.
+### JobIT là nền tảng tìm kiếm việc làm hiện đại kết nối người tìm việc với nhà tuyển dụng. Nền tảng cung cấp các tính năng cho cả người tìm việc và nhà tuyển dụng, với trọng tâm đặc biệt vào các gói đăng ký VIP để tăng khả năng hiển thị và tuyển dụng.
 
 ### Tính Năng Chính
 
