@@ -1,77 +1,88 @@
-# CV Builder Application
 
-This CV builder application allows users to create and edit professional CVs using a variety of templates.
+JobIT là nền tảng tìm kiếm việc làm hiện đại kết nối người tìm việc với nhà tuyển dụng. Nền tảng cung cấp các tính năng cho cả người tìm việc và nhà tuyển dụng, với trọng tâm đặc biệt vào các gói đăng ký VIP để tăng khả năng hiển thị và tuyển dụng.
 
-## Features
+### Tính Năng Chính
 
-- Multiple CV templates: Modern, Technical, Minimal, and Creative
-- Edit mode for in-place editing of all fields
-- Drag and drop functionality for adding custom fields
-- Easy customization of field labels and values
-- Export to PDF (coming soon)
+#### Cho Người Tìm Việc
+- Tìm kiếm việc làm nâng cao với nhiều bộ lọc
+- Theo dõi đơn ứng tuyển
+- Quản lý hồ sơ
+- Tải lên và quản lý sơ yếu lý lịch
+- Thông báo việc làm
+- Đánh giá và xếp hạng công ty
 
-## How to Use the Drag and Drop Feature
+#### Cho Nhà Tuyển Dụng
+- Quản lý đăng tin tuyển dụng
+- Sàng lọc và quản lý ứng viên
+- Quản lý hồ sơ công ty
+- Gói đăng ký VIP với các tính năng nâng cao:
+  - Hiển thị ưu tiên tin tuyển dụng
+  - Tin tuyển dụng nổi bật
+  - Tăng giới hạn đăng tin
+  - Thời hạn đăng ký kéo dài
+  - Tùy chọn thương hiệu
 
-The application now supports drag and drop functionality to add custom fields to your CV. Here's how to use it:
+### Gói Đăng Ký VIP
+- **Gói Cơ Bản**: Tính năng tuyển dụng cơ bản
+- **Gói Cao Cấp**: Khả năng hiển thị và đăng tin nâng cao
+- **Gói Doanh Nghiệp**: Bộ công cụ tuyển dụng đầy đủ và hiển thị tối đa
 
-1. **Enable Edit Mode**: Click the edit toggle in the top-right corner to enable editing.
+### Công Nghệ Sử Dụng
+- Frontend: React, TypeScript, Ant Design
+- Backend: Spring Boot, Java
+- Cơ sở dữ liệu: PostgreSQL
+- Tích hợp thanh toán: VNPay
+- Xác thực: JWT
 
-2. **Open the Fields Panel**: When edit mode is active, a panel of draggable fields will appear on the right side of the screen.
+### Bắt Đầu
 
-3. **Drag Fields to Your CV**: 
-   - Drag any field from the panel and drop it into one of the designated drop zones in your CV.
-   - Drop zones are indicated by dashed borders that appear when you're in edit mode.
-   - Drop zones become highlighted when you drag a field over them.
+#### Yêu Cầu
+- Node.js (v14 trở lên)
+- Java JDK 11 trở lên
+- PostgreSQL
+- npm hoặc yarn
 
-4. **Add Field Value**: 
-   - When you drop a field, a modal will appear asking for the field value.
-   - The field name will be pre-filled based on what you dragged.
-   - Enter the value for your field and click "Add".
-
-5. **Edit Custom Fields**:
-   - Once added, custom fields can be edited directly on the CV like any other field.
-   - You can edit both the field name and its value.
-
-6. **Add Custom Field Types**:
-   - If you don't see the field type you need in the panel, click "Tùy chỉnh trường mới" to add a completely custom field.
-
-## Field Types
-
-The application comes with several suggested field types:
-
-- Languages
-- Certifications
-- Projects
-- References
-- Interests
-- Publications
-- Patents
-- Volunteering
-
-## Templates
-
-Each template displays custom fields in different sections:
-
-- **Modern Template**: Custom fields appear in the "THÔNG TIN THÊM" section in the sidebar
-- **Technical Template**: Custom fields appear in the "ADDITIONAL INFO" section in the sidebar
-- **Minimal Template**: Custom fields appear in the "THÔNG TIN BỔ SUNG" section between objective and experience
-- **Creative Template**: Custom fields appear in designated areas based on where you drop them
-
-## Development
-
-This application is built with:
-
-- React
-- TypeScript
-- Ant Design
-- Vite
-
-### Running the Application
-
+#### Cài Đặt
+1. Clone repository
 ```bash
-# Install dependencies
-npm install
+git clone https://github.com/your-username/jobit.git
+```
 
-# Start development server
+2. Cài đặt dependencies frontend
+```bash
+cd frontend
+npm install
+```
+
+3. Cài đặt dependencies backend
+```bash
+cd backend
+./mvnw install
+```
+
+4. Cấu hình biến môi trường
+```bash
+# Frontend (.env)
+VITE_BACKEND_URL=http://localhost:8080
+VITE_VNPAY_RETURN_URL=http://localhost:3000/subscription/payment-result
+
+# Backend (application.properties)
+spring.datasource.url=jdbc:postgresql://localhost:5432/jobit
+spring.datasource.username=your_username
+spring.datasource.password=your_password
+```
+
+5. Khởi động ứng dụng
+```bash
+# Frontend
 npm run dev
-``` 
+
+# Backend
+./mvnw spring-boot:run
+```
+
+### Đóng Góp
+Vui lòng đọc [CONTRIBUTING.md](CONTRIBUTING.md) để biết thêm chi tiết về quy tắc ứng xử và quy trình gửi pull request.
+
+### Giấy Phép
+Dự án này được cấp phép theo MIT License - xem file [LICENSE.md](LICENSE.md) để biết thêm chi tiết. 
