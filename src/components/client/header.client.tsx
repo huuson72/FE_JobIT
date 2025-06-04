@@ -244,15 +244,6 @@ const Header = (props: any) => {
                                 >
                                     Đăng nhập / Đăng ký
                                 </Link>
-                                <Select
-                                    defaultValue="en"
-                                    style={{ width: 70 }}
-                                    options={[
-                                        { value: 'en', label: 'EN' },
-                                        { value: 'vi', label: 'VI' },
-                                    ]}
-                                    className={styles["language-select"]}
-                                />
                             </div>
                         ) : (
                             <Space size="middle">
@@ -272,7 +263,7 @@ const Header = (props: any) => {
                                         </span>
                                     </Space>
                                 </Dropdown>
-                                <Select
+                                {/* <Select
                                     defaultValue="en"
                                     style={{ width: 70 }}
                                     options={[
@@ -280,7 +271,7 @@ const Header = (props: any) => {
                                         { value: 'vi', label: 'VI' },
                                     ]}
                                     className={styles["language-select"]}
-                                />
+                                /> */}
                             </Space>
                         )}
                     </div>

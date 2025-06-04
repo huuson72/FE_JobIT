@@ -259,19 +259,6 @@ const RegisterPage = () => {
                                 </Button>
                             </Form.Item>
 
-                            <div className={styles.dividerContainer}>
-                                <Divider>Hoặc</Divider>
-                            </div>
-
-                            <div className={styles["social-login"]}>
-                                <Button className={styles["social-button"]} icon={<GoogleOutlined />}>
-                                    Đăng ký với Google
-                                </Button>
-                                <Button className={styles["social-button"]} icon={<LinkedinOutlined />}>
-                                    Đăng ký với LinkedIn
-                                </Button>
-                            </div>
-
                             <div className={styles.registerContainer}>
                                 <p className={styles.registerText}>
                                     Đã có tài khoản?

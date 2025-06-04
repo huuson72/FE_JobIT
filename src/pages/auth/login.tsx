@@ -157,19 +157,6 @@ const LoginPage = () => {
                                 </Button>
                             </Form.Item>
 
-                            <div className={styles.dividerContainer}>
-                                <Divider>Hoặc</Divider>
-                            </div>
-
-                            <div className={styles["social-login"]}>
-                                <Button className={styles["social-button"]} icon={<GoogleOutlined />}>
-                                    Đăng nhập với Google
-                                </Button>
-                                <Button className={styles["social-button"]} icon={<LinkedinOutlined />}>
-                                    Đăng nhập với LinkedIn
-                                </Button>
-                            </div>
-
                             <div className={styles.registerContainer}>
                                 <p className={styles.registerText}>
                                     Chưa có tài khoản?
