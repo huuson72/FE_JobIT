@@ -89,12 +89,12 @@ const JobPage = () => {
             dataIndex: 'name',
             sorter: true,
         },
-        {
-            title: 'Công ty',
-            dataIndex: ["company", "name"],
-            sorter: true,
-            hideInSearch: true,
-        },
+        // {
+        //     title: 'Công ty',
+        //     dataIndex: ["company", "name"],
+        //     sorter: true,
+        //     hideInSearch: true,
+        // },
         {
             title: 'Mức lương',
             dataIndex: 'salary',
